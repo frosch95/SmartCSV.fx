@@ -32,6 +32,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -143,7 +144,27 @@ public class SmartCSVController extends FXMLController {
         Platform.exit();
     }
 
+    @FXML
+    public void about(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText("SmartCSV.fx");
+        alert.setContentText("This software is licensed under MIT license.\n" +
+                "written by javafx.ninja project <info@javafx.ninja>\n\n" +
+                "https://github.com/frosch95/SmartCSV.fx\n\n" +
+                "3rd party software open source used:\n" +
+                "- junit\n" +
+                "- mockito\n" +
+                "- groovy\n" +
+                "- spring framework\n" +
+                "- supercsv\n" +
+                "- config\n" +
+                "- commons-validator");
 
+
+        alert.showAndWait();
+
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
