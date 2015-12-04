@@ -1,3 +1,29 @@
+/*
+   The MIT License (MIT)
+   -----------------------------------------------------------------------------
+
+   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>                                              
+                                                                                                                    
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+  
+*/
+
 package ninja.javafx.smartcsv.validation;
 
 import com.typesafe.config.Config;
@@ -9,25 +35,22 @@ import org.junit.runners.Parameterized;
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
-import static ninja.javafx.smartcsv.validation.ConfigMock.columnSectionConfig;
+import static ninja.javafx.smartcsv.validation.ConfigMock.headerSectionConfig;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * unit test for validator
+ * unit test for header validator
  */
 @RunWith(Parameterized.class)
-public class ValidatorTest {
-
+public class HeaderValidationTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // parameters
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private Config config;
-    private String column;
-    private String value;
     private Boolean expectedResult;
     private String expectedError;
-
+    private String[] headerNames;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // subject under test
@@ -38,27 +61,22 @@ public class ValidatorTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // parameterized constructor
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public ValidatorTest(String configcolumn,
-                         String configValidation,
-                         Object configValue,
-                         String column,
-                         String value,
-                         Boolean expectedResult,
-                         String expectedError) {
-        this.config = columnSectionConfig(configcolumn, configValidation, configValue);
-        this.column = column;
-        this.value = value;
+    public HeaderValidationTest(String[] configHeaderNames,
+                                String[] headerNames,
+                                Boolean expectedResult,
+                                String expectedError) {
+        this.config = headerSectionConfig(configHeaderNames);
+        this.headerNames = headerNames;
         this.expectedResult = expectedResult;
         this.expectedError = expectedError;
     }
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // init
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Before
     public void initialize() {
-       sut = new Validator(config);
+        sut = new Validator(config);
     }
 
 
@@ -68,7 +86,7 @@ public class ValidatorTest {
     @Test
     public void validation() {
         // execution
-        ValidationState result = sut.isValid(column, value);
+        ValidationState result = sut.isHeaderValid(headerNames);
 
         // assertion
         assertThat(result.isValid(), is(expectedResult));
@@ -83,25 +101,11 @@ public class ValidatorTest {
     @Parameterized.Parameters
     public static Collection validationConfigurations() {
         return asList(new Object[][] {
-                { "column", "not empty", true, "column", "value", true, null },
-                { "column", "not empty", true, "column", "", false, "should not be empty\n" },
-                { "column", "not empty", true, "column", null, false, "should not be empty\n" },
-                { "column", "integer", true, "column", "999", true, null },
-                { "column", "integer", true, "column", "a", false, "should be an integer\n" },
-                { "column", "minlength", 2, "column", "12", true, null },
-                { "column", "minlength", 2, "column", "1", false, "has not min length of 2\n" },
-                { "column", "maxlength", 2, "column", "12", true, null },
-                { "column", "maxlength", 2, "column", "123", false, "has not max length of 2\n" },
-                { "column", "date", "yyyyMMdd", "column", "20151127", true, null },
-                { "column", "date", "yyyyMMdd", "column", "27.11.2015", false, "is not a date of format yyyyMMdd\n" },
-                { "column", "alphanumeric", true, "column", "abcABC123", true, null },
-                { "column", "alphanumeric", true, "column", "-abcABC123", false, "should not be alphanumeric\n" },
-                { "column", "regexp", "[a-z]*", "column", "abc", true, null },
-                { "column", "regexp", "[a-z]*", "column", "abcA", false, "does not match [a-z]*\n" },
-                { "column", "groovy", "value.contains('a')? 'true' : 'no a inside'", "column", "abcdef", true, null },
-                { "column", "groovy", "value.contains('a')? 'true' : 'no a inside'", "column", "bcdefg", false, "no a inside\n" },
+                { new String[] {}, new String[] {}, true, null },
+                { new String[] {"a"}, new String[] {"a"}, true, null },
+                { new String[] {"a"}, new String[] {"b"}, false, "header number 0 does not match \"a\" should be \"b\"\n" },
+                { new String[] {"a"}, new String[] {"a","b"}, false, "number of headers is not correct! there are 2 but there should be 1\n" },
+                { new String[] {"a", "b"}, new String[] {"b", "a"}, false, "header number 0 does not match \"a\" should be \"b\"\nheader number 1 does not match \"b\" should be \"a\"\n" }
         });
     }
-
-
 }

@@ -89,6 +89,7 @@ public class CSVModel {
      */
     public void setHeader(String[] header) {
         this.header = header;
+        revalidate();
     }
 
     /**
@@ -104,6 +105,10 @@ public class CSVModel {
      * walks through the data and validates each value
      */
     private void revalidate() {
+        if (header != null) {
+            validator.isHeaderValid(header);
+        }
+
         for (CSVRow row: rows) {
             row.setValidator(validator);
             for (String column: row.getColumns().keySet()) {

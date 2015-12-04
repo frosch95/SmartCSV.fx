@@ -33,6 +33,7 @@ import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.validator.GenericValidator.*;
@@ -78,17 +79,20 @@ public class Validator {
     public ValidationState isValid(String column, String value) {
         ValidationState result = new ValidationState();
         if (validationConfig != null) {
-            Config columnConfig = getColumnConfig(column);
-            if (columnConfig != null) {
-                checkBlankOrNull(columnConfig, value, result);
-                if (value != null) {
-                    checkRegularExpression(columnConfig, value, result);
-                    checkAlphaNumeric(columnConfig, value, result);
-                    checkDate(columnConfig, value, result);
-                    checkMaxLength(columnConfig, value, result);
-                    checkMinLength(columnConfig, value, result);
-                    checkInteger(columnConfig, value, result);
-                    checkGroovy(column, columnConfig, value, result);
+            Config columnSectionConfig = getColumnSectionConfig();
+            if (columnSectionConfig != null) {
+                Config columnConfig = getColumnConfig(columnSectionConfig, column);
+                if (columnConfig != null) {
+                    checkBlankOrNull(columnConfig, value, result);
+                    if (value != null) {
+                        checkRegularExpression(columnConfig, value, result);
+                        checkAlphaNumeric(columnConfig, value, result);
+                        checkDate(columnConfig, value, result);
+                        checkMaxLength(columnConfig, value, result);
+                        checkMinLength(columnConfig, value, result);
+                        checkInteger(columnConfig, value, result);
+                        checkGroovy(column, columnConfig, value, result);
+                    }
                 }
             }
         }
@@ -196,9 +200,14 @@ public class Validator {
         }
     }
 
-    private Config getColumnConfig(String column) {
-        return validationConfig.hasPath(column) ? validationConfig.getConfig(column) : null;
+    private Config getColumnSectionConfig() {
+        return validationConfig.hasPath("columns") ? validationConfig.getConfig("columns") : null;
     }
+
+    private Config getColumnConfig(Config columnSectionConfig, String column) {
+        return columnSectionConfig.hasPath(column) ? columnSectionConfig.getConfig(column) : null;
+    }
+
 
     private String getString(Config columnConfig, String path) {
         return columnConfig.hasPath(path) ? columnConfig.getString(path) : null;
@@ -213,4 +222,38 @@ public class Validator {
         return columnConfig.hasPath(path) && columnConfig.getBoolean(path);
     }
 
+    public ValidationState isHeaderValid(String[] headerNames) {
+        ValidationState result = new ValidationState();
+        if (validationConfig != null) {
+            if (validationConfig.hasPath("headers")) {
+                Config headerSectionConfig = validationConfig.getConfig("headers");
+                if (headerSectionConfig.hasPath("list")) {
+                    List<String> headerConfig = headerSectionConfig.getStringList("list");
+                    if (headerConfig != null) {
+                        if (headerNames.length != headerConfig.size()) {
+                            result.invalidate("number of headers is not correct! there are " +
+                                              headerNames.length +
+                                              " but there should be " +
+                                              headerConfig.size());
+                            return result;
+                        }
+
+                        for(int i=0; i<headerConfig.size(); i++) {
+                            String header = headerConfig.get(i);
+                            if (!header.equals(headerNames[i])) {
+                                result.invalidate("header number " +
+                                        i +
+                                        " does not match \"" +
+                                        header +
+                                        "\" should be \"" +
+                                        headerNames[i] +
+                                        "\"");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
 }
