@@ -32,27 +32,26 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import ninja.javafx.smartcsv.FileReader;
 import ninja.javafx.smartcsv.csv.CSVFileReader;
 import ninja.javafx.smartcsv.csv.CSVFileWriter;
+import ninja.javafx.smartcsv.fx.list.ValidationErrorListCell;
 import ninja.javafx.smartcsv.fx.table.ObservableMapValueFactory;
 import ninja.javafx.smartcsv.fx.table.ValidationCellFactory;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
 import ninja.javafx.smartcsv.fx.table.model.CSVValue;
 import ninja.javafx.smartcsv.fx.table.model.CSVRow;
+import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.ValidationFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -83,6 +82,12 @@ public class SmartCSVController extends FXMLController {
     @FXML
     private Label stateline;
 
+    @FXML
+    private ListView errorList;
+
+    @FXML
+    private AnchorPane tableWrapper;
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // injections
@@ -92,6 +97,7 @@ public class SmartCSVController extends FXMLController {
     private final LoadCSVService loadCSVService = new LoadCSVService();
     private final SaveCSVService saveCSVService = new SaveCSVService();
     private CSVModel model;
+    private TableView<CSVRow> tableView;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,6 +107,10 @@ public class SmartCSVController extends FXMLController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         stateline.setVisible(false);
+        errorList.setCellFactory(param -> new ValidationErrorListCell());
+        errorList.getSelectionModel().selectedItemProperty().addListener(
+                observable -> scrollToError()
+        );
     }
 
 
@@ -215,7 +225,7 @@ public class SmartCSVController extends FXMLController {
         model = csvLoader.getData();
         model.setValidator(validationLoader.getValidator());
 
-        TableView<CSVRow> tableView = new TableView<>();
+        tableView = new TableView<>();
 
         for (String column: model.getHeader()) {
             addColumn(column, tableView);
@@ -223,7 +233,14 @@ public class SmartCSVController extends FXMLController {
         tableView.getItems().setAll(model.getRows());
         tableView.setEditable(true);
 
-        applicationPane.setCenter(tableView);
+        AnchorPane.setBottomAnchor(tableView, 0.0);
+        AnchorPane.setTopAnchor(tableView, 0.0);
+        AnchorPane.setLeftAnchor(tableView, 0.0);
+        AnchorPane.setRightAnchor(tableView, 0.0);
+        tableWrapper.getChildren().setAll(tableView);
+
+
+        errorList.setItems(model.getValidationError());
     }
 
     /**
@@ -248,6 +265,17 @@ public class SmartCSVController extends FXMLController {
         tableView.getColumns().add(column);
     }
 
+    private void scrollToError() {
+        ValidationError entry = (ValidationError)errorList.getSelectionModel().getSelectedItem();
+        if (entry != null) {
+            if (entry.getLineNumber() != null) {
+                tableView.scrollTo(entry.getLineNumber());
+                tableView.getSelectionModel().select(entry.getLineNumber());
+            } else {
+                tableView.scrollTo(0);
+            }
+        }
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // inner class
@@ -277,7 +305,7 @@ public class SmartCSVController extends FXMLController {
                         try {
                             fileReader.read(file);
                             runLater(SmartCSVController.this::resetContent);
-                        } catch (IOException ex) {
+                        } catch (Throwable ex) {
                             ex.printStackTrace();
                         }
                     }
@@ -300,7 +328,7 @@ public class SmartCSVController extends FXMLController {
                     try {
                         csvFileWriter.saveFile(model);
                         runLater(SmartCSVController.this::resetContent);
-                    } catch (IOException ex) {
+                    } catch (Throwable ex) {
                         ex.printStackTrace();
                     }
                     return null;

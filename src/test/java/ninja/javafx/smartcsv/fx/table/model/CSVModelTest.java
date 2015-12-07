@@ -88,7 +88,7 @@ public class CSVModelTest {
         sut.setValidator(validator);
 
         // assertion
-        verify(validator).isValid(TESTHEADER, TESTVALUE);
+        verify(validator).isValid(TESTHEADER, TESTVALUE, 0);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

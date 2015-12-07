@@ -28,7 +28,7 @@ package ninja.javafx.smartcsv.fx.table.model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import ninja.javafx.smartcsv.validation.ValidationState;
+import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.Validator;
 
 /**
@@ -41,6 +41,7 @@ public class CSVModel {
     private ObservableList<CSVRow> rows = FXCollections.observableArrayList();
     private String[] header;
     private String filepath;
+    private ObservableList<ValidationError> validationError  = FXCollections.observableArrayList();
 
     public CSVModel(String filepath) {
         this.filepath = filepath;
@@ -69,6 +70,10 @@ public class CSVModel {
      */
     public ObservableList<CSVRow> getRows() {
         return rows;
+    }
+
+    public ObservableList<ValidationError> getValidationError() {
+        return validationError;
     }
 
     /**
@@ -105,21 +110,36 @@ public class CSVModel {
      * walks through the data and validates each value
      */
     private void revalidate() {
+        validationError.clear();
+
         if (header != null && validator != null) {
-            validator.isHeaderValid(header);
+            addValidationError(validator.isHeaderValid(header));
         }
 
-        for (CSVRow row: rows) {
+        for (int lineNumber = 0; lineNumber < rows.size(); lineNumber++) {
+            CSVRow row = rows.get(lineNumber);
             row.setValidator(validator);
             for (String column: row.getColumns().keySet()) {
                 CSVValue value = row.getColumns().get(column).getValue();
                 value.setValidator(validator);
                 if (validator != null) {
-                    value.setValid(validator.isValid(column, value.getValue()));
+                    ValidationError validationError = validator.isValid(column, value.getValue(), lineNumber);
+                    if (validationError != null) {
+                        addValidationError(validationError);
+                        value.setValidationError(validationError);
+                    } else {
+                        value.setValidationError(null);
+                    }
                 } else {
-                    value.setValid(new ValidationState());
+                    value.setValidationError(null);
                 }
             }
+        }
+    }
+
+    private void addValidationError(ValidationError validationError) {
+        if (validationError != null) {
+            this.validationError.add(validationError);
         }
     }
 

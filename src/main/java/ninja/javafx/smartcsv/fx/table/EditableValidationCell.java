@@ -64,12 +64,12 @@ public class EditableValidationCell extends TableCell<CSVRow, CSVValue> {
     protected void updateItem(CSVValue item, boolean empty) {
         super.updateItem(item, empty);
 
-        if (item == null || item.getValid().isValid() || isEditing()) {
+        if (item == null || item.getValidationError() == null || isEditing()) {
             setStyle("");
             setTooltip(null);
-        } else if (!item.getValid().isValid()) {
+        } else if (item.getValidationError() != null) {
             setStyle("-fx-background-color: #ff8888");
-            setTooltip(new Tooltip(item.getValid().error()));
+            setTooltip(new Tooltip(item.getValidationError().getMessage()));
         }
 
         if (item == null || empty) {

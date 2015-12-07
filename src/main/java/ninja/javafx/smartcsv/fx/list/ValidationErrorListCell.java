@@ -2,8 +2,8 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
-
+   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>                                              
+                                                                                                                    
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,31 +21,42 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-
+  
 */
 
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.fx.list;
 
-import java.io.StringWriter;
+import javafx.scene.control.ListCell;
+import javafx.scene.text.Text;
+import ninja.javafx.smartcsv.validation.ValidationError;
 
 /**
- * Created by Andreas on 28.11.2015.
+ * TODO: DESCRIPTION!!!
  */
-public class ValidationState {
-    private boolean valid = true;
-    private StringWriter messages = new StringWriter();
+public class ValidationErrorListCell extends ListCell<ValidationError> {
 
-    public void invalidate(String message) {
-        valid = false;
-        messages.append(message).append('\n');
+    private Text text;
+
+    @Override
+    public void updateItem(ValidationError validationError, boolean empty) {
+        super.updateItem(validationError, empty);
+        if (empty) {
+            clearContent();
+        } else {
+            addContent(validationError);
+        }
     }
 
-    public boolean isValid() {
-        return valid;
+
+    private void clearContent() {
+        setText(null);
+        setGraphic(null);
     }
 
-    public String error() {
-        return messages.toString();
+    private void addContent(ValidationError validationError) {
+        setText(null);
+        text = new Text(validationError.getMessage());
+        text.setWrappingWidth(180);
+        setGraphic(text);
     }
-
 }

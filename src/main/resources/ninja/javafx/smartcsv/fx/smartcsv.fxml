@@ -39,10 +39,26 @@
       </VBox>
    </top>
    <center>
-      <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <columns>
-        </columns>
-      </TableView>
+       <SplitPane dividerPositions="0.8" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+           <items>
+               <AnchorPane fx:id="tableWrapper">
+                   <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" BorderPane.alignment="CENTER">
+                       <columns>
+                       </columns>
+                   </TableView>
+               </AnchorPane>
+               <VBox>
+                   <children>
+                       <Label text="Validation Errors">
+                           <padding>
+                               <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                           </padding>
+                       </Label>
+                       <ListView fx:id="errorList" minWidth="10.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                   </children>
+               </VBox>
+           </items>
+       </SplitPane>
    </center>
    <bottom>
       <HBox spacing="8.0" BorderPane.alignment="CENTER">
@@ -54,4 +70,6 @@
          </BorderPane.margin>
       </HBox>
    </bottom>
+   <left>
+   </left>
 </BorderPane>

@@ -86,12 +86,12 @@ public class HeaderValidationTest {
     @Test
     public void validation() {
         // execution
-        ValidationState result = sut.isHeaderValid(headerNames);
+        ValidationError result = sut.isHeaderValid(headerNames);
 
         // assertion
-        assertThat(result.isValid(), is(expectedResult));
+        assertThat(result == null, is(expectedResult));
         if (!expectedResult) {
-            assertThat(result.error(), is(expectedError));
+            assertThat(result.getMessage(), is(expectedError));
         }
     }
 
