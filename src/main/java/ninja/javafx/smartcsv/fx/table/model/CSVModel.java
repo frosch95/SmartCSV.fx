@@ -105,7 +105,7 @@ public class CSVModel {
      * walks through the data and validates each value
      */
     private void revalidate() {
-        if (header != null) {
+        if (header != null && validator != null) {
             validator.isHeaderValid(header);
         }
 
