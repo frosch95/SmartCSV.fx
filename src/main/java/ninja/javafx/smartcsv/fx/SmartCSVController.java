@@ -55,6 +55,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static java.lang.Math.max;
 import static javafx.application.Platform.runLater;
 
 /**
@@ -270,7 +271,7 @@ public class SmartCSVController extends FXMLController {
         ValidationError entry = (ValidationError)errorList.getSelectionModel().getSelectedItem();
         if (entry != null) {
             if (entry.getLineNumber() != null) {
-                tableView.scrollTo(entry.getLineNumber());
+                tableView.scrollTo(max(0, entry.getLineNumber() - 1));
                 tableView.getSelectionModel().select(entry.getLineNumber());
             } else {
                 tableView.scrollTo(0);
