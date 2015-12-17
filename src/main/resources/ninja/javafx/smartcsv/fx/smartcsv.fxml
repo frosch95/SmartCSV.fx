@@ -12,25 +12,20 @@
          <children>
             <MenuBar>
               <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="false" text="%menu.file">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#openCsv" text="Open CSV" />
-                    <MenuItem mnemonicParsing="false" onAction="#openConfig" text="Open Validation Config" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                    <MenuItem mnemonicParsing="false" onAction="#saveCsv" text="Save" />
-                      <MenuItem mnemonicParsing="false" onAction="#saveAsCsv" text="Save As" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#close" text="Close" />
+                    <MenuItem mnemonicParsing="false" onAction="#openCsv" text="%menu.open.csv" />
+                    <MenuItem mnemonicParsing="false" onAction="#openConfig" text="%menu.open.config" />
+                    <SeparatorMenuItem mnemonicParsing="false" />
+                    <MenuItem mnemonicParsing="false" onAction="#saveCsv" text="%menu.save" />
+                    <MenuItem mnemonicParsing="false" onAction="#saveAsCsv" text="%menu.save.as" />
+                    <SeparatorMenuItem mnemonicParsing="false" />
+                    <MenuItem mnemonicParsing="false" onAction="#close" text="%menu.close" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
+                <Menu mnemonicParsing="false" text="%menu.help">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Delete" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                  <items>
-                    <MenuItem mnemonicParsing="false" onAction="#about" text="About" />
+                    <MenuItem mnemonicParsing="false" onAction="#about" text="%menu.about" />
                   </items>
                 </Menu>
               </menus>
@@ -49,7 +44,7 @@
                </AnchorPane>
                <VBox>
                    <children>
-                       <Label text="Validation Errors">
+                       <Label text="%title.validation.errors">
                            <padding>
                                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                            </padding>
