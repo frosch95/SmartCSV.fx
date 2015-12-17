@@ -26,8 +26,6 @@
 
 package ninja.javafx.smartcsv.validation;
 
-import java.io.StringWriter;
-
 /**
  * Created by Andreas on 28.11.2015.
  */
