@@ -96,6 +96,7 @@ public class Validator {
                         checkInteger(columnConfig, value, error);
                         checkGroovy(column, columnConfig, value, error);
                         checkValueOf(columnConfig, value, error);
+                        checkDouble(columnConfig, value, error);
                     }
 
                     if (!error.isEmpty()) {
@@ -173,6 +174,15 @@ public class Validator {
             }
         }
     }
+
+    private void checkDouble(Config columnConfig, String value, ValidationError error) {
+        if (getBoolean(columnConfig, "double")) {
+            if (!isDouble(value)) {
+                error.add("validation.message.double");
+            }
+        }
+    }
+
 
     private void checkMinLength(Config columnConfig, String value, ValidationError error) {
         Integer minLength = getInteger(columnConfig, "minlength");
