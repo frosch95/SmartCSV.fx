@@ -26,23 +26,29 @@
 
 package ninja.javafx.smartcsv.validation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Andreas on 28.11.2015.
+ * This class holds all the error messages
+ * for a single cell and the information in
+ * which row the cell is
  */
 public class ValidationError {
 
-    private List<ValidationMessage> messages;
+    private List<ValidationMessage> messages = new ArrayList<>();
     private Integer lineNumber;
 
-    public ValidationError(List<ValidationMessage> messages) {
-        this(messages, -1);
+    private ValidationError(Integer lineNumber) {
+        this.lineNumber = lineNumber;
     }
 
-    public ValidationError(List<ValidationMessage> messages, Integer lineNumber) {
-        this.messages = messages;
-        this.lineNumber = lineNumber;
+    public static ValidationError withLineNumber(int lineNumber) {
+        return new ValidationError(lineNumber);
+    }
+
+    public static ValidationError withoutLineNumber() {
+        return new ValidationError(-1);
     }
 
     public Integer getLineNumber() {
@@ -53,4 +59,12 @@ public class ValidationError {
         return messages;
     }
 
+    public ValidationError add(String key, String... parameters) {
+        messages.add(new ValidationMessage(key, parameters));
+        return this;
+    }
+
+    public boolean isEmpty() {
+        return messages.isEmpty();
+    }
 }
