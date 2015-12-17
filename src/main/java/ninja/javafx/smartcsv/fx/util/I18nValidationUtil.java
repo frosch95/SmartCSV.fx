@@ -26,6 +26,8 @@
 
 package ninja.javafx.smartcsv.fx.util;
 
+import ninja.javafx.smartcsv.validation.ValidationMessage;
+
 import java.io.StringWriter;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -35,14 +37,14 @@ import java.util.ResourceBundle;
  */
 public class I18nValidationUtil {
 
-    public static String getI18nValidatioMessage(ResourceBundle resourceBundle, List<String> messages) {
+    public static String getI18nValidatioMessage(ResourceBundle resourceBundle, List<ValidationMessage> validationMessages) {
 
         StringWriter message = new StringWriter();
-        for (String key: messages) {
-            if (resourceBundle.containsKey(key)) {
-                message.append(resourceBundle.getString(key)).append("\n");
+        for (ValidationMessage validationMessage: validationMessages) {
+            if (resourceBundle.containsKey(validationMessage.getKey())) {
+                message.append(resourceBundle.getString(validationMessage.getKey())).append("\n");
             } else {
-                message.append(key).append("\n");
+                message.append(validationMessage.getKey()).append("\n");
             }
         }
 

@@ -2,8 +2,8 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
-
+   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>                                              
+                                                                                                                    
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,36 +21,51 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-
+  
 */
 
 package ninja.javafx.smartcsv.validation;
 
-import java.util.List;
+import java.util.Arrays;
 
 /**
- * Created by Andreas on 28.11.2015.
+ * TODO: DESCRIPTION!!!
  */
-public class ValidationError {
+public class ValidationMessage {
 
-    private List<ValidationMessage> messages;
-    private Integer lineNumber;
+    private String key;
+    private String[] parameters;
 
-    public ValidationError(List<ValidationMessage> messages) {
-        this(messages, -1);
+    public ValidationMessage(String key, String... parameters) {
+        this.key = key;
+        this.parameters = parameters;
     }
 
-    public ValidationError(List<ValidationMessage> messages, Integer lineNumber) {
-        this.messages = messages;
-        this.lineNumber = lineNumber;
+    public String getKey() {
+        return key;
     }
 
-    public Integer getLineNumber() {
-        return lineNumber;
+    public String[] getParameters() {
+        return parameters;
     }
 
-    public List<ValidationMessage> getMessages() {
-        return messages;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ValidationMessage that = (ValidationMessage) o;
+
+        if (key != null ? !key.equals(that.key) : that.key != null) return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(parameters, that.parameters);
+
     }
 
+    @Override
+    public int hashCode() {
+        int result = key != null ? key.hashCode() : 0;
+        result = 31 * result + Arrays.hashCode(parameters);
+        return result;
+    }
 }

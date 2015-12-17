@@ -27,7 +27,7 @@ public class ValidatorTest {
     private String column;
     private String value;
     private Boolean expectedResult;
-    private String expectedError;
+    private ValidationMessage expectedError;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ public class ValidatorTest {
                          String column,
                          String value,
                          Boolean expectedResult,
-                         String expectedError) {
+                         ValidationMessage expectedError) {
         this.config = columnSectionConfig(configcolumn, configValidation, configValue);
         this.column = column;
         this.value = value;
@@ -85,22 +85,22 @@ public class ValidatorTest {
     public static Collection validationConfigurations() {
         return asList(new Object[][] {
                 { "column", "not empty", true, "column", "value", true, null },
-                { "column", "not empty", true, "column", "", false, "validation.message.not.empty" },
-                { "column", "not empty", true, "column", null, false, "validation.message.not.empty" },
+                { "column", "not empty", true, "column", "", false, new ValidationMessage("validation.message.not.empty") },
+                { "column", "not empty", true, "column", null, false, new ValidationMessage("validation.message.not.empty") },
                 { "column", "integer", true, "column", "999", true, null },
-                { "column", "integer", true, "column", "a", false, "validation.message.integer" },
+                { "column", "integer", true, "column", "a", false, new ValidationMessage("validation.message.integer") },
                 { "column", "minlength", 2, "column", "12", true, null },
-                { "column", "minlength", 2, "column", "1", false, "has not min length of 2" },
+                { "column", "minlength", 2, "column", "1", false, new ValidationMessage("has not min length of 2") },
                 { "column", "maxlength", 2, "column", "12", true, null },
-                { "column", "maxlength", 2, "column", "123", false, "has not max length of 2" },
+                { "column", "maxlength", 2, "column", "123", false, new ValidationMessage("has not max length of 2") },
                 { "column", "date", "yyyyMMdd", "column", "20151127", true, null },
-                { "column", "date", "yyyyMMdd", "column", "27.11.2015", false, "is not a date of format yyyyMMdd" },
+                { "column", "date", "yyyyMMdd", "column", "27.11.2015", false, new ValidationMessage("is not a date of format yyyyMMdd") },
                 { "column", "alphanumeric", true, "column", "abcABC123", true, null },
-                { "column", "alphanumeric", true, "column", "-abcABC123", false, "validation.message.alphanumeric" },
+                { "column", "alphanumeric", true, "column", "-abcABC123", false, new ValidationMessage("validation.message.alphanumeric") },
                 { "column", "regexp", "[a-z]*", "column", "abc", true, null },
-                { "column", "regexp", "[a-z]*", "column", "abcA", false, "does not match [a-z]*" },
+                { "column", "regexp", "[a-z]*", "column", "abcA", false, new ValidationMessage("does not match [a-z]*") },
                 { "column", "groovy", "value.contains('a')? 'true' : 'no a inside'", "column", "abcdef", true, null },
-                { "column", "groovy", "value.contains('a')? 'true' : 'no a inside'", "column", "bcdefg", false, "no a inside" },
+                { "column", "groovy", "value.contains('a')? 'true' : 'no a inside'", "column", "bcdefg", false, new ValidationMessage("no a inside") },
         });
     }
 

@@ -86,7 +86,7 @@ public class Validator {
                 Config columnConfig = getColumnConfig(columnSectionConfig, column);
                 if (columnConfig != null) {
 
-                    List<String> errorMessages = new ArrayList<>();
+                    List<ValidationMessage> errorMessages = new ArrayList<>();
                     checkBlankOrNull(columnConfig, value, errorMessages);
                     if (value != null) {
                         checkRegularExpression(columnConfig, value, errorMessages);
@@ -112,7 +112,7 @@ public class Validator {
     // private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void checkGroovy(String column, Config columnConfig, String value, List<String> result) {
+    private void checkGroovy(String column, Config columnConfig, String value, List<ValidationMessage> result) {
         String groovyScript = getString(columnConfig, "groovy");
         if (groovyScript != null) {
 
@@ -130,15 +130,15 @@ public class Validator {
             try {
                 groovyResult = script.run();
             } catch (CompilationFailedException e) {
-                result.add("groovy script '"+groovyScript+"' throws exception: "+e.getMessage());
+                result.add(new ValidationMessage("groovy script '"+groovyScript+"' throws exception: "+e.getMessage()));
                 e.printStackTrace();
             }
             if (groovyResult == null) {
-                result.add("groovy script '"+groovyScript+"' returns null");
+                result.add(new ValidationMessage("groovy script '"+groovyScript+"' returns null"));
             }
 
             if (!isScriptResultTrue(groovyResult)) {
-                result.add(groovyResult.toString());
+                result.add(new ValidationMessage(groovyResult.toString()));
             }
 
         }
@@ -148,62 +148,62 @@ public class Validator {
         return groovyResult.equals(true) || groovyResult.toString().trim().toLowerCase().equals("true");
     }
 
-    private void checkBlankOrNull(Config columnConfig, String value, List<String> result) {
+    private void checkBlankOrNull(Config columnConfig, String value, List<ValidationMessage> result) {
         if (getBoolean(columnConfig, "not empty")) {
             if (isBlankOrNull(value)) {
-                result.add("validation.message.not.empty");
+                result.add(new ValidationMessage("validation.message.not.empty"));
             }
         }
     }
 
-    private void checkInteger(Config columnConfig, String value, List<String> result) {
+    private void checkInteger(Config columnConfig, String value, List<ValidationMessage> result) {
         if (getBoolean(columnConfig, "integer")) {
             if (!isInt(value)) {
-                result.add("validation.message.integer");
+                result.add(new ValidationMessage("validation.message.integer"));
             }
         }
     }
 
-    private void checkMinLength(Config columnConfig, String value, List<String> result) {
+    private void checkMinLength(Config columnConfig, String value, List<ValidationMessage> result) {
         Integer minLength = getInteger(columnConfig, "minlength");
         if (minLength != null) {
             if (!minLength(value, minLength)) {
-                result.add("has not min length of " + minLength);
+                result.add(new ValidationMessage("has not min length of " + minLength));
             }
         }
     }
 
-    private void checkMaxLength(Config columnConfig, String value, List<String> result) {
+    private void checkMaxLength(Config columnConfig, String value, List<ValidationMessage> result) {
         Integer maxLength = getInteger(columnConfig, "maxlength");
         if (maxLength != null) {
             if (!maxLength(value, maxLength)) {
-                result.add("has not max length of " + maxLength);
+                result.add(new ValidationMessage("has not max length of " + maxLength));
             }
         }
     }
 
-    private void checkDate(Config columnConfig, String value, List<String> result) {
+    private void checkDate(Config columnConfig, String value, List<ValidationMessage> result) {
         String dateformat = getString(columnConfig, "date");
         if (dateformat != null && !dateformat.trim().isEmpty()) {
             if (!isDate(value, dateformat, true)) {
-                result.add("is not a date of format " + dateformat);
+                result.add(new ValidationMessage("is not a date of format " + dateformat));
             }
         }
     }
 
-    private void checkAlphaNumeric(Config columnConfig, String value, List<String> result) {
+    private void checkAlphaNumeric(Config columnConfig, String value, List<ValidationMessage> result) {
         if (getBoolean(columnConfig, "alphanumeric")) {
             if (!matchRegexp(value, "[0-9a-zA-Z]*")) {
-                result.add("validation.message.alphanumeric");
+                result.add(new ValidationMessage("validation.message.alphanumeric"));
             }
         }
     }
 
-    private void checkRegularExpression(Config columnConfig, String value, List<String> result) {
+    private void checkRegularExpression(Config columnConfig, String value, List<ValidationMessage> result) {
         String regexp = getString(columnConfig, "regexp");
         if (regexp != null && !regexp.trim().isEmpty()) {
             if (!matchRegexp(value, regexp)) {
-                result.add("does not match " + regexp);
+                result.add(new ValidationMessage("does not match " + regexp));
             }
         }
     }
@@ -239,25 +239,25 @@ public class Validator {
                     List<String> headerConfig = headerSectionConfig.getStringList("list");
                     if (headerConfig != null) {
                         if (headerNames.length != headerConfig.size()) {
-                            result = new ValidationError(singletonList("number of headers is not correct! there are " +
+                            result = new ValidationError(singletonList(new ValidationMessage("number of headers is not correct! there are " +
                                     headerNames.length +
                                     " but there should be " +
-                                    headerConfig.size()));
+                                    headerConfig.size())));
                             return result;
                         }
 
-                        List<String> errorMessages = new ArrayList<>();
+                        List<ValidationMessage> errorMessages = new ArrayList<>();
 
                         for(int i=0; i<headerConfig.size(); i++) {
                             String header = headerConfig.get(i);
                             if (!header.equals(headerNames[i])) {
-                                errorMessages.add("header number " +
+                                errorMessages.add(new ValidationMessage("header number " +
                                         i +
                                         " does not match \"" +
                                         header +
                                         "\" should be \"" +
                                         headerNames[i] +
-                                        "\"");
+                                        "\""));
                             }
                         }
                         if (!errorMessages.isEmpty()) {

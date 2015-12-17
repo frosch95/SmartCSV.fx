@@ -34,9 +34,11 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static ninja.javafx.smartcsv.validation.ConfigMock.headerSectionConfig;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -52,7 +54,7 @@ public class HeaderValidationTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private Config config;
     private Boolean expectedResult;
-    private List<String> expectedErrors;
+    private List<ValidationMessage> expectedErrors;
     private String[] headerNames;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +69,7 @@ public class HeaderValidationTest {
     public HeaderValidationTest(String[] configHeaderNames,
                                 String[] headerNames,
                                 Boolean expectedResult,
-                                List<String> expectedErrors) {
+                                List<ValidationMessage> expectedErrors) {
         this.config = headerSectionConfig(configHeaderNames);
         this.headerNames = headerNames;
         this.expectedResult = expectedResult;
@@ -106,9 +108,9 @@ public class HeaderValidationTest {
         return asList(new Object[][] {
                 { new String[] {}, new String[] {}, true, null },
                 { new String[] {"a"}, new String[] {"a"}, true, null },
-                { new String[] {"a"}, new String[] {"b"}, false,  Arrays.asList("header number 0 does not match \"a\" should be \"b\"") },
-                { new String[] {"a"}, new String[] {"a","b"}, false,  Arrays.asList("number of headers is not correct! there are 2 but there should be 1") },
-                { new String[] {"a", "b"}, new String[] {"b", "a"}, false, Arrays.asList("header number 0 does not match \"a\" should be \"b\"", "header number 1 does not match \"b\" should be \"a\"") }
+                { new String[] {"a"}, new String[] {"b"}, false, singletonList(new ValidationMessage("header number 0 does not match \"a\" should be \"b\""))},
+                { new String[] {"a"}, new String[] {"a","b"}, false, singletonList(new ValidationMessage("number of headers is not correct! there are 2 but there should be 1"))},
+                { new String[] {"a", "b"}, new String[] {"b", "a"}, false, asList(new ValidationMessage("header number 0 does not match \"a\" should be \"b\""), new ValidationMessage("header number 1 does not match \"b\" should be \"a\"")) }
         });
     }
 }
