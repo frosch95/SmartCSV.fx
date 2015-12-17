@@ -67,4 +67,7 @@
    </bottom>
    <left>
    </left>
+    <stylesheets>
+        <URL value="@/ninja/javafx/smartcsv/fx/smartcsv.css"/>
+    </stylesheets>
 </BorderPane>
