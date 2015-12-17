@@ -101,6 +101,8 @@ public class ValidatorTest {
                 { "column", "regexp", "[a-z]*", "column", "abcA", false, new ValidationMessage("validation.message.regexp", "[a-z]*") },
                 { "column", "groovy", "value.contains('a')? 'true' : 'no a inside'", "column", "abcdef", true, null },
                 { "column", "groovy", "value.contains('a')? 'true' : 'no a inside'", "column", "bcdefg", false, new ValidationMessage("no a inside") },
+                { "column", "value of", asList("a","b","c","d","e"), "column", "c", true, null },
+                { "column", "value of", asList("a","b","c","d","e"), "column", "f", false, new ValidationMessage("validation.message.value.of", "f", "a, b, c, d, e") },
         });
     }
 

@@ -2,6 +2,8 @@ package ninja.javafx.smartcsv.validation;
 
 import com.typesafe.config.Config;
 
+import java.util.List;
+
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.*;
 
@@ -51,6 +53,8 @@ public class ConfigMock {
             when(validatorConfig.getString(validation)).thenReturn((String) value);
         } else if (value instanceof Integer) {
             when(validatorConfig.getInt(validation)).thenReturn((Integer) value);
+        } else if (value instanceof List) {
+            when(validatorConfig.getStringList(validation)).thenReturn((List<String>) value);
         }
 
         return columnSectionConfig;

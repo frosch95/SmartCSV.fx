@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.stream.Collectors.joining;
 import static org.apache.commons.validator.GenericValidator.*;
 
 /**
@@ -94,6 +95,7 @@ public class Validator {
                         checkMinLength(columnConfig, value, error);
                         checkInteger(columnConfig, value, error);
                         checkGroovy(column, columnConfig, value, error);
+                        checkValueOf(columnConfig, value, error);
                     }
 
                     if (!error.isEmpty()) {
@@ -144,6 +146,16 @@ public class Validator {
 
     private boolean isScriptResultTrue(Object groovyResult) {
         return groovyResult.equals(true) || groovyResult.toString().trim().toLowerCase().equals("true");
+    }
+
+    private void checkValueOf(Config columnConfig, String value, ValidationError error) {
+        List<String> stringList = getStringList(columnConfig, "value of");
+        if (stringList != null) {
+            if (!stringList.contains(value)) {
+                String commaSeparated = stringList.stream().collect(joining(", "));
+                error.add("validation.message.value.of", value, commaSeparated);
+            }
+        }
     }
 
     private void checkBlankOrNull(Config columnConfig, String value, ValidationError error) {
@@ -223,9 +235,12 @@ public class Validator {
         return columnConfig.hasPath(path) ? columnConfig.getInt(path) : null;
     }
 
-
     private boolean getBoolean(Config columnConfig, String path) {
         return columnConfig.hasPath(path) && columnConfig.getBoolean(path);
+    }
+
+    private List<String> getStringList(Config columnConfig, String path) {
+        return columnConfig.hasPath(path) ? columnConfig.getStringList(path) : null;
     }
 
     public ValidationError isHeaderValid(String[] headerNames) {
@@ -233,30 +248,28 @@ public class Validator {
         if (validationConfig != null) {
             if (validationConfig.hasPath("headers")) {
                 Config headerSectionConfig = validationConfig.getConfig("headers");
-                if (headerSectionConfig.hasPath("list")) {
-                    List<String> headerConfig = headerSectionConfig.getStringList("list");
-                    if (headerConfig != null) {
-                        if (headerNames.length != headerConfig.size()) {
-                            result = ValidationError.withoutLineNumber().add("validation.message.header.length",
-                                    Integer.toString(headerNames.length),
-                                    Integer.toString(headerConfig.size()));
-                            return result;
-                        }
+                List<String> headerConfig = getStringList(headerSectionConfig, "list");
+                if (headerConfig != null) {
+                    if (headerNames.length != headerConfig.size()) {
+                        result = ValidationError.withoutLineNumber().add("validation.message.header.length",
+                                Integer.toString(headerNames.length),
+                                Integer.toString(headerConfig.size()));
+                        return result;
+                    }
 
-                        ValidationError error = ValidationError.withoutLineNumber();
+                    ValidationError error = ValidationError.withoutLineNumber();
 
-                        for(int i=0; i<headerConfig.size(); i++) {
-                            String header = headerConfig.get(i);
-                            if (!header.equals(headerNames[i])) {
-                                error.add("validation.message.header.match",
-                                        Integer.toString(i),
-                                        header,
-                                        headerNames[i]);
-                            }
+                    for(int i=0; i<headerConfig.size(); i++) {
+                        String header = headerConfig.get(i);
+                        if (!header.equals(headerNames[i])) {
+                            error.add("validation.message.header.match",
+                                    Integer.toString(i),
+                                    header,
+                                    headerNames[i]);
                         }
-                        if (!error.isEmpty()) {
-                            result = error;
-                        }
+                    }
+                    if (!error.isEmpty()) {
+                        result = error;
                     }
                 }
             }
