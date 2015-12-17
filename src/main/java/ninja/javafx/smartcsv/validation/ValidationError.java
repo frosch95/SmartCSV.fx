@@ -26,26 +26,45 @@
 
 package ninja.javafx.smartcsv.validation;
 
-import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by Andreas on 28.11.2015.
+ * This class holds all the error messages
+ * for a single cell and the information in
+ * which row the cell is
  */
-public class ValidationState {
-    private boolean valid = true;
-    private StringWriter messages = new StringWriter();
+public class ValidationError {
 
-    public void invalidate(String message) {
-        valid = false;
-        messages.append(message).append('\n');
+    private List<ValidationMessage> messages = new ArrayList<>();
+    private Integer lineNumber;
+
+    private ValidationError(Integer lineNumber) {
+        this.lineNumber = lineNumber;
     }
 
-    public boolean isValid() {
-        return valid;
+    public static ValidationError withLineNumber(int lineNumber) {
+        return new ValidationError(lineNumber);
     }
 
-    public String error() {
-        return messages.toString();
+    public static ValidationError withoutLineNumber() {
+        return new ValidationError(-1);
     }
 
+    public Integer getLineNumber() {
+        return lineNumber;
+    }
+
+    public List<ValidationMessage> getMessages() {
+        return messages;
+    }
+
+    public ValidationError add(String key, String... parameters) {
+        messages.add(new ValidationMessage(key, parameters));
+        return this;
+    }
+
+    public boolean isEmpty() {
+        return messages.isEmpty();
+    }
 }

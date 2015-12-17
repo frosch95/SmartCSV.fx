@@ -2,8 +2,8 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
-
+   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>                                              
+                                                                                                                    
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,32 +21,50 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-
+  
 */
 
-package ninja.javafx.smartcsv.fx.table;
+package ninja.javafx.smartcsv.fx.list;
 
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.util.Callback;
-import ninja.javafx.smartcsv.fx.table.model.CSVRow;
-import ninja.javafx.smartcsv.fx.table.model.CSVValue;
+import javafx.scene.control.ListCell;
+import javafx.scene.text.Text;
+import ninja.javafx.smartcsv.validation.ValidationError;
 
 import java.util.ResourceBundle;
 
+import static ninja.javafx.smartcsv.fx.util.I18nValidationUtil.getI18nValidatioMessage;
+
 /**
- * Created by Andreas on 18.11.2015.
+ * TODO: DESCRIPTION!!!
  */
-public class ValidationCellFactory implements Callback<TableColumn<CSVRow, CSVValue>, TableCell<CSVRow, CSVValue>> {
+public class ValidationErrorListCell extends ListCell<ValidationError> {
 
     private ResourceBundle resourceBundle;
 
-    public ValidationCellFactory(ResourceBundle resourceBundle) {
+    public ValidationErrorListCell(ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
     }
 
     @Override
-    public TableCell<CSVRow, CSVValue> call(TableColumn<CSVRow, CSVValue> param) {
-        return new EditableValidationCell(resourceBundle);
+    public void updateItem(ValidationError validationError, boolean empty) {
+        super.updateItem(validationError, empty);
+        if (empty) {
+            clearContent();
+        } else {
+            addContent(validationError);
+        }
+    }
+
+
+    private void clearContent() {
+        setText(null);
+        setGraphic(null);
+    }
+
+    private void addContent(ValidationError validationError) {
+        setText(null);
+        Text text = new Text(getI18nValidatioMessage(resourceBundle, validationError));
+        text.setWrappingWidth(180);
+        setGraphic(text);
     }
 }

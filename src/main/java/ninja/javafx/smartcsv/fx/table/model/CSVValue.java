@@ -28,7 +28,7 @@ package ninja.javafx.smartcsv.fx.table.model;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import ninja.javafx.smartcsv.validation.ValidationState;
+import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.Validator;
 
 /**
@@ -41,7 +41,7 @@ public class CSVValue {
     private int rowNumber;
     private String column;
     private StringProperty value = new SimpleStringProperty();
-    private ValidationState valid = new ValidationState();
+    private ValidationError valid;
 
     /**
      * single value of a cell
@@ -89,7 +89,7 @@ public class CSVValue {
      */
     public void setValue(String value) {
         if (validator != null) {
-            valid = validator.isValid(column, value);
+            valid = validator.isValid(column, value, rowNumber);
         }
         this.value.set(value);
     }
@@ -98,7 +98,7 @@ public class CSVValue {
      * returns if the value is valid to the rules of the validator
      * @return
      */
-    public ValidationState getValid() {
+    public ValidationError getValidationError() {
         return valid;
     }
 
@@ -106,7 +106,7 @@ public class CSVValue {
      * sets the state if a value is valid or not
      * @param valid the validation state
      */
-    protected void setValid(ValidationState valid) {
+    protected void setValidationError(ValidationError valid) {
         this.valid = valid;
     }
 }
