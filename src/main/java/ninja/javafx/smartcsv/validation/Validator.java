@@ -151,7 +151,7 @@ public class Validator {
     private void checkBlankOrNull(Config columnConfig, String value, List<String> result) {
         if (getBoolean(columnConfig, "not empty")) {
             if (isBlankOrNull(value)) {
-                result.add("should not be empty");
+                result.add("validation.message.not.empty");
             }
         }
     }
@@ -159,7 +159,7 @@ public class Validator {
     private void checkInteger(Config columnConfig, String value, List<String> result) {
         if (getBoolean(columnConfig, "integer")) {
             if (!isInt(value)) {
-                result.add("should be an integer");
+                result.add("validation.message.integer");
             }
         }
     }
@@ -194,7 +194,7 @@ public class Validator {
     private void checkAlphaNumeric(Config columnConfig, String value, List<String> result) {
         if (getBoolean(columnConfig, "alphanumeric")) {
             if (!matchRegexp(value, "[0-9a-zA-Z]*")) {
-                result.add("should not be alphanumeric");
+                result.add("validation.message.alphanumeric");
             }
         }
     }
