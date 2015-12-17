@@ -63,7 +63,7 @@ public class ValidationErrorListCell extends ListCell<ValidationError> {
 
     private void addContent(ValidationError validationError) {
         setText(null);
-        Text text = new Text(getI18nValidatioMessage(resourceBundle, validationError.getMessages()));
+        Text text = new Text(getI18nValidatioMessage(resourceBundle, validationError));
         text.setWrappingWidth(180);
         setGraphic(text);
     }

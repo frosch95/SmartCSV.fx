@@ -77,7 +77,7 @@ public class EditableValidationCell extends TableCell<CSVRow, CSVValue> {
             setTooltip(null);
         } else if (item.getValidationError() != null) {
             setStyle("-fx-background-color: #ff8888");
-            setTooltip(new Tooltip(getI18nValidatioMessage(resourceBundle, item.getValidationError().getMessages())));
+            setTooltip(new Tooltip(getI18nValidatioMessage(resourceBundle, item.getValidationError())));
         }
 
         if (item == null || empty) {

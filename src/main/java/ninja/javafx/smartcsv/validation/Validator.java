@@ -128,11 +128,11 @@ public class Validator {
             try {
                 groovyResult = script.run();
             } catch (CompilationFailedException e) {
-                error.add("groovy script '"+groovyScript+"' throws exception: "+e.getMessage());
+                error.add("validation.message.groovy.exception", groovyScript, e.getMessage());
                 e.printStackTrace();
             }
             if (groovyResult == null) {
-                error.add("groovy script '"+groovyScript+"' returns null");
+                error.add("validation.message.groovy.return.null", groovyScript);
             }
 
             if (!isScriptResultTrue(groovyResult)) {
@@ -166,7 +166,7 @@ public class Validator {
         Integer minLength = getInteger(columnConfig, "minlength");
         if (minLength != null) {
             if (!minLength(value, minLength)) {
-                error.add("has not min length of " + minLength);
+                error.add("validation.message.min.length", minLength.toString());
             }
         }
     }
@@ -175,7 +175,7 @@ public class Validator {
         Integer maxLength = getInteger(columnConfig, "maxlength");
         if (maxLength != null) {
             if (!maxLength(value, maxLength)) {
-                error.add("has not max length of " + maxLength);
+                error.add("validation.message.max.length", maxLength.toString());
             }
         }
     }
@@ -184,7 +184,7 @@ public class Validator {
         String dateformat = getString(columnConfig, "date");
         if (dateformat != null && !dateformat.trim().isEmpty()) {
             if (!isDate(value, dateformat, true)) {
-                error.add("is not a date of format " + dateformat);
+                error.add("validation.message.date.format", dateformat);
             }
         }
     }
@@ -201,7 +201,7 @@ public class Validator {
         String regexp = getString(columnConfig, "regexp");
         if (regexp != null && !regexp.trim().isEmpty()) {
             if (!matchRegexp(value, regexp)) {
-                error.add("does not match " + regexp);
+                error.add("validation.message.regexp", regexp);
             }
         }
     }
@@ -237,10 +237,9 @@ public class Validator {
                     List<String> headerConfig = headerSectionConfig.getStringList("list");
                     if (headerConfig != null) {
                         if (headerNames.length != headerConfig.size()) {
-                            result = ValidationError.withoutLineNumber().add("number of headers is not correct! there are " +
-                                    headerNames.length +
-                                    " but there should be " +
-                                    headerConfig.size());
+                            result = ValidationError.withoutLineNumber().add("validation.message.header.length",
+                                    Integer.toString(headerNames.length),
+                                    Integer.toString(headerConfig.size()));
                             return result;
                         }
 
@@ -249,13 +248,10 @@ public class Validator {
                         for(int i=0; i<headerConfig.size(); i++) {
                             String header = headerConfig.get(i);
                             if (!header.equals(headerNames[i])) {
-                                error.add("header number " +
-                                        i +
-                                        " does not match \"" +
-                                        header +
-                                        "\" should be \"" +
-                                        headerNames[i] +
-                                        "\"");
+                                error.add("validation.message.header.match",
+                                        Integer.toString(i),
+                                        header,
+                                        headerNames[i]);
                             }
                         }
                         if (!error.isEmpty()) {

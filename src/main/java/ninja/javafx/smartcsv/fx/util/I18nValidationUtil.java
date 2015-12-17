@@ -26,23 +26,32 @@
 
 package ninja.javafx.smartcsv.fx.util;
 
+import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.ValidationMessage;
 
 import java.io.StringWriter;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static java.text.MessageFormat.format;
+
 /**
  * This class makes validation messages readable in supported languages
  */
 public class I18nValidationUtil {
 
-    public static String getI18nValidatioMessage(ResourceBundle resourceBundle, List<ValidationMessage> validationMessages) {
+    public static String getI18nValidatioMessage(ResourceBundle resourceBundle, ValidationError error) {
 
+        List<ValidationMessage> validationMessages = error.getMessages();
         StringWriter message = new StringWriter();
         for (ValidationMessage validationMessage: validationMessages) {
             if (resourceBundle.containsKey(validationMessage.getKey())) {
-                message.append(resourceBundle.getString(validationMessage.getKey())).append("\n");
+                String resourceText = resourceBundle.getString(validationMessage.getKey());
+                if (validationMessage.getParameters().length > 0) {
+                    message.append(format(resourceText, validationMessage.getParameters())).append("\n");
+                } else {
+                    message.append(resourceText).append("\n");
+                }
             } else {
                 message.append(validationMessage.getKey()).append("\n");
             }

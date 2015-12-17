@@ -108,9 +108,9 @@ public class HeaderValidationTest {
         return asList(new Object[][] {
                 { new String[] {}, new String[] {}, true, null },
                 { new String[] {"a"}, new String[] {"a"}, true, null },
-                { new String[] {"a"}, new String[] {"b"}, false, singletonList(new ValidationMessage("header number 0 does not match \"a\" should be \"b\""))},
-                { new String[] {"a"}, new String[] {"a","b"}, false, singletonList(new ValidationMessage("number of headers is not correct! there are 2 but there should be 1"))},
-                { new String[] {"a", "b"}, new String[] {"b", "a"}, false, asList(new ValidationMessage("header number 0 does not match \"a\" should be \"b\""), new ValidationMessage("header number 1 does not match \"b\" should be \"a\"")) }
+                { new String[] {"a"}, new String[] {"b"}, false, singletonList(new ValidationMessage("validation.message.header.match", "0", "a", "b"))},
+                { new String[] {"a"}, new String[] {"a","b"}, false, singletonList(new ValidationMessage("validation.message.header.length", "2", "1"))},
+                { new String[] {"a", "b"}, new String[] {"b", "a"}, false, asList(new ValidationMessage("validation.message.header.match", "0", "a", "b"), new ValidationMessage("validation.message.header.match", "1", "b", "a")) }
         });
     }
 }

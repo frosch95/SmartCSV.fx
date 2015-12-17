@@ -68,4 +68,12 @@ public class ValidationMessage {
         result = 31 * result + Arrays.hashCode(parameters);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ValidationMessage{" +
+                "key='" + key + '\'' +
+                ", parameters=" + Arrays.toString(parameters) +
+                '}';
+    }
 }
