@@ -32,13 +32,21 @@ import javafx.util.Callback;
 import ninja.javafx.smartcsv.fx.table.model.CSVRow;
 import ninja.javafx.smartcsv.fx.table.model.CSVValue;
 
+import java.util.ResourceBundle;
+
 /**
  * Created by Andreas on 18.11.2015.
  */
 public class ValidationCellFactory implements Callback<TableColumn<CSVRow, CSVValue>, TableCell<CSVRow, CSVValue>> {
 
+    private ResourceBundle resourceBundle;
+
+    public ValidationCellFactory(ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
+    }
+
     @Override
     public TableCell<CSVRow, CSVValue> call(TableColumn<CSVRow, CSVValue> param) {
-        return new EditableValidationCell();
+        return new EditableValidationCell(resourceBundle);
     }
 }

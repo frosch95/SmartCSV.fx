@@ -26,20 +26,22 @@
 
 package ninja.javafx.smartcsv.validation;
 
+import java.util.List;
+
 /**
  * Created by Andreas on 28.11.2015.
  */
 public class ValidationError {
 
-    private String message;
+    private List<String> messages;
     private Integer lineNumber;
 
-    public ValidationError(String message) {
-        this(message, -1);
+    public ValidationError(List<String> messages) {
+        this(messages, -1);
     }
 
-    public ValidationError(String message, Integer lineNumber) {
-        this.message = message;
+    public ValidationError(List<String> messages, Integer lineNumber) {
+        this.messages = messages;
         this.lineNumber = lineNumber;
     }
 
@@ -47,8 +49,8 @@ public class ValidationError {
         return lineNumber;
     }
 
-    public String getMessage() {
-        return message;
+    public List<String> getMessages() {
+        return messages;
     }
 
 }

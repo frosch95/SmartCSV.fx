@@ -24,47 +24,29 @@
   
 */
 
-package ninja.javafx.smartcsv.fx.list;
+package ninja.javafx.smartcsv.fx.util;
 
-import javafx.scene.control.ListCell;
-import javafx.scene.text.Text;
-import ninja.javafx.smartcsv.validation.ValidationError;
-
+import java.io.StringWriter;
+import java.util.List;
 import java.util.ResourceBundle;
 
-import static ninja.javafx.smartcsv.fx.util.I18nValidationUtil.getI18nValidatioMessage;
-
 /**
- * TODO: DESCRIPTION!!!
+ * This class makes validation messages readable in supported languages
  */
-public class ValidationErrorListCell extends ListCell<ValidationError> {
+public class I18nValidationUtil {
 
-    private ResourceBundle resourceBundle;
+    public static String getI18nValidatioMessage(ResourceBundle resourceBundle, List<String> messages) {
 
-    public ValidationErrorListCell(ResourceBundle resourceBundle) {
-        this.resourceBundle = resourceBundle;
-    }
-
-    @Override
-    public void updateItem(ValidationError validationError, boolean empty) {
-        super.updateItem(validationError, empty);
-        if (empty) {
-            clearContent();
-        } else {
-            addContent(validationError);
+        StringWriter message = new StringWriter();
+        for (String key: messages) {
+            if (resourceBundle.containsKey(key)) {
+                message.append(resourceBundle.getString(key)).append("\n");
+            } else {
+                message.append(key).append("\n");
+            }
         }
+
+        return message.toString();
     }
 
-
-    private void clearContent() {
-        setText(null);
-        setGraphic(null);
-    }
-
-    private void addContent(ValidationError validationError) {
-        setText(null);
-        Text text = new Text(getI18nValidatioMessage(resourceBundle, validationError.getMessages()));
-        text.setWrappingWidth(180);
-        setGraphic(text);
-    }
 }

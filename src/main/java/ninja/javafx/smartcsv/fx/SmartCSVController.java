@@ -90,10 +90,10 @@ public class SmartCSVController extends FXMLController {
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // injections
+    // members
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private ValidationCellFactory cellFactory = new ValidationCellFactory();
+    private ValidationCellFactory cellFactory;
     private final LoadCSVService loadCSVService = new LoadCSVService();
     private final SaveCSVService saveCSVService = new SaveCSVService();
     private CSVModel model;
@@ -105,9 +105,10 @@ public class SmartCSVController extends FXMLController {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resourceBundle) {
+        cellFactory = new ValidationCellFactory(resourceBundle);
         stateline.setVisible(false);
-        errorList.setCellFactory(param -> new ValidationErrorListCell());
+        errorList.setCellFactory(param -> new ValidationErrorListCell(resourceBundle));
         errorList.getSelectionModel().selectedItemProperty().addListener(
                 observable -> scrollToError()
         );

@@ -32,12 +32,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static ninja.javafx.smartcsv.validation.ConfigMock.headerSectionConfig;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * unit test for header validator
@@ -49,7 +52,7 @@ public class HeaderValidationTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private Config config;
     private Boolean expectedResult;
-    private String expectedError;
+    private List<String> expectedErrors;
     private String[] headerNames;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,11 +67,11 @@ public class HeaderValidationTest {
     public HeaderValidationTest(String[] configHeaderNames,
                                 String[] headerNames,
                                 Boolean expectedResult,
-                                String expectedError) {
+                                List<String> expectedErrors) {
         this.config = headerSectionConfig(configHeaderNames);
         this.headerNames = headerNames;
         this.expectedResult = expectedResult;
-        this.expectedError = expectedError;
+        this.expectedErrors = expectedErrors;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +94,7 @@ public class HeaderValidationTest {
         // assertion
         assertThat(result == null, is(expectedResult));
         if (!expectedResult) {
-            assertThat(result.getMessage(), is(expectedError));
+            assertTrue(result.getMessages().containsAll(expectedErrors));
         }
     }
 
@@ -103,9 +106,9 @@ public class HeaderValidationTest {
         return asList(new Object[][] {
                 { new String[] {}, new String[] {}, true, null },
                 { new String[] {"a"}, new String[] {"a"}, true, null },
-                { new String[] {"a"}, new String[] {"b"}, false, "header number 0 does not match \"a\" should be \"b\"\n" },
-                { new String[] {"a"}, new String[] {"a","b"}, false, "number of headers is not correct! there are 2 but there should be 1\n" },
-                { new String[] {"a", "b"}, new String[] {"b", "a"}, false, "header number 0 does not match \"a\" should be \"b\"\nheader number 1 does not match \"b\" should be \"a\"\n" }
+                { new String[] {"a"}, new String[] {"b"}, false,  Arrays.asList("header number 0 does not match \"a\" should be \"b\"") },
+                { new String[] {"a"}, new String[] {"a","b"}, false,  Arrays.asList("number of headers is not correct! there are 2 but there should be 1") },
+                { new String[] {"a", "b"}, new String[] {"b", "a"}, false, Arrays.asList("header number 0 does not match \"a\" should be \"b\"", "header number 1 does not match \"b\" should be \"a\"") }
         });
     }
 }

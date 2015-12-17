@@ -34,7 +34,10 @@ import javafx.scene.input.KeyCode;
 import ninja.javafx.smartcsv.fx.table.model.CSVRow;
 import ninja.javafx.smartcsv.fx.table.model.CSVValue;
 
+import java.util.ResourceBundle;
+
 import static javafx.application.Platform.runLater;
+import static ninja.javafx.smartcsv.fx.util.I18nValidationUtil.getI18nValidatioMessage;
 
 /**
  * Created by Andreas on 27.11.2015.
@@ -42,6 +45,11 @@ import static javafx.application.Platform.runLater;
 public class EditableValidationCell extends TableCell<CSVRow, CSVValue> {
 
     private ValueTextField textField;
+    private ResourceBundle resourceBundle;
+
+    public EditableValidationCell(ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
+    }
 
     @Override
     public void startEdit() {
@@ -69,7 +77,7 @@ public class EditableValidationCell extends TableCell<CSVRow, CSVValue> {
             setTooltip(null);
         } else if (item.getValidationError() != null) {
             setStyle("-fx-background-color: #ff8888");
-            setTooltip(new Tooltip(item.getValidationError().getMessage()));
+            setTooltip(new Tooltip(getI18nValidatioMessage(resourceBundle, item.getValidationError().getMessages())));
         }
 
         if (item == null || empty) {
