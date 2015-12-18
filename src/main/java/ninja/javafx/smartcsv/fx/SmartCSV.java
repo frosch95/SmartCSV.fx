@@ -27,9 +27,12 @@
 package ninja.javafx.smartcsv.fx;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
@@ -45,6 +48,8 @@ public class SmartCSV extends Application {
         appContext = new AnnotationConfigApplicationContext(SmartCSV.class);
         String name = appContext.getEnvironment().getProperty("application.name");
         String version = appContext.getEnvironment().getProperty("application.version");
+
+        Platform.setImplicitExit(false);
 
         try {
             showUI(primaryStage, name, version);
@@ -80,6 +85,12 @@ public class SmartCSV extends Application {
         primaryStage.setTitle(String.format("%s %s", name, version));
         primaryStage.show();
         primaryStage.setMaximized(true);
+
+        primaryStage.setOnCloseRequest(event -> {
+            if (!smartCVSController.canExit()) {
+                event.consume();
+            }
+        });
     }
 
 }

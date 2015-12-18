@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
@@ -55,19 +56,35 @@
            </items>
        </SplitPane>
    </center>
-   <bottom>
-      <HBox spacing="8.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label fx:id="stateline" text="Status" HBox.hgrow="ALWAYS" />
-         </children>
-         <BorderPane.margin>
-            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-         </BorderPane.margin>
-      </HBox>
-   </bottom>
    <left>
    </left>
     <stylesheets>
-        <URL value="@/ninja/javafx/smartcsv/fx/smartcsv.css"/>
+        <URL value="@/ninja/javafx/smartcsv/fx/smartcsv.css" />
     </stylesheets>
+   <bottom>
+      <GridPane hgap="8.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+          <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="%stateline.csv" GridPane.hgrow="NEVER" />
+            <Label fx:id="csvName" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+            <Label text="%stateline.state" GridPane.columnIndex="2" GridPane.hgrow="NEVER" />
+            <Label fx:id="stateName" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS" />
+             <Label text="%stateline.configuration" GridPane.columnIndex="4" GridPane.hgrow="NEVER" />
+             <Label fx:id="configurationName" GridPane.columnIndex="5" GridPane.hgrow="ALWAYS" />
+         </children>
+         <BorderPane.margin>
+            <Insets top="4.0" left="8.0" bottom="4.0" right="8.0" />
+         </BorderPane.margin>
+      </GridPane>
+   </bottom>
 </BorderPane>

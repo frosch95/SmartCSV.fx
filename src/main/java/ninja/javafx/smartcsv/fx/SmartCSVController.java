@@ -27,6 +27,12 @@
 package ninja.javafx.smartcsv.fx;
 
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -53,6 +59,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static java.lang.Math.max;
@@ -81,7 +88,13 @@ public class SmartCSVController extends FXMLController {
     private BorderPane applicationPane;
 
     @FXML
-    private Label stateline;
+    private Label csvName;
+
+    @FXML
+    private Label configurationName;
+
+    @FXML
+    private Label stateName;
 
     @FXML
     private ListView errorList;
@@ -100,6 +113,8 @@ public class SmartCSVController extends FXMLController {
     private CSVModel model;
     private TableView<CSVRow> tableView;
     private File lastDirectory;
+    private BooleanProperty fileChanged = new SimpleBooleanProperty(true);
+    private ResourceBundle resourceBundle;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,12 +123,13 @@ public class SmartCSVController extends FXMLController {
 
     @Override
     public void initialize(URL location, ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
+        saveCSVService.setWriter(csvFileWriter);
         cellFactory = new ValidationCellFactory(resourceBundle);
-        stateline.setVisible(false);
         errorList.setCellFactory(param -> new ValidationErrorListCell(resourceBundle));
-        errorList.getSelectionModel().selectedItemProperty().addListener(
-                observable -> scrollToError()
-        );
+        errorList.getSelectionModel().selectedItemProperty().addListener(observable -> scrollToError());
+        fileChanged.addListener(observable -> setStateName());
+        setStateName();
     }
 
 
@@ -134,12 +150,12 @@ public class SmartCSVController extends FXMLController {
 
     @FXML
     public void openCsv(ActionEvent actionEvent) {
-        loadFile(csvLoader, "CSV files (*.csv)", "*.csv", "Open CSV");
+        loadFile(csvLoader, "CSV files (*.csv)", "*.csv", "Open CSV", csvName);
     }
 
     @FXML
     public void openConfig(ActionEvent actionEvent) {
-        loadFile(validationLoader, "JSON files (*.json)", "*.json", "Open Validation Configuration");
+        loadFile(validationLoader, "JSON files (*.json)", "*.json", "Open Validation Configuration", configurationName);
     }
 
     @FXML
@@ -154,7 +170,9 @@ public class SmartCSVController extends FXMLController {
 
     @FXML
     public void close(ActionEvent actionEvent) {
-        Platform.exit();
+        if (canExit()) {
+            Platform.exit();
+        }
     }
 
     @FXML
@@ -176,13 +194,30 @@ public class SmartCSVController extends FXMLController {
 
 
         alert.showAndWait();
-
     }
+
+    public boolean canExit() {
+        boolean canExit = true;
+        if (model != null && fileChanged.get()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(resourceBundle.getString("dialog.exit.title"));
+            alert.setHeaderText(resourceBundle.getString("dialog.exit.header.text"));
+            alert.setContentText(resourceBundle.getString("dialog.exit.text"));
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() != ButtonType.OK){
+                canExit = false;
+            }
+        }
+
+        return canExit;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void loadFile(FileReader fileReader, String filterText, String filter, String title) {
+    private void loadFile(FileReader fileReader, String filterText, String filter, String title, Label fileLabel) {
         final FileChooser fileChooser = new FileChooser();
 
         //Set extension filter
@@ -197,6 +232,7 @@ public class SmartCSVController extends FXMLController {
         //Show open file dialog
         final File file = fileChooser.showOpenDialog(applicationPane.getScene().getWindow());
         if (file != null) {
+            loadCSVService.setFileLabel(fileLabel);
             loadCSVService.setFile(file);
             loadCSVService.setFileReader(fileReader);
             loadCSVService.restart();
@@ -220,6 +256,7 @@ public class SmartCSVController extends FXMLController {
             final File file = fileChooser.showOpenDialog(applicationPane.getScene().getWindow());
             if (file != null) {
                 model.setFilepath(file.getAbsolutePath());
+                saveCSVService.setWriter(writer);
                 saveCSVService.restart();
             }
         }
@@ -265,7 +302,10 @@ public class SmartCSVController extends FXMLController {
             public void handle(TableColumn.CellEditEvent<CSVRow, CSVValue> event) {
                 event.getTableView().getItems().get(event.getTablePosition().getRow()).
                 getColumns().get(header).setValue(event.getNewValue());
-                runLater(() -> model.revalidate());
+                runLater(() -> {
+                    fileChanged.setValue(true);
+                    model.revalidate();
+                });
             }
         });
 
@@ -284,6 +324,19 @@ public class SmartCSVController extends FXMLController {
         }
     }
 
+    private void setStateName() {
+        if (model != null) {
+            if (fileChanged.get()) {
+                stateName.setText(resourceBundle.getString("state.changed"));
+            } else {
+                stateName.setText(resourceBundle.getString("state.unchanged"));
+            }
+        } else {
+            stateName.setText("");
+        }
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // inner class
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -295,12 +348,16 @@ public class SmartCSVController extends FXMLController {
 
         private File file = null;
         private FileReader fileReader;
+        private Label fileLabel;
 
         public void setFile(File value) {
             file = value;
         }
         public void setFileReader(FileReader fileReader) {
             this.fileReader = fileReader;
+        }
+        public void setFileLabel(Label fileLabel) {
+            this.fileLabel = fileLabel;
         }
 
         @Override
@@ -312,7 +369,11 @@ public class SmartCSVController extends FXMLController {
                         try {
                             lastDirectory = file.getParentFile();
                             fileReader.read(file);
-                            runLater(SmartCSVController.this::resetContent);
+                            runLater(() -> {
+                                fileLabel.setText(file.getName());
+                                resetContent();
+                                fileChanged.setValue(false);
+                            });
                         } catch (Throwable ex) {
                             ex.printStackTrace();
                         }
@@ -321,6 +382,7 @@ public class SmartCSVController extends FXMLController {
                 }
             };
         }
+
     }
 
     /**
@@ -328,14 +390,23 @@ public class SmartCSVController extends FXMLController {
      */
     private class SaveCSVService extends Service {
 
+        private CSVFileWriter writer;
+
+        public void setWriter(CSVFileWriter writer) {
+            this.writer = writer;
+        }
+
         @Override
         protected Task createTask() {
             return new Task() {
                 @Override
                 protected Void call() throws Exception {
                     try {
-                        csvFileWriter.saveFile(model);
-                        runLater(SmartCSVController.this::resetContent);
+                        writer.saveFile(model);
+                        runLater(() -> {
+                            resetContent();
+                            fileChanged.setValue(false);
+                        });
                     } catch (Throwable ex) {
                         ex.printStackTrace();
                     }
@@ -343,5 +414,6 @@ public class SmartCSVController extends FXMLController {
                 }
             };
         }
+
     }
 }
