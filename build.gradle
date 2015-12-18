@@ -1,5 +1,5 @@
 group 'ninja.javafx'
-version '1.0-SNAPSHOT'
+version '0.5-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'groovy'
