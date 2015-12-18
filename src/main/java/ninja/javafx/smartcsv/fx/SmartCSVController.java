@@ -264,8 +264,8 @@ public class SmartCSVController extends FXMLController {
             @Override
             public void handle(TableColumn.CellEditEvent<CSVRow, CSVValue> event) {
                 event.getTableView().getItems().get(event.getTablePosition().getRow()).
-                getColumns().get(header).
-                        setValue(event.getNewValue());
+                getColumns().get(header).setValue(event.getNewValue());
+                runLater(() -> model.revalidate());
             }
         });
 

@@ -35,7 +35,7 @@ import java.util.ResourceBundle;
 import static ninja.javafx.smartcsv.fx.util.I18nValidationUtil.getI18nValidatioMessage;
 
 /**
- * TODO: DESCRIPTION!!!
+ * Cell to show the error text
  */
 public class ValidationErrorListCell extends ListCell<ValidationError> {
 

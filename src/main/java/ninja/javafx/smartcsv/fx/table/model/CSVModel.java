@@ -109,7 +109,7 @@ public class CSVModel {
     /**
      * walks through the data and validates each value
      */
-    private void revalidate() {
+    public void revalidate() {
         validationError.clear();
 
         if (header != null && validator != null) {
