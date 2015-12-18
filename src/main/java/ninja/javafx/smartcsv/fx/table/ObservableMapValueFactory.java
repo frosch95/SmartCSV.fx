@@ -33,7 +33,7 @@ import ninja.javafx.smartcsv.fx.table.model.CSVRow;
 import ninja.javafx.smartcsv.fx.table.model.CSVValue;
 
 /**
- * Created by Andreas on 18.11.2015.
+ * cell value factory for the columns in the tableview
  */
 public class ObservableMapValueFactory implements
         Callback<TableColumn.CellDataFeatures<CSVRow, CSVValue>, ObjectProperty<CSVValue>> {

@@ -30,7 +30,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by Andreas on 19.11.2015.
+ * read some file
  */
 public interface FileReader {
     void read(File filename) throws IOException;

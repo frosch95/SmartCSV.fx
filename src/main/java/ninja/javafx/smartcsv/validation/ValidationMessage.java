@@ -29,7 +29,7 @@ package ninja.javafx.smartcsv.validation;
 import java.util.Arrays;
 
 /**
- * TODO: DESCRIPTION!!!
+ * Stores the i18n key and possible parameters for validation messages
  */
 public class ValidationMessage {
 

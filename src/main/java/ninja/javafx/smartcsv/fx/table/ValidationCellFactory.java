@@ -35,7 +35,7 @@ import ninja.javafx.smartcsv.fx.table.model.CSVValue;
 import java.util.ResourceBundle;
 
 /**
- * Created by Andreas on 18.11.2015.
+ * cell factory for rendering a value in the cell
  */
 public class ValidationCellFactory implements Callback<TableColumn<CSVRow, CSVValue>, TableCell<CSVRow, CSVValue>> {
 

@@ -40,7 +40,8 @@ import static javafx.application.Platform.runLater;
 import static ninja.javafx.smartcsv.fx.util.I18nValidationUtil.getI18nValidatioMessage;
 
 /**
- * Created by Andreas on 27.11.2015.
+ * cell representation which indicates if a cell is valid and not
+ * and allows editing
  */
 public class EditableValidationCell extends TableCell<CSVRow, CSVValue> {
 
