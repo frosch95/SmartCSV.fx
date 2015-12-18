@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.supercsv.io.CsvMapWriter;
 import org.supercsv.io.ICsvMapWriter;
 import org.supercsv.prefs.CsvPreference;
+import org.supercsv.quote.AlwaysQuoteMode;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -48,7 +49,11 @@ public class CSVFileWriter {
     public void saveFile(CSVModel model) throws IOException {
         ICsvMapWriter mapWriter = null;
         try {
-            mapWriter = new CsvMapWriter(new FileWriter(model.getFilepath()), CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
+            CsvPreference preference = new CsvPreference.
+                    Builder(CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE).
+                    useQuoteMode(new AlwaysQuoteMode())
+                    .build();
+            mapWriter = new CsvMapWriter(new FileWriter(model.getFilepath()), preference);
             mapWriter.writeHeader(model.getHeader());
 
             for(CSVRow row: model.getRows()) {
