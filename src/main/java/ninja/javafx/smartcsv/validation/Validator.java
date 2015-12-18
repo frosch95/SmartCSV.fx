@@ -87,7 +87,7 @@ public class Validator {
 
                     ValidationError error = ValidationError.withLineNumber(lineNumber);
                     checkBlankOrNull(columnConfig, value, error);
-                    if (value != null) {
+                    if (value != null && !value.isEmpty()) {
                         checkRegularExpression(columnConfig, value, error);
                         checkAlphaNumeric(columnConfig, value, error);
                         checkDate(columnConfig, value, error);
