@@ -6,8 +6,7 @@ A simple JavaFX application to load, save and edit a CSV file and provide a JSON
 At work I have the need to fix wrong CSV files from customers. It is hard to find the errors and fix them in a texteditor, 
 even in a "normal" CSV editor. So I decided to write this simple JavaFX application.
 
-##
-Example
+##Video
 [![short video about the application](http://img.youtube.com/vi/SH0UAtPG6Eg/0.jpg)](https://youtu.be/SH0UAtPG6Eg)
 
 ##License
