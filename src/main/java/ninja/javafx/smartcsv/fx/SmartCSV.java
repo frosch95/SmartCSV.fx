@@ -79,6 +79,7 @@ public class SmartCSV extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle(String.format("%s %s", name, version));
         primaryStage.show();
+        primaryStage.setMaximized(true);
     }
 
 }
