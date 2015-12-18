@@ -99,6 +99,7 @@ public class SmartCSVController extends FXMLController {
     private final SaveCSVService saveCSVService = new SaveCSVService();
     private CSVModel model;
     private TableView<CSVRow> tableView;
+    private File lastDirectory;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,6 +190,10 @@ public class SmartCSVController extends FXMLController {
         fileChooser.getExtensionFilters().add(extFilter);
         fileChooser.setTitle(title);
 
+        if (lastDirectory != null) {
+            fileChooser.setInitialDirectory(lastDirectory);
+        }
+
         //Show open file dialog
         final File file = fileChooser.showOpenDialog(applicationPane.getScene().getWindow());
         if (file != null) {
@@ -225,24 +230,24 @@ public class SmartCSVController extends FXMLController {
      */
     private void resetContent() {
         model = csvLoader.getData();
-        model.setValidator(validationLoader.getValidator());
+        if (model != null) {
+            model.setValidator(validationLoader.getValidator());
+            tableView = new TableView<>();
 
-        tableView = new TableView<>();
+            for (String column : model.getHeader()) {
+                addColumn(column, tableView);
+            }
+            tableView.getItems().setAll(model.getRows());
+            tableView.setEditable(true);
 
-        for (String column: model.getHeader()) {
-            addColumn(column, tableView);
+            AnchorPane.setBottomAnchor(tableView, 0.0);
+            AnchorPane.setTopAnchor(tableView, 0.0);
+            AnchorPane.setLeftAnchor(tableView, 0.0);
+            AnchorPane.setRightAnchor(tableView, 0.0);
+            tableWrapper.getChildren().setAll(tableView);
+
+            errorList.setItems(model.getValidationError());
         }
-        tableView.getItems().setAll(model.getRows());
-        tableView.setEditable(true);
-
-        AnchorPane.setBottomAnchor(tableView, 0.0);
-        AnchorPane.setTopAnchor(tableView, 0.0);
-        AnchorPane.setLeftAnchor(tableView, 0.0);
-        AnchorPane.setRightAnchor(tableView, 0.0);
-        tableWrapper.getChildren().setAll(tableView);
-
-
-        errorList.setItems(model.getValidationError());
     }
 
     /**
@@ -305,6 +310,7 @@ public class SmartCSVController extends FXMLController {
                 protected Void call() throws Exception {
                     if (file != null) {
                         try {
+                            lastDirectory = file.getParentFile();
                             fileReader.read(file);
                             runLater(SmartCSVController.this::resetContent);
                         } catch (Throwable ex) {
