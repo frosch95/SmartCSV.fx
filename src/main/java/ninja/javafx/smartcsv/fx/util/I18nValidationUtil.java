@@ -57,7 +57,15 @@ public class I18nValidationUtil {
             }
         }
 
-        return message.toString();
+        if (!validationMessages.isEmpty()) {
+            return cutOffLastLineBreak(message.toString());
+        }
+
+        return "";
+    }
+
+    private static String cutOffLastLineBreak(String message) {
+        return message.substring(0, message.length()-1);
     }
 
 }
