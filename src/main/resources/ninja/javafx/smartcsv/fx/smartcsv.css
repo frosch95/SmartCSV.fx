@@ -13,3 +13,35 @@
 .list-cell:even {
     -fx-background: -fx-control-inner-background;
 }
+
+.open-icon {
+    -glyph-name: "FILE_TEXT_ALT";
+    -glyph-size: 14px;
+}
+
+.config-icon {
+    -glyph-name: "CHECK";
+    -glyph-size: 14px;
+}
+
+.save-icon {
+    -glyph-name: "FLOPPY_ALT";
+    -glyph-size: 14px;
+}
+
+.exit-icon {
+    -glyph-name: "SIGN_OUT";
+    -glyph-size: 14px;
+}
+
+.info-icon {
+    -glyph-name: "INFO";
+    -glyph-size: 14px;
+}
+
+.error-title-icon {
+    -glyph-name: "EXCLAMATION_TRIANGLE";
+    -glyph-size: 14px;
+}
+
+

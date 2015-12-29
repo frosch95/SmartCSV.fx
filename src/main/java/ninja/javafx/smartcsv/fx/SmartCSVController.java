@@ -27,12 +27,8 @@
 package ninja.javafx.smartcsv.fx;
 
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -190,7 +186,8 @@ public class SmartCSVController extends FXMLController {
                 "- spring framework\n" +
                 "- supercsv\n" +
                 "- config\n" +
-                "- commons-validator");
+                "- commons-validator\n" +
+                "- fontawesomefx");
 
 
         alert.showAndWait();
