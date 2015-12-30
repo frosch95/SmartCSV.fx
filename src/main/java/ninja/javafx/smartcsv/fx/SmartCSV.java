@@ -36,6 +36,8 @@ import javafx.stage.WindowEvent;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
+import static javafx.application.Platform.exit;
+
 @Configuration
 @ComponentScan("ninja.javafx")
 @PropertySource(value = "classpath:/ninja/javafx/smartcsv/fx/application.properties")
@@ -89,6 +91,8 @@ public class SmartCSV extends Application {
         primaryStage.setOnCloseRequest(event -> {
             if (!smartCVSController.canExit()) {
                 event.consume();
+            } else {
+                exit();
             }
         });
     }
