@@ -59,6 +59,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static java.lang.Math.max;
+import static javafx.application.Platform.exit;
 import static javafx.application.Platform.runLater;
 
 /**
@@ -167,7 +168,7 @@ public class SmartCSVController extends FXMLController {
     @FXML
     public void close(ActionEvent actionEvent) {
         if (canExit()) {
-            Platform.exit();
+            exit();
         }
     }
 
