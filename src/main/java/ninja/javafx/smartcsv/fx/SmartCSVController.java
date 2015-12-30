@@ -26,7 +26,6 @@
 
 package ninja.javafx.smartcsv.fx;
 
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Service;
@@ -41,6 +40,7 @@ import javafx.stage.FileChooser;
 import ninja.javafx.smartcsv.FileReader;
 import ninja.javafx.smartcsv.csv.CSVFileReader;
 import ninja.javafx.smartcsv.csv.CSVFileWriter;
+import ninja.javafx.smartcsv.fx.about.AboutController;
 import ninja.javafx.smartcsv.fx.list.ValidationErrorListCell;
 import ninja.javafx.smartcsv.fx.table.ObservableMapValueFactory;
 import ninja.javafx.smartcsv.fx.table.ValidationCellFactory;
@@ -80,6 +80,9 @@ public class SmartCSVController extends FXMLController {
 
     @Autowired
     private CSVFileWriter csvFileWriter;
+
+    @Autowired
+    private AboutController aboutController;
 
     @FXML
     private BorderPane applicationPane;
@@ -177,20 +180,7 @@ public class SmartCSVController extends FXMLController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("About");
         alert.setHeaderText("SmartCSV.fx");
-        alert.setContentText("This software is licensed under MIT license.\n" +
-                "written by javafx.ninja project <info@javafx.ninja>\n\n" +
-                "https://github.com/frosch95/SmartCSV.fx\n\n" +
-                "3rd party software open source used:\n" +
-                "- junit\n" +
-                "- mockito\n" +
-                "- groovy\n" +
-                "- spring framework\n" +
-                "- supercsv\n" +
-                "- config\n" +
-                "- commons-validator\n" +
-                "- fontawesomefx");
-
-
+        alert.getDialogPane().setContent(aboutController.getView());
         alert.showAndWait();
     }
 

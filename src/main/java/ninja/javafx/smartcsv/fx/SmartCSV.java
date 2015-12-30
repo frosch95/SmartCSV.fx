@@ -33,6 +33,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import ninja.javafx.smartcsv.fx.about.AboutController;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
@@ -52,6 +53,9 @@ public class SmartCSV extends Application {
         String version = appContext.getEnvironment().getProperty("application.version");
 
         Platform.setImplicitExit(false);
+
+        AboutController aboutController = appContext.getBean(AboutController.class);
+        aboutController.setHostServices(getHostServices());
 
         try {
             showUI(primaryStage, name, version);
