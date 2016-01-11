@@ -44,4 +44,7 @@
     -glyph-size: 14px;
 }
 
-
+.preferences-icon {
+    -glyph-name: "COG";
+    -glyph-size: 14px;
+}

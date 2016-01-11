@@ -42,18 +42,23 @@ import ninja.javafx.smartcsv.csv.CSVFileReader;
 import ninja.javafx.smartcsv.csv.CSVFileWriter;
 import ninja.javafx.smartcsv.fx.about.AboutController;
 import ninja.javafx.smartcsv.fx.list.ValidationErrorListCell;
+import ninja.javafx.smartcsv.fx.preferences.PreferencesController;
 import ninja.javafx.smartcsv.fx.table.ObservableMapValueFactory;
 import ninja.javafx.smartcsv.fx.table.ValidationCellFactory;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
 import ninja.javafx.smartcsv.fx.table.model.CSVRow;
 import ninja.javafx.smartcsv.fx.table.model.CSVValue;
+import ninja.javafx.smartcsv.preferences.PreferencesFileReader;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.ValidationFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.supercsv.prefs.CsvPreference;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -73,6 +78,9 @@ public class SmartCSVController extends FXMLController {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Autowired
+    private PreferencesFileReader preferencesLoader;
+
+    @Autowired
     private CSVFileReader csvLoader;
 
     @Autowired
@@ -83,6 +91,9 @@ public class SmartCSVController extends FXMLController {
 
     @Autowired
     private AboutController aboutController;
+
+    @Autowired
+    private PreferencesController preferencesController;
 
     @FXML
     private BorderPane applicationPane;
@@ -130,7 +141,10 @@ public class SmartCSVController extends FXMLController {
         errorList.getSelectionModel().selectedItemProperty().addListener(observable -> scrollToError());
         fileChanged.addListener(observable -> setStateName());
         setStateName();
+        initCsvPreferences();
     }
+
+
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,6 +198,19 @@ public class SmartCSVController extends FXMLController {
         alert.showAndWait();
     }
 
+    @FXML
+    public void preferences(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Preferences");
+        alert.setHeaderText("Preferences");
+        alert.getDialogPane().setContent(preferencesController.getView());
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == ButtonType.OK){
+            setCsvPreference(preferencesController.getCsvPreference());
+        }
+    }
+
     public boolean canExit() {
         boolean canExit = true;
         if (model != null && fileChanged.get()) {
@@ -204,6 +231,24 @@ public class SmartCSVController extends FXMLController {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void initCsvPreferences() {
+        try {
+            File preferencesFile = new File(
+                    getClass().getResource("/ninja/javafx/smartcsv/fx/preferences/preferences.json").toURI());
+            preferencesLoader.read(preferencesFile);
+            CsvPreference csvPreference = preferencesLoader.getCSVpreference();
+            setCsvPreference(csvPreference);
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setCsvPreference(CsvPreference csvPreference) {
+        csvLoader.setCsvPreference(csvPreference);
+        csvFileWriter.setCsvPreference(csvPreference);
+        preferencesController.setCsvPreference(csvPreference);
+    }
 
     private void loadFile(FileReader fileReader, String filterText, String filter, String title, Label fileLabel) {
         final FileChooser fileChooser = new FileChooser();

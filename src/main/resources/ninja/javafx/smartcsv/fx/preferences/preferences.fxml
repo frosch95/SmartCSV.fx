@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane hgap="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" vgap="8.0" xmlns="http://javafx.com/javafx/8.0.66" xmlns:fx="http://javafx.com/fxml/1">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+  </rowConstraints>
+   <children>
+      <Label text="%preferences.quoteChar" />
+      <TextField fx:id="quoteChar" GridPane.columnIndex="1" />
+      <Label text="%preferences.delimiterChar" GridPane.rowIndex="1" />
+      <TextField fx:id="delimiterChar" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Label text="%preferences.surroundingSpacesNeedQuotes" GridPane.rowIndex="2" />
+      <CheckBox fx:id="surroundingSpacesNeedQuotes" mnemonicParsing="false" text="" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Label text="%preferences.ignoreEmptyLines" GridPane.rowIndex="3" />
+      <CheckBox fx:id="ignoreEmptyLines" mnemonicParsing="false" text="" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <Label text="%preferences.quoteMode" GridPane.rowIndex="4" />
+      <ComboBox fx:id="quoteMode" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+   </children>
+   <padding>
+      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+   </padding>
+</GridPane>

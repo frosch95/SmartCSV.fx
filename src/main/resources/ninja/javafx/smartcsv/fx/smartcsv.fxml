@@ -40,6 +40,12 @@
                                     </graphic>
                                 </MenuItem>
                                 <SeparatorMenuItem mnemonicParsing="false"/>
+                                <MenuItem mnemonicParsing="false" onAction="#preferences" text="%menu.preferences">
+                                    <graphic>
+                                        <FontAwesomeIconView styleClass="preferences-icon"/>
+                                    </graphic>
+                                </MenuItem>
+                                <SeparatorMenuItem mnemonicParsing="false"/>
                                 <MenuItem mnemonicParsing="false" onAction="#close" text="%menu.close">
                                     <graphic>
                                         <FontAwesomeIconView styleClass="exit-icon"/>

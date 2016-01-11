@@ -31,8 +31,6 @@ import ninja.javafx.smartcsv.fx.table.model.CSVRow;
 import org.springframework.stereotype.Service;
 import org.supercsv.io.CsvMapWriter;
 import org.supercsv.io.ICsvMapWriter;
-import org.supercsv.prefs.CsvPreference;
-import org.supercsv.quote.AlwaysQuoteMode;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -44,16 +42,12 @@ import static java.util.stream.Collectors.toMap;
  * filewriter for the csv
  */
 @Service
-public class CSVFileWriter {
+public class CSVFileWriter extends CSVConfigurable {
 
     public void saveFile(CSVModel model) throws IOException {
         ICsvMapWriter mapWriter = null;
         try {
-            CsvPreference preference = new CsvPreference.
-                    Builder(CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE).
-                    useQuoteMode(new AlwaysQuoteMode())
-                    .build();
-            mapWriter = new CsvMapWriter(new FileWriter(model.getFilepath()), preference);
+            mapWriter = new CsvMapWriter(new FileWriter(model.getFilepath()), csvPreference);
             mapWriter.writeHeader(model.getHeader());
 
             for(CSVRow row: model.getRows()) {

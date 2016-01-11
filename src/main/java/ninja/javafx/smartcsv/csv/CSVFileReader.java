@@ -32,7 +32,6 @@ import ninja.javafx.smartcsv.fx.table.model.CSVRow;
 import org.springframework.stereotype.Service;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.ICsvMapReader;
-import org.supercsv.prefs.CsvPreference;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +41,7 @@ import java.util.Map;
  * reads the csv file and stores the values in csv model
  */
 @Service
-public class CSVFileReader implements FileReader {
+public class CSVFileReader extends CSVConfigurable implements FileReader {
 
     private CSVModel model;
 
@@ -51,7 +50,7 @@ public class CSVFileReader implements FileReader {
 
         ICsvMapReader mapReader = null;
         try {
-            mapReader = new CsvMapReader(new java.io.FileReader(file.getAbsoluteFile()), CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
+            mapReader = new CsvMapReader(new java.io.FileReader(file.getAbsoluteFile()), csvPreference);
             model = new CSVModel(file.getAbsolutePath());
 
             // the header columns are used as the keys to the Map
