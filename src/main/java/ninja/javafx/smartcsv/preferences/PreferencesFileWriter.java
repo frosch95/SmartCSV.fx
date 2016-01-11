@@ -28,54 +28,34 @@ package ninja.javafx.smartcsv.preferences;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import ninja.javafx.smartcsv.FileReader;
+import com.typesafe.config.ConfigRenderOptions;
 import org.springframework.stereotype.Service;
 import org.supercsv.prefs.CsvPreference;
-import org.supercsv.quote.AlwaysQuoteMode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import static ninja.javafx.smartcsv.preferences.QuoteModeHelper.getQuoteMode;
+import static java.nio.file.Files.write;
 
 /**
- * file reader for the preferences
+ * Save preferences to configuration file
  */
 @Service
-public class PreferencesFileReader implements FileReader {
+public class PreferencesFileWriter {
 
-    private Config config;
-    private CsvPreference csvPreference;
+    public void saveFile(File file, CsvPreference csvPreference) throws IOException {
+        Map<String, Object> preferences = new HashMap<>();
+        preferences.put("quoteChar", Character.toString(csvPreference.getQuoteChar()));
+        preferences.put("delimiterChar", Character.toString((char)csvPreference.getDelimiterChar()));
+        preferences.put("endOfLineSymbols", csvPreference.getEndOfLineSymbols());
+        preferences.put("surroundingSpacesNeedQuotes", csvPreference.isSurroundingSpacesNeedQuotes());
+        preferences.put("ignoreEmptyLines", csvPreference.isIgnoreEmptyLines());
+        preferences.put("quoteMode", QuoteModeHelper.getQuoteModeName(csvPreference.getQuoteMode()));
 
-    public PreferencesFileReader() {
-        csvPreference = new CsvPreference.
-                Builder(CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE).
-                useQuoteMode(new AlwaysQuoteMode()).build();
+        Config config = ConfigFactory.parseMap(preferences);
+        write(file.toPath(), config.root().render(ConfigRenderOptions.concise()).getBytes());
     }
-
-    @Override
-    public void read(File filename) throws IOException {
-        config = ConfigFactory.parseFile(filename);
-
-        if (config != null) {
-            char quoteChar = config.getString("quoteChar").charAt(0);
-            char delimiterChar = config.getString("delimiterChar").charAt(0);
-            String endOfLineSymbols = config.getString("endOfLineSymbols");
-            boolean surroundingSpacesNeedQuotes = config.getBoolean("surroundingSpacesNeedQuotes");
-            boolean ignoreEmptyLines = config.getBoolean("ignoreEmptyLines");
-            String quoteMode = config.getString("quoteMode");
-
-            csvPreference = new CsvPreference.Builder(quoteChar, delimiterChar, endOfLineSymbols)
-                    .useQuoteMode(getQuoteMode(quoteMode))
-                    .surroundingSpacesNeedQuotes(surroundingSpacesNeedQuotes)
-                    .ignoreEmptyLines(ignoreEmptyLines)
-                    .build();
-        }
-    }
-
-    public CsvPreference getCSVpreference() {
-        return csvPreference;
-    }
-
 
 }

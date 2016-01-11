@@ -49,6 +49,7 @@ import ninja.javafx.smartcsv.fx.table.model.CSVModel;
 import ninja.javafx.smartcsv.fx.table.model.CSVRow;
 import ninja.javafx.smartcsv.fx.table.model.CSVValue;
 import ninja.javafx.smartcsv.preferences.PreferencesFileReader;
+import ninja.javafx.smartcsv.preferences.PreferencesFileWriter;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.ValidationFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,6 @@ import org.supercsv.prefs.CsvPreference;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -74,11 +74,24 @@ import static javafx.application.Platform.runLater;
 public class SmartCSVController extends FXMLController {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // constants
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static final File PREFERENCES_FILE =  new File(System.getProperty("user.home") +
+            File.separator +
+            ".SmartCSV.fx" +
+            File.separator + "" +
+            "preferences.json");
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // injections
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Autowired
     private PreferencesFileReader preferencesLoader;
+
+    @Autowired
+    private PreferencesFileWriter preferencesWriter;
 
     @Autowired
     private CSVFileReader csvLoader;
@@ -207,7 +220,9 @@ public class SmartCSVController extends FXMLController {
         Optional<ButtonType> result = alert.showAndWait();
 
         if (result.get() == ButtonType.OK){
-            setCsvPreference(preferencesController.getCsvPreference());
+            CsvPreference csvPreference = preferencesController.getCsvPreference();
+            setCsvPreference(csvPreference);
+            saveCsvPreferences(csvPreference);
         }
     }
 
@@ -234,12 +249,34 @@ public class SmartCSVController extends FXMLController {
 
     private void loadCsvPreferences() {
         try {
-            File preferencesFile = new File(
-                    getClass().getResource("/ninja/javafx/smartcsv/fx/preferences/preferences.json").toURI());
-            preferencesLoader.read(preferencesFile);
+            if (PREFERENCES_FILE.exists()) {
+                preferencesLoader.read(PREFERENCES_FILE);
+            }
             setCsvPreference(preferencesLoader.getCSVpreference());
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void saveCsvPreferences(CsvPreference csvPreference) {
+        try {
+            createPreferenceFile();
+            preferencesWriter.saveFile(PREFERENCES_FILE, csvPreference);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createPreferenceFile() throws IOException {
+        if (!PREFERENCES_FILE.exists()) {
+            createPreferencesFileFolder();
+            PREFERENCES_FILE.createNewFile();
+        }
+    }
+
+    private void createPreferencesFileFolder() {
+        if (!PREFERENCES_FILE.getParentFile().exists()) {
+            PREFERENCES_FILE.getParentFile().mkdir();
         }
     }
 
