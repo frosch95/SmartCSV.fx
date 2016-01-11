@@ -141,7 +141,7 @@ public class SmartCSVController extends FXMLController {
         errorList.getSelectionModel().selectedItemProperty().addListener(observable -> scrollToError());
         fileChanged.addListener(observable -> setStateName());
         setStateName();
-        initCsvPreferences();
+        loadCsvPreferences();
     }
 
 
@@ -232,13 +232,12 @@ public class SmartCSVController extends FXMLController {
     // private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void initCsvPreferences() {
+    private void loadCsvPreferences() {
         try {
             File preferencesFile = new File(
                     getClass().getResource("/ninja/javafx/smartcsv/fx/preferences/preferences.json").toURI());
             preferencesLoader.read(preferencesFile);
-            CsvPreference csvPreference = preferencesLoader.getCSVpreference();
-            setCsvPreference(csvPreference);
+            setCsvPreference(preferencesLoader.getCSVpreference());
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
