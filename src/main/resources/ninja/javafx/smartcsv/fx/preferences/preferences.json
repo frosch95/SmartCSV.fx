@@ -1,8 +1,0 @@
-{
-  "quoteChar" : "\"",
-  "delimiterChar" : ";",
-  "endOfLineSymbols" : "\n",
-  "surroundingSpacesNeedQuotes" : true,
-  "ignoreEmptyLines" : true,
-  "quoteMode" : "always"
-}
