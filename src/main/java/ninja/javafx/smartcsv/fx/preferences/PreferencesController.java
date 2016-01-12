@@ -26,10 +26,17 @@
 
 package ninja.javafx.smartcsv.fx.preferences;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import ninja.javafx.smartcsv.fx.FXMLController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -37,6 +44,7 @@ import org.supercsv.prefs.CsvPreference;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.UnaryOperator;
 
 import static ninja.javafx.smartcsv.preferences.QuoteModeHelper.getQuoteMode;
 import static ninja.javafx.smartcsv.preferences.QuoteModeHelper.getQuoteModeName;
@@ -64,6 +72,8 @@ public class PreferencesController extends FXMLController {
 
     private String endOfLineSymbols;
 
+    private BooleanProperty valid = new SimpleBooleanProperty(true);
+
 
     @Value("${fxml.smartcvs.preferences.view}")
     @Override
@@ -74,6 +84,24 @@ public class PreferencesController extends FXMLController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         quoteMode.getItems().addAll("normal", "always", "column");
+
+        UnaryOperator<TextFormatter.Change> allowOnlyOneCharacter = change -> {
+            if (change.isContentChange()) {
+                if (change.getControlNewText().length() > 1) {
+                    return null;
+                }
+            }
+            return change;
+        };
+        quoteChar.setTextFormatter(new TextFormatter(allowOnlyOneCharacter));
+        quoteChar.textProperty().addListener(observable -> {revalidate();});
+
+        delimiterChar.setTextFormatter(new TextFormatter(allowOnlyOneCharacter));
+        delimiterChar.textProperty().addListener(observable -> {revalidate();});
+    }
+
+    private void revalidate() {
+        valid.setValue(quoteChar.getText().length() == 1 && delimiterChar.getText().length() == 1);
     }
 
     public void setCsvPreference(CsvPreference csvPreference) {
@@ -91,5 +119,17 @@ public class PreferencesController extends FXMLController {
                 .surroundingSpacesNeedQuotes(surroundingSpacesNeedQuotes.isSelected())
                 .ignoreEmptyLines(ignoreEmptyLines.isSelected())
                 .build();
+    }
+
+    public boolean getValid() {
+        return valid.get();
+    }
+
+    public BooleanProperty validProperty() {
+        return valid;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid.set(valid);
     }
 }

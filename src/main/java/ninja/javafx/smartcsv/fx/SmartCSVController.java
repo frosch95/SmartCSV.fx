@@ -31,6 +31,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -249,12 +250,18 @@ public class SmartCSVController extends FXMLController {
         alert.setTitle(resourceBundle.getString("dialog.preferences.title"));
         alert.setHeaderText(resourceBundle.getString("dialog.preferences.header.text"));
         alert.getDialogPane().setContent(preferencesController.getView());
+
+        Node okButton = alert.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.disableProperty().bind(preferencesController.validProperty().not());
+
         Optional<ButtonType> result = alert.showAndWait();
 
         if (result.get() == ButtonType.OK){
             CsvPreference csvPreference = preferencesController.getCsvPreference();
             setCsvPreference(csvPreference);
             saveCsvPreferences(csvPreference);
+        } else {
+            preferencesController.setCsvPreference(preferencesLoader.getCSVpreference());
         }
     }
 
