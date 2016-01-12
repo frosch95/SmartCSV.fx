@@ -24,44 +24,47 @@
   
 */
 
-package ninja.javafx.smartcsv.preferences;
+package ninja.javafx.smartcsv.fx.util;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-import com.typesafe.config.ConfigRenderOptions;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import ninja.javafx.smartcsv.FileWriter;
-import org.springframework.stereotype.Service;
-import org.supercsv.prefs.CsvPreference;
+import ninja.javafx.smartcsv.csv.CSVFileWriter;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
+
+import static javafx.application.Platform.runLater;
 
 /**
- * Save preferences to configuration file
+ * Service class for async load of a csv file
  */
-@Service
-public class PreferencesFileWriter implements FileWriter {
+@org.springframework.stereotype.Service
+public class SaveFileService extends Service {
 
-    private CsvPreference csvPreference;
+    private File file;
+    private FileWriter writer;
 
-    public void setCsvPreference(CsvPreference csvPreference) {
-        this.csvPreference = csvPreference;
+    public void setWriter(FileWriter writer) {
+        this.writer = writer;
     }
 
-    public void write(File file) throws IOException {
-        Map<String, Object> preferences = new HashMap<>();
-        preferences.put("quoteChar", Character.toString(csvPreference.getQuoteChar()));
-        preferences.put("delimiterChar", Character.toString((char)csvPreference.getDelimiterChar()));
-        preferences.put("endOfLineSymbols", csvPreference.getEndOfLineSymbols());
-        preferences.put("surroundingSpacesNeedQuotes", csvPreference.isSurroundingSpacesNeedQuotes());
-        preferences.put("ignoreEmptyLines", csvPreference.isIgnoreEmptyLines());
-        preferences.put("quoteMode", QuoteModeHelper.getQuoteModeName(csvPreference.getQuoteMode()));
+    public void setFile(File value) {
+        file = value;
+    }
 
-        Config config = ConfigFactory.parseMap(preferences);
-        Files.write(file.toPath(), config.root().render(ConfigRenderOptions.concise()).getBytes());
+    @Override
+    protected Task createTask() {
+        return new Task() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    writer.write(file);
+                } catch (Throwable ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
+        };
     }
 
 }

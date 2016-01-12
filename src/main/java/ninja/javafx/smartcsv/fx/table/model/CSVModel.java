@@ -40,20 +40,7 @@ public class CSVModel {
     private Validator validator;
     private ObservableList<CSVRow> rows = FXCollections.observableArrayList();
     private String[] header;
-    private String filepath;
     private ObservableList<ValidationError> validationError  = FXCollections.observableArrayList();
-
-    public CSVModel(String filepath) {
-        this.filepath = filepath;
-    }
-
-    public String getFilepath() {
-        return this.filepath;
-    }
-
-    public void setFilepath(String filepath) {
-        this.filepath = filepath;
-    }
 
     /**
      * sets the validator for the data revalidates

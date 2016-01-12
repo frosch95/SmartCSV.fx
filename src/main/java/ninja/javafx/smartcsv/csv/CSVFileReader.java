@@ -51,7 +51,7 @@ public class CSVFileReader extends CSVConfigurable implements FileReader {
         ICsvMapReader mapReader = null;
         try {
             mapReader = new CsvMapReader(new java.io.FileReader(file.getAbsoluteFile()), csvPreference);
-            model = new CSVModel(file.getAbsolutePath());
+            model = new CSVModel();
 
             // the header columns are used as the keys to the Map
             String[] header = mapReader.getHeader(true);

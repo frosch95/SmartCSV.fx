@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.supercsv.io.CsvMapWriter;
 import org.supercsv.io.ICsvMapWriter;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
@@ -42,12 +43,19 @@ import static java.util.stream.Collectors.toMap;
  * filewriter for the csv
  */
 @Service
-public class CSVFileWriter extends CSVConfigurable {
+public class CSVFileWriter extends CSVConfigurable implements ninja.javafx.smartcsv.FileWriter {
 
-    public void saveFile(CSVModel model) throws IOException {
+    private CSVModel model;
+
+    public void setModel(CSVModel model) {
+        this.model = model;
+    }
+
+    @Override
+    public void write(File filename) throws IOException {
         ICsvMapWriter mapWriter = null;
         try {
-            mapWriter = new CsvMapWriter(new FileWriter(model.getFilepath()), csvPreference);
+            mapWriter = new CsvMapWriter(new FileWriter(filename.getAbsolutePath()), csvPreference);
             mapWriter.writeHeader(model.getHeader());
 
             for(CSVRow row: model.getRows()) {
