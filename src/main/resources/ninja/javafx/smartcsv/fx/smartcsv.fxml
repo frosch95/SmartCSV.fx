@@ -29,12 +29,12 @@
                                     </graphic>
                                 </MenuItem>
                                 <SeparatorMenuItem mnemonicParsing="false"/>
-                                <MenuItem mnemonicParsing="false" onAction="#saveCsv" text="%menu.save">
+                                <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#saveCsv" text="%menu.save" disable="true">
                                     <graphic>
                                         <FontAwesomeIconView styleClass="save-icon"/>
                                     </graphic>
                                 </MenuItem>
-                                <MenuItem mnemonicParsing="false" onAction="#saveAsCsv" text="%menu.save.as">
+                                <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#saveAsCsv" text="%menu.save.as" disable="true">
                                     <graphic>
                                         <FontAwesomeIconView styleClass="save-icon"/>
                                     </graphic>

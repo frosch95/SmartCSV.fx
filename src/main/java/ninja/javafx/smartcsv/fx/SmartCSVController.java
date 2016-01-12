@@ -134,6 +134,12 @@ public class SmartCSVController extends FXMLController {
     @FXML
     private AnchorPane tableWrapper;
 
+    @FXML
+    private MenuItem saveMenuItem;
+
+    @FXML
+    private MenuItem saveAsMenuItem;
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // members
@@ -190,6 +196,7 @@ public class SmartCSVController extends FXMLController {
                 "*.csv",
                 "Open CSV",
                 currentCsvFile);
+        enableSaveMenuItems();
         setCsvFileName();
     }
 
@@ -270,6 +277,13 @@ public class SmartCSVController extends FXMLController {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void enableSaveMenuItems() {
+        if (currentCsvFile != null) {
+            saveMenuItem.setDisable(false);
+            saveAsMenuItem.setDisable(false);
+        }
+    }
 
     private void setCsvFileName() {
         if (currentCsvFile != null) {
