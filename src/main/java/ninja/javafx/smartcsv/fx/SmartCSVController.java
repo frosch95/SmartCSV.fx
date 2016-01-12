@@ -245,8 +245,9 @@ public class SmartCSVController extends FXMLController {
     @FXML
     public void preferences(ActionEvent actionEvent) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Preferences");
-        alert.setHeaderText("Preferences");
+        alert.setGraphic(null);
+        alert.setTitle(resourceBundle.getString("dialog.preferences.title"));
+        alert.setHeaderText(resourceBundle.getString("dialog.preferences.header.text"));
         alert.getDialogPane().setContent(preferencesController.getView());
         Optional<ButtonType> result = alert.showAndWait();
 
