@@ -49,6 +49,16 @@
     -glyph-size: 14px;
 }
 
+.delete-icon {
+    -glyph-name: "MINUS";
+    -glyph-size: 14px;
+}
+
+.add-icon {
+    -glyph-name: "PLUS";
+    -glyph-size: 14px;
+}
+
 /* toolbar customization based on http://fxexperience.com/2012/02/customized-segmented-toolbar-buttons/ */
 
 #background {
@@ -92,6 +102,16 @@
 }
 
 .tool-bar .exit-icon {
+    -glyph-size: 16px;
+    -fx-fill: white;
+}
+
+.tool-bar .delete-icon {
+    -glyph-size: 16px;
+    -fx-fill: white;
+}
+
+.tool-bar .add-icon {
     -glyph-size: 16px;
     -fx-fill: white;
 }
