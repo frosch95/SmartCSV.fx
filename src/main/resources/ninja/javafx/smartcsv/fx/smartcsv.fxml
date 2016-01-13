@@ -1,72 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
 <?import de.jensd.fx.glyphs.fontawesome.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
-<BorderPane fx:id="applicationPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-            minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.66"
-            xmlns:fx="http://javafx.com/fxml/1">
+
+<BorderPane fx:id="applicationPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.66" xmlns:fx="http://javafx.com/fxml/1">
     <top>
-        <VBox prefWidth="100.0" BorderPane.alignment="CENTER">
+        <VBox prefWidth="100.0" BorderPane.alignment="CENTER" id="background">
             <children>
                 <MenuBar>
                     <menus>
                         <Menu mnemonicParsing="false" text="%menu.file">
-                            <graphic>
-                                <FontAwesomeIconView styleClass="save-icon"/>
-                            </graphic>
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openCsv" text="%menu.open.csv">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="open-icon"/>
+                                        <FontAwesomeIconView styleClass="open-icon" />
                                     </graphic>
                                 </MenuItem>
                                 <MenuItem mnemonicParsing="false" onAction="#openConfig" text="%menu.open.config">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="config-icon"/>
+                                        <FontAwesomeIconView styleClass="config-icon" />
                                     </graphic>
                                 </MenuItem>
-                                <SeparatorMenuItem mnemonicParsing="false"/>
-                                <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#saveCsv" text="%menu.save" disable="true">
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem fx:id="saveMenuItem" disable="true" mnemonicParsing="false" onAction="#saveCsv" text="%menu.save">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="save-icon"/>
+                                        <FontAwesomeIconView styleClass="save-icon" />
                                     </graphic>
                                 </MenuItem>
-                                <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" onAction="#saveAsCsv" text="%menu.save.as" disable="true">
+                                <MenuItem fx:id="saveAsMenuItem" disable="true" mnemonicParsing="false" onAction="#saveAsCsv" text="%menu.save.as">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="save-icon"/>
+                                        <FontAwesomeIconView styleClass="save-icon" />
                                     </graphic>
                                 </MenuItem>
-                                <SeparatorMenuItem mnemonicParsing="false"/>
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#preferences" text="%menu.preferences">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="preferences-icon"/>
+                                        <FontAwesomeIconView styleClass="preferences-icon" />
                                     </graphic>
                                 </MenuItem>
-                                <SeparatorMenuItem mnemonicParsing="false"/>
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#close" text="%menu.close">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="exit-icon"/>
+                                        <FontAwesomeIconView styleClass="exit-icon" />
                                     </graphic>
                                 </MenuItem>
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="%menu.help">
-                            <graphic>
-                                <FontAwesomeIconView styleClass="info-icon"/>
-                            </graphic>
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#about" text="%menu.about">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="info-icon"/>
+                                        <FontAwesomeIconView styleClass="info-icon" />
                                     </graphic>
                                 </MenuItem>
                             </items>
                         </Menu>
                     </menus>
                 </MenuBar>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+                <HBox styleClass="segmented-button-bar">
+                <Button mnemonicParsing="false" onAction="#openCsv" styleClass="first">
+                    <tooltip>
+                        <Tooltip text="%menu.open.csv" />
+                    </tooltip>
+                    <graphic>
+                        <FontAwesomeIconView styleClass="open-icon" />
+                    </graphic>
+                </Button>
+                  <Button mnemonicParsing="false" onAction="#openConfig">
+                      <tooltip>
+                          <Tooltip text="%menu.open.config" />
+                      </tooltip>
+                      <graphic>
+                          <FontAwesomeIconView styleClass="config-icon" />
+                      </graphic>
+                  </Button>
+                  <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveCsv">
+                      <tooltip>
+                          <Tooltip text="%menu.save" />
+                      </tooltip>
+                      <graphic>
+                          <FontAwesomeIconView styleClass="save-icon" />
+                      </graphic>
+                  </Button>
+                    <Button fx:id="saveAsButton" disable="true" mnemonicParsing="false" onAction="#saveAsCsv" text="..." styleClass="last">
+                        <tooltip>
+                            <Tooltip text="%menu.save.as" />
+                        </tooltip>
+                        <graphic>
+                            <FontAwesomeIconView styleClass="save-icon" />
+                        </graphic>
+                    </Button>
+              </HBox>
+                <Region styleClass="spacer" />
+                <HBox styleClass="segmented-button-bar">
+                    <Button mnemonicParsing="false" onAction="#preferences" styleClass="first">
+                        <tooltip>
+                            <Tooltip text="%menu.preferences" />
+                        </tooltip>
+                        <graphic>
+                            <FontAwesomeIconView styleClass="preferences-icon" />
+                        </graphic>
+                    </Button>
+                    <Button mnemonicParsing="false" onAction="#close" styleClass="last">
+                        <tooltip>
+                            <Tooltip text="%menu.close" />
+                        </tooltip>
+                        <graphic>
+                            <FontAwesomeIconView styleClass="exit-icon" />
+                        </graphic>
+                    </Button>
+                </HBox>
+            </ToolBar>
             </children>
         </VBox>
     </top>
@@ -74,9 +125,7 @@
         <SplitPane dividerPositions="0.8" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <items>
                 <AnchorPane fx:id="tableWrapper">
-                    <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0"
-                               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                               BorderPane.alignment="CENTER">
+                    <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" BorderPane.alignment="CENTER">
                         <columns>
                         </columns>
                     </TableView>
@@ -85,13 +134,13 @@
                     <children>
                         <Label text="%title.validation.errors">
                             <padding>
-                                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+                                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                             </padding>
                             <graphic>
-                                <FontAwesomeIconView styleClass="error-title-icon"/>
+                                <FontAwesomeIconView styleClass="error-title-icon" />
                             </graphic>
                         </Label>
-                        <ListView fx:id="errorList" minWidth="10.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+                        <ListView fx:id="errorList" minWidth="10.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                     </children>
                 </VBox>
             </items>
@@ -100,35 +149,35 @@
     <left>
     </left>
     <stylesheets>
-        <URL value="@/ninja/javafx/smartcsv/fx/smartcsv.css"/>
+        <URL value="@/ninja/javafx/smartcsv/fx/smartcsv.css" />
     </stylesheets>
     <bottom>
         <GridPane hgap="8.0" BorderPane.alignment="CENTER">
             <columnConstraints>
-                <ColumnConstraints hgrow="NEVER" minWidth="10.0"/>
-                <ColumnConstraints hgrow="NEVER" minWidth="10.0"/>
-                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="NEVER" minWidth="10.0"/>
-                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="NEVER" minWidth="10.0"/>
-                <ColumnConstraints hgrow="NEVER" minWidth="10.0"/>
-                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <FontAwesomeIconView styleClass="open-icon" GridPane.hgrow="NEVER"/>
-                <Label text="%stateline.csv" GridPane.columnIndex="1" GridPane.hgrow="NEVER"/>
-                <Label fx:id="csvName" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS"/>
-                <Label text="%stateline.state" GridPane.columnIndex="3" GridPane.hgrow="NEVER"/>
-                <Label fx:id="stateName" GridPane.columnIndex="4" GridPane.hgrow="ALWAYS"/>
-                <FontAwesomeIconView styleClass="open-icon" GridPane.columnIndex="5" GridPane.hgrow="NEVER"/>
-                <Label text="%stateline.configuration" GridPane.columnIndex="6" GridPane.hgrow="NEVER"/>
-                <Label fx:id="configurationName" GridPane.columnIndex="7" GridPane.hgrow="ALWAYS"/>
+                <FontAwesomeIconView styleClass="open-icon" GridPane.hgrow="NEVER" />
+                <Label text="%stateline.csv" GridPane.columnIndex="1" GridPane.hgrow="NEVER" />
+                <Label fx:id="csvName" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" />
+                <Label text="%stateline.state" GridPane.columnIndex="3" GridPane.hgrow="NEVER" />
+                <Label fx:id="stateName" GridPane.columnIndex="4" GridPane.hgrow="ALWAYS" />
+                <FontAwesomeIconView styleClass="open-icon" GridPane.columnIndex="5" GridPane.hgrow="NEVER" />
+                <Label text="%stateline.configuration" GridPane.columnIndex="6" GridPane.hgrow="NEVER" />
+                <Label fx:id="configurationName" GridPane.columnIndex="7" GridPane.hgrow="ALWAYS" />
             </children>
             <BorderPane.margin>
-                <Insets top="4.0" left="8.0" bottom="4.0" right="8.0"/>
+                <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
             </BorderPane.margin>
         </GridPane>
     </bottom>

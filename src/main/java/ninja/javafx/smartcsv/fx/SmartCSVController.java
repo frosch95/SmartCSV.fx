@@ -141,6 +141,12 @@ public class SmartCSVController extends FXMLController {
     @FXML
     private MenuItem saveAsMenuItem;
 
+    @FXML
+    private Button saveButton;
+
+    @FXML
+    private Button saveAsButton;
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // members
@@ -290,6 +296,8 @@ public class SmartCSVController extends FXMLController {
         if (currentCsvFile != null) {
             saveMenuItem.setDisable(false);
             saveAsMenuItem.setDisable(false);
+            saveButton.setDisable(false);
+            saveAsButton.setDisable(false);
         }
     }
 
