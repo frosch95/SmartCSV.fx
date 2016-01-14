@@ -81,9 +81,9 @@ public class CSVRow {
     public void addValue(String column, String value) {
         CSVValue v = new CSVValue();
         v.setValidator(validator);
-        v.setValue(value);
         v.setColumn(column);
         v.setRowNumber(rowNumber);
+        v.setValue(value);
         columns.put(column, new SimpleObjectProperty<>(v));
     }
 
