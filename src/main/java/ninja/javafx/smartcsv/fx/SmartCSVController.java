@@ -43,7 +43,7 @@ import ninja.javafx.smartcsv.FileWriter;
 import ninja.javafx.smartcsv.csv.CSVFileReader;
 import ninja.javafx.smartcsv.csv.CSVFileWriter;
 import ninja.javafx.smartcsv.fx.about.AboutController;
-import ninja.javafx.smartcsv.fx.list.ValidationErrorListCell;
+import ninja.javafx.smartcsv.fx.list.ErrorSideBar;
 import ninja.javafx.smartcsv.fx.preferences.PreferencesController;
 import ninja.javafx.smartcsv.fx.table.ObservableMapValueFactory;
 import ninja.javafx.smartcsv.fx.table.ValidationCellFactory;
@@ -133,9 +133,6 @@ public class SmartCSVController extends FXMLController {
     private Label stateName;
 
     @FXML
-    private ListView errorList;
-
-    @FXML
     private AnchorPane tableWrapper;
 
     @FXML
@@ -162,6 +159,8 @@ public class SmartCSVController extends FXMLController {
     @FXML
     private Button addRowButton;
 
+    private ErrorSideBar errorSideBar;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // members
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -185,8 +184,13 @@ public class SmartCSVController extends FXMLController {
         this.resourceBundle = resourceBundle;
 
         setupTableCellFactory();
-        setupErrorListCellFactory();
-        setupErrorListSelectionListener();
+
+        errorSideBar = new ErrorSideBar(resourceBundle);
+
+        errorSideBar.selectedValidationErrorProperty().addListener((observable, oldValue, newValue) -> {
+            scrollToError(newValue);
+        });
+        applicationPane.setRight(errorSideBar);
 
         bindMenuItemsToCsvFileExtistence(saveMenuItem, saveAsMenuItem, addRowMenuItem);
         bindButtonsToCsvFileExistence(saveButton, saveAsButton, addRowButton);
@@ -194,14 +198,6 @@ public class SmartCSVController extends FXMLController {
         bindConfigFileName();
 
         loadCsvPreferencesFromFile();
-    }
-
-    private void setupErrorListSelectionListener() {
-        errorList.getSelectionModel().selectedItemProperty().addListener(observable -> scrollToError());
-    }
-
-    private void setupErrorListCellFactory() {
-        errorList.setCellFactory(param -> new ValidationErrorListCell(resourceBundle));
     }
 
     private void setupTableCellFactory() {
@@ -510,8 +506,7 @@ public class SmartCSVController extends FXMLController {
             setLeftAnchor(tableView, 0.0);
             setRightAnchor(tableView, 0.0);
             tableWrapper.getChildren().setAll(tableView);
-
-            errorList.setItems(model.getValidationError());
+            errorSideBar.setModel(model);
         }
     }
 
@@ -540,8 +535,7 @@ public class SmartCSVController extends FXMLController {
         tableView.getColumns().add(column);
     }
 
-    private void scrollToError() {
-        ValidationError entry = (ValidationError)errorList.getSelectionModel().getSelectedItem();
+    private void scrollToError(ValidationError entry) {
         if (entry != null) {
             if (entry.getLineNumber() != null) {
                 tableView.scrollTo(max(0, entry.getLineNumber() - 1));
