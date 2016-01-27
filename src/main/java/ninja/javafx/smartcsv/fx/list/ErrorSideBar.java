@@ -53,7 +53,7 @@ public class ErrorSideBar extends Region {
 
     private static final double WIDTH = 20.0;
 
-    private ListChangeListener<ValidationError> errorListListener = c -> {setErrorMarker();};
+    private ListChangeListener<ValidationError> errorListListener = c -> setErrorMarker();
     private WeakListChangeListener<ValidationError> weakErrorListListener = new WeakListChangeListener<>(errorListListener);
     private ObjectProperty<CSVModel> model = new SimpleObjectProperty<>();
     private ObjectProperty<ValidationError> selectedValidationError = new SimpleObjectProperty<>();
@@ -62,11 +62,14 @@ public class ErrorSideBar extends Region {
 
     public ErrorSideBar(ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
+        initPopOver();
         setFixWidth();
         addModelListener();
+    }
+
+    private void initPopOver() {
         popOver.setAutoHide(true);
         popOver.setArrowLocation(PopOver.ArrowLocation.RIGHT_CENTER);
-
     }
 
     public void setModel(CSVModel model) {
