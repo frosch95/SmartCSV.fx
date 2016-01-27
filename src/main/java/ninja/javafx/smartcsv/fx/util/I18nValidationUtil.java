@@ -40,6 +40,20 @@ import static java.text.MessageFormat.format;
  */
 public class I18nValidationUtil {
 
+    public static String getI18nValidatioMessage(ResourceBundle resourceBundle, List<ValidationError> errors) {
+
+        StringWriter message = new StringWriter();
+        for (ValidationError validationError: errors) {
+            message.append(getI18nValidatioMessage(resourceBundle, validationError)).append("\n");
+        }
+
+        if (message.toString().length() != 0) {
+            return cutOffLastLineBreak(message.toString());
+        }
+
+        return "";
+    }
+
     public static String getI18nValidatioMessage(ResourceBundle resourceBundle, ValidationError error) {
 
         List<ValidationMessage> validationMessages = error.getMessages();

@@ -31,18 +31,20 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.WeakListChangeListener;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import org.controlsfx.control.PopOver;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -54,13 +56,16 @@ import static ninja.javafx.smartcsv.fx.util.I18nValidationUtil.getI18nValidatioM
  */
 public class ErrorSideBar extends Pane {
 
+    private static final double WIDTH = 20.0;
+    private static final int BLOCKSIZE = 6;
+
     private ListChangeListener<ValidationError> errorListListener = c -> requestLayout();
     private WeakListChangeListener<ValidationError> weakErrorListListener = new WeakListChangeListener<>(errorListListener);
     private ObjectProperty<CSVModel> model = new SimpleObjectProperty<>();
     private Canvas canvas = new Canvas();
     private ObjectProperty<ValidationError> selectedValidationError = new SimpleObjectProperty<>();
     private PopOver popOver = new PopOver();
-    private static final double WIDTH = 20.0;
+    private List<ValidationError> lastPopupErrors = null;
 
     public ErrorSideBar(ResourceBundle resourceBundle) {
         getChildren().add(canvas);
@@ -96,19 +101,8 @@ public class ErrorSideBar extends Pane {
     }
 
     private void addOnMouseOverListenerForPopOver(ResourceBundle resourceBundle) {
-        setOnMouseMoved(event -> {
-            List<ValidationError> errors = findValidationErrors(event.getY());
-            if (!errors.isEmpty()) {
-                StringWriter messages = new StringWriter();
-                for (ValidationError validationError: errors) {
-                    messages.append(getI18nValidatioMessage(resourceBundle, validationError)).append("\n");
-                }
-                popOver.setContentNode(popupContent(messages.toString()));
-                popOver.show(ErrorSideBar.this.getParent(), event.getScreenX()-WIDTH, event.getScreenY());
-            } else {
-                popOver.hide();
-            }
-        });
+        setOnMouseMoved(event -> showPopOver(event, resourceBundle));
+        setOnMouseEntered(event -> showPopOver(event, resourceBundle));
     }
 
     private void addMouseClickListener() {
@@ -125,6 +119,24 @@ public class ErrorSideBar extends Pane {
             newValue.getValidationError().addListener(weakErrorListListener);
             requestLayout();
         });
+    }
+
+    private void showPopOver(MouseEvent event, ResourceBundle resourceBundle) {
+        List<ValidationError> errors = findValidationErrors(event.getY());
+        if (!errors.isEmpty()) {
+            if (!areErrorsAlreadyInPopup(errors)) {
+                lastPopupErrors = errors;
+                popOver.setContentNode(popupContent(getI18nValidatioMessage(resourceBundle, errors)));
+                popOver.show(ErrorSideBar.this.getParent(), event.getScreenX() - WIDTH, event.getScreenY());
+            }
+        } else {
+            lastPopupErrors = null;
+            popOver.hide(Duration.millis(50));
+        }
+    }
+
+    private boolean areErrorsAlreadyInPopup(List<ValidationError> errors) {
+        return lastPopupErrors != null && lastPopupErrors.size() == errors.size() && lastPopupErrors.containsAll(errors);
     }
 
     private void configurePopOver() {
@@ -163,7 +175,7 @@ public class ErrorSideBar extends Pane {
                 double space = ((int)canvas.getHeight()) / rows;
                 for (ValidationError error : errorList) {
                     double blockStart = space * error.getLineNumber();
-                    if (blockStart-1 <= y && y <= blockStart+3) {
+                    if (blockStart - 1 <= y && y <= blockStart + BLOCKSIZE + 1) {
                         errors.add(error);
                     }
                 }
@@ -185,8 +197,13 @@ public class ErrorSideBar extends Pane {
                 double space = h / rows;
                 for (ValidationError error : errorList) {
                     double blockStart = space * error.getLineNumber();
-                    g.fillRect(0, blockStart, w, 2);
+                    g.fillRect(0, blockStart, w, BLOCKSIZE - 2);
                 }
+                for (ValidationError error : errorList) {
+                    double blockStart = space * error.getLineNumber();
+                    g.clearRect(0, blockStart + BLOCKSIZE + 1, w, 1);
+                }
+
             }
         }
     }
@@ -196,6 +213,7 @@ public class ErrorSideBar extends Pane {
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(10,10,10,10));
         vBox.getChildren().add(new Text(text));
+        vBox.setAlignment(Pos.CENTER);
         return vBox;
     }
 }
