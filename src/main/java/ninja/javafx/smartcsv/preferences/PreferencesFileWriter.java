@@ -26,9 +26,8 @@
 
 package ninja.javafx.smartcsv.preferences;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-import com.typesafe.config.ConfigRenderOptions;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import ninja.javafx.smartcsv.FileWriter;
 import org.springframework.stereotype.Service;
 import org.supercsv.prefs.CsvPreference;
@@ -60,8 +59,8 @@ public class PreferencesFileWriter implements FileWriter {
         preferences.put("ignoreEmptyLines", csvPreference.isIgnoreEmptyLines());
         preferences.put("quoteMode", QuoteModeHelper.getQuoteModeName(csvPreference.getQuoteMode()));
 
-        Config config = ConfigFactory.parseMap(preferences);
-        Files.write(file.toPath(), config.root().render(ConfigRenderOptions.concise()).getBytes());
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Files.write(file.toPath(), gson.toJson(preferences).getBytes());
     }
 
 }

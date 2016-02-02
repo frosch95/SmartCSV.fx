@@ -30,6 +30,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -378,9 +379,9 @@ public class SmartCSVController extends FXMLController {
 
     private void loadCsvPreferencesFromFile() {
         if (PREFERENCES_FILE.exists()) {
-            useLoadFileService(preferencesLoader, PREFERENCES_FILE);
+            useLoadFileService(preferencesLoader, PREFERENCES_FILE,
+                    event -> setCsvPreference(preferencesLoader.getCSVpreference()));
         }
-        setCsvPreference(preferencesLoader.getCSVpreference());
     }
 
     private void saveCsvPreferences(CsvPreference csvPreference) {
@@ -431,7 +432,10 @@ public class SmartCSVController extends FXMLController {
         //Show open file dialog
         File file = fileChooser.showOpenDialog(applicationPane.getScene().getWindow());
         if (file != null) {
-            useLoadFileService(fileReader, file);
+            useLoadFileService(fileReader, file, event -> runLater(() -> {
+                resetContent();
+                fileChanged.setValue(false);
+            }));
             return file;
         } else {
             return initChildFile;
@@ -462,14 +466,11 @@ public class SmartCSVController extends FXMLController {
         return file;
     }
 
-    private void useLoadFileService(FileReader fileReader, File file) {
+    private void useLoadFileService(FileReader fileReader, File file, EventHandler<WorkerStateEvent> value) {
         loadFileService.setFile(file);
         loadFileService.setFileReader(fileReader);
         loadFileService.restart();
-        loadFileService.setOnSucceeded(event -> runLater(() -> {
-            resetContent();
-            fileChanged.setValue(false);
-        }));
+        loadFileService.setOnSucceeded(value);
     }
 
     private void useSaveFileService(FileWriter writer, File file) {

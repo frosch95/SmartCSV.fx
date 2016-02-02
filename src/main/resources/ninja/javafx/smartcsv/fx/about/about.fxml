@@ -46,8 +46,8 @@
                   <Hyperlink onAction="#openLinkInBrowser" text="https://spring.io/" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <Label text="supercsv" GridPane.rowIndex="4" />
                    <Hyperlink onAction="#openLinkInBrowser" text="http://super-csv.github.io/super-csv/" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Label text="config" GridPane.rowIndex="5" />
-                   <Hyperlink onAction="#openLinkInBrowser" text="https://github.com/typesafehub/config" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <Label text="Gson" GridPane.rowIndex="5" />
+                   <Hyperlink onAction="#openLinkInBrowser" text="https://github.com/google/gson/" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <Label text="commons-validator" GridPane.rowIndex="6" />
                    <Hyperlink onAction="#openLinkInBrowser" text="https://commons.apache.org/proper/commons-validator/" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                   <Label text="fontawesomefx" GridPane.rowIndex="7" />

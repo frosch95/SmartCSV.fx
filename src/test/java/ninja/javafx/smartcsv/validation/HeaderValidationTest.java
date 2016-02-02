@@ -26,20 +26,19 @@
 
 package ninja.javafx.smartcsv.validation;
 
-import com.typesafe.config.Config;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static ninja.javafx.smartcsv.validation.ConfigMock.headerSectionConfig;
+import static java.util.stream.Collectors.joining;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -52,7 +51,7 @@ public class HeaderValidationTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // parameters
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private Config config;
+    private ValidationConfiguration config;
     private Boolean expectedResult;
     private List<ValidationMessage> expectedErrors;
     private String[] headerNames;
@@ -66,11 +65,12 @@ public class HeaderValidationTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // parameterized constructor
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public HeaderValidationTest(String[] configHeaderNames,
+    public HeaderValidationTest(String configHeaderNames,
                                 String[] headerNames,
                                 Boolean expectedResult,
                                 List<ValidationMessage> expectedErrors) {
-        this.config = headerSectionConfig(configHeaderNames);
+        Gson gson = new GsonBuilder().create();
+        this.config = gson.fromJson(configHeaderNames, ValidationConfiguration.class);
         this.headerNames = headerNames;
         this.expectedResult = expectedResult;
         this.expectedErrors = expectedErrors;
@@ -106,11 +106,16 @@ public class HeaderValidationTest {
     @Parameterized.Parameters
     public static Collection validationConfigurations() {
         return asList(new Object[][] {
-                { new String[] {}, new String[] {}, true, null },
-                { new String[] {"a"}, new String[] {"a"}, true, null },
-                { new String[] {"a"}, new String[] {"b"}, false, singletonList(new ValidationMessage("validation.message.header.match", "0", "a", "b"))},
-                { new String[] {"a"}, new String[] {"a","b"}, false, singletonList(new ValidationMessage("validation.message.header.length", "2", "1"))},
-                { new String[] {"a", "b"}, new String[] {"b", "a"}, false, asList(new ValidationMessage("validation.message.header.match", "0", "a", "b"), new ValidationMessage("validation.message.header.match", "1", "b", "a")) }
+                { json(), new String[] {}, true, null },
+                { json("a"), new String[] {"a"}, true, null },
+                { json("a"), new String[] {"b"}, false, singletonList(new ValidationMessage("validation.message.header.match", "0", "a", "b"))},
+                { json("a"), new String[] {"a","b"}, false, singletonList(new ValidationMessage("validation.message.header.length", "2", "1"))},
+                { json("a", "b"), new String[] {"b", "a"}, false, asList(new ValidationMessage("validation.message.header.match", "0", "a", "b"), new ValidationMessage("validation.message.header.match", "1", "b", "a")) }
         });
     }
+
+    public static String json(String... headerNames) {
+        return "{\"headers\":{\"list\":[" + asList(headerNames).stream().collect(joining(", ")) + "]}}";
+    }
+
 }

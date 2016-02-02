@@ -26,7 +26,6 @@
 
 package ninja.javafx.smartcsv.validation;
 
-import com.typesafe.config.Config;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
@@ -49,7 +48,7 @@ public class Validator {
     // member variables
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private Config validationConfig;
+    private ValidationConfiguration validationConfig;
     private GroovyShell shell = new GroovyShell();
     private Map<String, Script> scriptCache = new HashMap<>();
 
@@ -62,7 +61,7 @@ public class Validator {
      * JSON configuration for this validator
      * @param validationConfig
      */
-    public Validator(Config validationConfig) {
+    public Validator(ValidationConfiguration validationConfig) {
          this.validationConfig = validationConfig;
     }
 
@@ -80,29 +79,23 @@ public class Validator {
     public ValidationError isValid(String column, String value, Integer lineNumber) {
         ValidationError result = null;
         if (validationConfig != null) {
-            Config columnSectionConfig = getColumnSectionConfig();
-            if (columnSectionConfig != null) {
-                Config columnConfig = getColumnConfig(columnSectionConfig, column);
-                if (columnConfig != null) {
 
-                    ValidationError error = ValidationError.withLineNumber(lineNumber);
-                    checkBlankOrNull(columnConfig, value, error);
-                    if (value != null && !value.isEmpty()) {
-                        checkRegularExpression(columnConfig, value, error);
-                        checkAlphaNumeric(columnConfig, value, error);
-                        checkDate(columnConfig, value, error);
-                        checkMaxLength(columnConfig, value, error);
-                        checkMinLength(columnConfig, value, error);
-                        checkInteger(columnConfig, value, error);
-                        checkGroovy(column, columnConfig, value, error);
-                        checkValueOf(columnConfig, value, error);
-                        checkDouble(columnConfig, value, error);
-                    }
+            ValidationError error = ValidationError.withLineNumber(lineNumber);
+            checkBlankOrNull(column, value, error);
+            if (value != null && !value.isEmpty()) {
+                checkRegularExpression(column, value, error);
+                checkAlphaNumeric(column, value, error);
+                checkDate(column, value, error);
+                checkMaxLength(column, value, error);
+                checkMinLength(column, value, error);
+                checkInteger(column, value, error);
+                checkGroovy(column, value, error);
+                checkValueOf(column, value, error);
+                checkDouble(column, value, error);
+            }
 
-                    if (!error.isEmpty()) {
-                        result = error;
-                    }
-                }
+            if (!error.isEmpty()) {
+                result = error;
             }
         }
         return result;
@@ -113,8 +106,8 @@ public class Validator {
     // private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void checkGroovy(String column, Config columnConfig, String value, ValidationError error) {
-        String groovyScript = getString(columnConfig, "groovy");
+    private void checkGroovy(String column, String value, ValidationError error) {
+        String groovyScript = validationConfig.groovyRuleFor(column);
         if (groovyScript != null) {
 
             Script script = scriptCache.get(column);
@@ -149,43 +142,42 @@ public class Validator {
         return groovyResult.equals(true) || groovyResult.toString().trim().toLowerCase().equals("true");
     }
 
-    private void checkValueOf(Config columnConfig, String value, ValidationError error) {
-        List<String> stringList = getStringList(columnConfig, "value of");
-        if (stringList != null) {
-            if (!stringList.contains(value)) {
-                String commaSeparated = stringList.stream().collect(joining(", "));
+    private void checkValueOf(String column, String value, ValidationError error) {
+        List<String> values = validationConfig.valueOfRuleFor(column);
+        if (values != null) {
+            if (!values.contains(value)) {
+                String commaSeparated = values.stream().collect(joining(", "));
                 error.add("validation.message.value.of", value, commaSeparated);
             }
         }
     }
 
-    private void checkBlankOrNull(Config columnConfig, String value, ValidationError error) {
-        if (getBoolean(columnConfig, "not empty")) {
+    private void checkBlankOrNull(String column, String value, ValidationError error) {
+        if (validationConfig.notEmptyRuleFor(column)) {
             if (isBlankOrNull(value)) {
                 error.add("validation.message.not.empty");
             }
         }
     }
 
-    private void checkInteger(Config columnConfig, String value, ValidationError error) {
-        if (getBoolean(columnConfig, "integer")) {
+    private void checkInteger(String column, String value, ValidationError error) {
+        if (validationConfig.integerRuleFor(column)) {
             if (!isInt(value)) {
                 error.add("validation.message.integer");
             }
         }
     }
 
-    private void checkDouble(Config columnConfig, String value, ValidationError error) {
-        if (getBoolean(columnConfig, "double")) {
+    private void checkDouble(String column, String value, ValidationError error) {
+        if (validationConfig.doubleRuleFor(column)) {
             if (!isDouble(value)) {
                 error.add("validation.message.double");
             }
         }
     }
 
-
-    private void checkMinLength(Config columnConfig, String value, ValidationError error) {
-        Integer minLength = getInteger(columnConfig, "minlength");
+    private void checkMinLength(String column, String value, ValidationError error) {
+        Integer minLength = validationConfig.minLengthRuleFor(column);
         if (minLength != null) {
             if (!minLength(value, minLength)) {
                 error.add("validation.message.min.length", minLength.toString());
@@ -193,8 +185,8 @@ public class Validator {
         }
     }
 
-    private void checkMaxLength(Config columnConfig, String value, ValidationError error) {
-        Integer maxLength = getInteger(columnConfig, "maxlength");
+    private void checkMaxLength(String column, String value, ValidationError error) {
+        Integer maxLength = validationConfig.maxLengthRuleFor(column);
         if (maxLength != null) {
             if (!maxLength(value, maxLength)) {
                 error.add("validation.message.max.length", maxLength.toString());
@@ -202,8 +194,8 @@ public class Validator {
         }
     }
 
-    private void checkDate(Config columnConfig, String value, ValidationError error) {
-        String dateformat = getString(columnConfig, "date");
+    private void checkDate(String column, String value, ValidationError error) {
+        String dateformat = validationConfig.dateRuleFor(column);
         if (dateformat != null && !dateformat.trim().isEmpty()) {
             if (!isDate(value, dateformat, true)) {
                 error.add("validation.message.date.format", dateformat);
@@ -211,16 +203,16 @@ public class Validator {
         }
     }
 
-    private void checkAlphaNumeric(Config columnConfig, String value, ValidationError error) {
-        if (getBoolean(columnConfig, "alphanumeric")) {
+    private void checkAlphaNumeric(String column, String value, ValidationError error) {
+        if (validationConfig.alphanumericRuleFor(column)) {
             if (!matchRegexp(value, "[0-9a-zA-Z]*")) {
                 error.add("validation.message.alphanumeric");
             }
         }
     }
 
-    private void checkRegularExpression(Config columnConfig, String value, ValidationError error) {
-        String regexp = getString(columnConfig, "regexp");
+    private void checkRegularExpression(String column, String value, ValidationError error) {
+        String regexp = validationConfig.regexpRuleFor(column);
         if (regexp != null && !regexp.trim().isEmpty()) {
             if (!matchRegexp(value, regexp)) {
                 error.add("validation.message.regexp", regexp);
@@ -228,59 +220,30 @@ public class Validator {
         }
     }
 
-    private Config getColumnSectionConfig() {
-        return validationConfig.hasPath("columns") ? validationConfig.getConfig("columns") : null;
-    }
-
-    private Config getColumnConfig(Config columnSectionConfig, String column) {
-        return columnSectionConfig.hasPath(column) ? columnSectionConfig.getConfig(column) : null;
-    }
-
-
-    private String getString(Config columnConfig, String path) {
-        return columnConfig.hasPath(path) ? columnConfig.getString(path) : null;
-    }
-
-    private Integer getInteger(Config columnConfig, String path) {
-        return columnConfig.hasPath(path) ? columnConfig.getInt(path) : null;
-    }
-
-    private boolean getBoolean(Config columnConfig, String path) {
-        return columnConfig.hasPath(path) && columnConfig.getBoolean(path);
-    }
-
-    private List<String> getStringList(Config columnConfig, String path) {
-        return columnConfig.hasPath(path) ? columnConfig.getStringList(path) : null;
-    }
-
     public ValidationError isHeaderValid(String[] headerNames) {
         ValidationError result = null;
         if (validationConfig != null) {
-            if (validationConfig.hasPath("headers")) {
-                Config headerSectionConfig = validationConfig.getConfig("headers");
-                List<String> headerConfig = getStringList(headerSectionConfig, "list");
-                if (headerConfig != null) {
-                    if (headerNames.length != headerConfig.size()) {
-                        result = ValidationError.withoutLineNumber().add("validation.message.header.length",
-                                Integer.toString(headerNames.length),
-                                Integer.toString(headerConfig.size()));
-                        return result;
-                    }
+            String[] headerNamesConfig = validationConfig.headerNames();
+            if (headerNamesConfig != null) {
+                if (headerNames.length != headerNamesConfig.length) {
+                    result = ValidationError.withoutLineNumber().add("validation.message.header.length",
+                            Integer.toString(headerNames.length),
+                            Integer.toString(headerNamesConfig.length));
+                    return result;
+                }
 
-                    ValidationError error = ValidationError.withoutLineNumber();
+                ValidationError error = ValidationError.withoutLineNumber();
 
-                    for(int i=0; i<headerConfig.size(); i++) {
-                        String header = headerConfig.get(i);
-                        if (!header.equals(headerNames[i])) {
-                            error.add("validation.message.header.match",
-                                    Integer.toString(i),
-                                    header,
-                                    headerNames[i]);
-                        }
+                for(int i=0; i<headerNamesConfig.length; i++) {
+                    if (!headerNamesConfig[i].equals(headerNames[i])) {
+                        error.add("validation.message.header.match",
+                                Integer.toString(i),
+                                headerNamesConfig[i],
+                                headerNames[i]);
                     }
-                    if (!error.isEmpty()) {
-                        result = error;
-                    }
+                }
+                if (!error.isEmpty()) {
+                    result = error;
                 }
             }
         }

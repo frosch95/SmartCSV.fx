@@ -26,8 +26,7 @@
 
 package ninja.javafx.smartcsv.preferences;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
+import com.google.gson.GsonBuilder;
 import ninja.javafx.smartcsv.FileReader;
 import org.springframework.stereotype.Service;
 import org.supercsv.prefs.CsvPreference;
@@ -35,6 +34,8 @@ import org.supercsv.quote.AlwaysQuoteMode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static ninja.javafx.smartcsv.preferences.QuoteModeHelper.getQuoteMode;
 
@@ -44,7 +45,7 @@ import static ninja.javafx.smartcsv.preferences.QuoteModeHelper.getQuoteMode;
 @Service
 public class PreferencesFileReader implements FileReader {
 
-    private Config config;
+    private Map config;
     private CsvPreference csvPreference;
 
     public PreferencesFileReader() {
@@ -55,15 +56,15 @@ public class PreferencesFileReader implements FileReader {
 
     @Override
     public void read(File filename) throws IOException {
-        config = ConfigFactory.parseFile(filename);
+        config = new GsonBuilder().create().fromJson(new java.io.FileReader(filename), HashMap.class);
 
         if (config != null) {
-            char quoteChar = config.getString("quoteChar").charAt(0);
-            char delimiterChar = config.getString("delimiterChar").charAt(0);
-            String endOfLineSymbols = config.getString("endOfLineSymbols");
-            boolean surroundingSpacesNeedQuotes = config.getBoolean("surroundingSpacesNeedQuotes");
-            boolean ignoreEmptyLines = config.getBoolean("ignoreEmptyLines");
-            String quoteMode = config.getString("quoteMode");
+            char quoteChar = config.get("quoteChar").toString().charAt(0);
+            char delimiterChar = config.get("delimiterChar").toString().charAt(0);
+            String endOfLineSymbols = config.get("endOfLineSymbols").toString();
+            boolean surroundingSpacesNeedQuotes = (Boolean)config.get("surroundingSpacesNeedQuotes");
+            boolean ignoreEmptyLines = (Boolean)config.get("ignoreEmptyLines");
+            String quoteMode = config.get("quoteMode").toString();
 
             csvPreference = new CsvPreference.Builder(quoteChar, delimiterChar, endOfLineSymbols)
                     .useQuoteMode(getQuoteMode(quoteMode))
