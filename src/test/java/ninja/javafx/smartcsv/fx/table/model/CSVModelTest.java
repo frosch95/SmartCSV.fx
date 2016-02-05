@@ -26,6 +26,7 @@
 
 package ninja.javafx.smartcsv.fx.table.model;
 
+import ninja.javafx.smartcsv.validation.ValidationConfiguration;
 import ninja.javafx.smartcsv.validation.Validator;
 import org.junit.Test;
 
@@ -75,20 +76,6 @@ public class CSVModelTest {
 
         // assertion
         assertThat(sut.getRows().indexOf(newRow), is(newRow.getRowNumber()));
-    }
-
-    @Test
-    public void set_validator_calls_when_model_has_data() {
-
-        // setup
-        Validator validator = mock(Validator.class);
-        setup_model_with_one_row_one_column_and_value();
-
-        // execution
-        sut.setValidator(validator);
-
-        // assertion
-        verify(validator).isValid(TESTHEADER, TESTVALUE, 0);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

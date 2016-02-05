@@ -2,8 +2,8 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
-
+   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>                                              
+                                                                                                                    
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,32 +21,22 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-
+  
 */
 
 package ninja.javafx.smartcsv.validation;
 
-import com.google.gson.GsonBuilder;
-import ninja.javafx.smartcsv.FileReader;
-import org.springframework.stereotype.Service;
-
-import java.io.File;
-import java.io.IOException;
+import com.google.gson.annotations.SerializedName;
 
 /**
- * This class loads the constraints as json config
+ * header configuration for the validation
  */
-@Service
-public class ValidationFileReader implements FileReader {
+public class HeaderConfiguration {
 
-    private ValidationConfiguration config;
+    @SerializedName("list")
+    private String[] names ;
 
-    @Override
-    public void read(File file) throws IOException {
-        config = new GsonBuilder().create().fromJson(new java.io.FileReader(file), ValidationConfiguration.class);
-    }
-
-    public ValidationConfiguration getValidationConfiguration() {
-        return config;
+    public String[] getNames() {
+        return names;
     }
 }

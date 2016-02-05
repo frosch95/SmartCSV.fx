@@ -28,6 +28,7 @@ package ninja.javafx.smartcsv.fx.table.model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import ninja.javafx.smartcsv.validation.ValidationConfiguration;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.Validator;
 
@@ -43,11 +44,11 @@ public class CSVModel {
     private ObservableList<ValidationError> validationError  = FXCollections.observableArrayList();
 
     /**
-     * sets the validator for the data revalidates
-     * @param validator the validator for this data
+     * sets the validator configuration for the data revalidates
+     * @param validationConfiguration the validator configuration for this data
      */
-    public void setValidator(Validator validator) {
-        this.validator = validator;
+    public void setValidationConfiguration(ValidationConfiguration validationConfiguration) {
+        this.validator = new Validator(validationConfiguration);
         revalidate();
     }
 

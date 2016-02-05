@@ -24,43 +24,32 @@
   
 */
 
-package ninja.javafx.smartcsv.preferences;
+package ninja.javafx.smartcsv.validation;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ninja.javafx.smartcsv.FileWriter;
 import org.springframework.stereotype.Service;
-import org.supercsv.prefs.CsvPreference;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Save preferences to configuration file
+ * file writer for the validation configuration
  */
 @Service
-public class PreferencesFileWriter implements FileWriter {
+public class ValidationFileWriter implements FileWriter {
 
-    private CsvPreference csvPreference;
+    private ValidationConfiguration validationConfiguration;
 
-    public void setCsvPreference(CsvPreference csvPreference) {
-        this.csvPreference = csvPreference;
+    public void setValidationConfiguration(ValidationConfiguration validationConfiguration) {
+        this.validationConfiguration = validationConfiguration;
     }
 
+    @Override
     public void write(File file) throws IOException {
-        Map<String, Object> preferences = new HashMap<>();
-        preferences.put("quoteChar", Character.toString(csvPreference.getQuoteChar()));
-        preferences.put("delimiterChar", Character.toString((char)csvPreference.getDelimiterChar()));
-        preferences.put("endOfLineSymbols", csvPreference.getEndOfLineSymbols());
-        preferences.put("surroundingSpacesNeedQuotes", csvPreference.isSurroundingSpacesNeedQuotes());
-        preferences.put("ignoreEmptyLines", csvPreference.isIgnoreEmptyLines());
-        preferences.put("quoteMode", QuoteModeHelper.getQuoteModeName(csvPreference.getQuoteMode()));
-
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        Files.write(file.toPath(), gson.toJson(preferences).getBytes());
+        Files.write(file.toPath(), gson.toJson(validationConfiguration).getBytes());
     }
-
 }

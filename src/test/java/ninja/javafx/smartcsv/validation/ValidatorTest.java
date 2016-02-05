@@ -1,15 +1,17 @@
 package ninja.javafx.smartcsv.validation;
 
-import com.typesafe.config.Config;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
+import java.util.List;
 
 import static java.util.Arrays.asList;
-import static ninja.javafx.smartcsv.validation.ConfigMock.columnSectionConfig;
+import static java.util.stream.Collectors.joining;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -23,7 +25,7 @@ public class ValidatorTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // parameters
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private Config config;
+    private ValidationConfiguration config;
     private String column;
     private String value;
     private Boolean expectedResult;
@@ -39,14 +41,14 @@ public class ValidatorTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // parameterized constructor
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public ValidatorTest(String configcolumn,
-                         String configValidation,
-                         Object configValue,
+    public ValidatorTest(String config,
                          String column,
                          String value,
                          Boolean expectedResult,
                          ValidationMessage expectedError) {
-        this.config = columnSectionConfig(configcolumn, configValidation, configValue);
+        System.out.println(config);
+        Gson gson = new GsonBuilder().create();
+        this.config = gson.fromJson(config, ValidationConfiguration.class);
         this.column = column;
         this.value = value;
         this.expectedResult = expectedResult;
@@ -84,30 +86,42 @@ public class ValidatorTest {
     @Parameterized.Parameters
     public static Collection validationConfigurations() {
         return asList(new Object[][] {
-                { "column", "not empty", true, "column", "value", true, null },
-                { "column", "not empty", true, "column", "", false, new ValidationMessage("validation.message.not.empty") },
-                { "column", "not empty", true, "column", null, false, new ValidationMessage("validation.message.not.empty") },
-                { "column", "integer", true, "column", "999", true, null },
-                { "column", "integer", true, "column", "a", false, new ValidationMessage("validation.message.integer") },
-                { "column", "double", true, "column", "999", true, null },
-                { "column", "double", true, "column", "999.000", true, null },
-                { "column", "double", true, "column", "a", false, new ValidationMessage("validation.message.double") },
-                { "column", "minlength", 2, "column", "12", true, null },
-                { "column", "minlength", 2, "column", "1", false, new ValidationMessage("validation.message.min.length", "2") },
-                { "column", "maxlength", 2, "column", "12", true, null },
-                { "column", "maxlength", 2, "column", "123", false, new ValidationMessage("validation.message.max.length", "2") },
-                { "column", "date", "yyyyMMdd", "column", "20151127", true, null },
-                { "column", "date", "yyyyMMdd", "column", "27.11.2015", false, new ValidationMessage("validation.message.date.format", "yyyyMMdd") },
-                { "column", "alphanumeric", true, "column", "abcABC123", true, null },
-                { "column", "alphanumeric", true, "column", "-abcABC123", false, new ValidationMessage("validation.message.alphanumeric") },
-                { "column", "regexp", "[a-z]*", "column", "abc", true, null },
-                { "column", "regexp", "[a-z]*", "column", "abcA", false, new ValidationMessage("validation.message.regexp", "[a-z]*") },
-                { "column", "groovy", "value.contains('a')? 'true' : 'no a inside'", "column", "abcdef", true, null },
-                { "column", "groovy", "value.contains('a')? 'true' : 'no a inside'", "column", "bcdefg", false, new ValidationMessage("no a inside") },
-                { "column", "value of", asList("a","b","c","d","e"), "column", "c", true, null },
-                { "column", "value of", asList("a","b","c","d","e"), "column", "f", false, new ValidationMessage("validation.message.value.of", "f", "a, b, c, d, e") },
+                { json("column", "not empty", true), "column", "value", true, null },
+                { json("column", "not empty", true), "column", "", false, new ValidationMessage("validation.message.not.empty") },
+                { json("column", "not empty", true), "column", null, false, new ValidationMessage("validation.message.not.empty") },
+                { json("column", "integer", true), "column", "999", true, null },
+                { json("column", "integer", true), "column", "a", false, new ValidationMessage("validation.message.integer") },
+                { json("column", "double", true), "column", "999", true, null },
+                { json("column", "double", true), "column", "999.000", true, null },
+                { json("column", "double", true), "column", "a", false, new ValidationMessage("validation.message.double") },
+                { json("column", "minlength", 2), "column", "12", true, null },
+                { json("column", "minlength", 2), "column", "1", false, new ValidationMessage("validation.message.min.length", "2") },
+                { json("column", "maxlength", 2), "column", "12", true, null },
+                { json("column", "maxlength", 2), "column", "123", false, new ValidationMessage("validation.message.max.length", "2") },
+                { json("column", "date", "yyyyMMdd"), "column", "20151127", true, null },
+                { json("column", "date", "yyyyMMdd"), "column", "27.11.2015", false, new ValidationMessage("validation.message.date.format", "yyyyMMdd") },
+                { json("column", "alphanumeric", true), "column", "abcABC123", true, null },
+                { json("column", "alphanumeric", true), "column", "-abcABC123", false, new ValidationMessage("validation.message.alphanumeric") },
+                { json("column", "regexp", "[a-z]*"), "column", "abc", true, null },
+                { json("column", "regexp", "[a-z]*"), "column", "abcA", false, new ValidationMessage("validation.message.regexp", "[a-z]*") },
+                { json("column", "groovy", "value.contains('a')? 'true' : 'no a inside'"), "column", "abcdef", true, null },
+                { json("column", "groovy", "value.contains('a')? 'true' : 'no a inside'"), "column", "bcdefg", false, new ValidationMessage("no a inside") },
+                { json("column", "value of", asList("a","b","c","d","e")), "column", "c", true, null },
+                { json("column", "value of", asList("a","b","c","d","e")), "column", "f", false, new ValidationMessage("validation.message.value.of", "f", "a, b, c, d, e") },
         });
     }
 
-
+    public static String json(String column, String rule, Object value) {
+        String json = "{\"columns\":{\"" + column + "\":{\"" + rule + "\":";
+        if (value instanceof String) {
+            json += "\""+ value + "\"";
+        } else if (value instanceof List) {
+            List<String> list = (List<String>)value;
+            json += "[" + list.stream().collect(joining(", ")) + "]";
+        } else {
+            json += value;
+        }
+        json += "}}}";
+        return json;
+    }
 }

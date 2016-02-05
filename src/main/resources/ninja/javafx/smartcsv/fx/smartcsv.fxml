@@ -25,6 +25,7 @@
 
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import ninja.javafx.smartcsv.fx.list.ErrorSideBar?>
+<?import de.jensd.fx.glyphs.GlyphsStack?>
 <BorderPane fx:id="applicationPane" maxHeight="-Infinity" maxWidth="1000.0" minHeight="700.0" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
     <top>
         <VBox id="background" prefWidth="100.0" BorderPane.alignment="CENTER">
@@ -38,12 +39,6 @@
                                         <FontAwesomeIconView styleClass="open-icon" />
                                     </graphic>
                                 </MenuItem>
-                                <MenuItem mnemonicParsing="false" onAction="#openConfig" text="%menu.open.config">
-                                    <graphic>
-                                        <FontAwesomeIconView styleClass="config-icon" />
-                                    </graphic>
-                                </MenuItem>
-                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem fx:id="saveMenuItem" disable="true" mnemonicParsing="false" onAction="#saveCsv" text="%menu.save">
                                     <graphic>
                                         <FontAwesomeIconView styleClass="save-icon" />
@@ -54,6 +49,34 @@
                                         <FontAwesomeIconView styleClass="save-icon" />
                                     </graphic>
                                 </MenuItem>
+
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem fx:id="loadConfigMenuItem"  disable="true" mnemonicParsing="false" onAction="#openConfig" text="%menu.open.config">
+                                    <graphic>
+                                        <FontAwesomeIconView styleClass="config-icon" />
+                                    </graphic>
+                                </MenuItem>
+                                <MenuItem fx:id="saveConfigMenuItem" disable="true" mnemonicParsing="false" onAction="#saveConfig" text="%menu.save.config">
+                                    <graphic>
+                                        <GlyphsStack>
+                                            <children>
+                                                <FontAwesomeIconView styleClass="save-icon" style="-fx-opacity: 0.7;" />
+                                                <FontAwesomeIconView styleClass="config-icon" />
+                                            </children>
+                                        </GlyphsStack>
+                                    </graphic>
+                                </MenuItem>
+                                <MenuItem fx:id="saveAsConfigMenuItem" disable="true" mnemonicParsing="false" onAction="#saveAsConfig" text="%menu.save.as.config">
+                                    <graphic>
+                                    <GlyphsStack>
+                                        <children>
+                                            <FontAwesomeIconView styleClass="save-icon" style="-fx-opacity: 0.7;" />
+                                            <FontAwesomeIconView styleClass="config-icon" />
+                                        </children>
+                                    </GlyphsStack>
+                                    </graphic>
+                                </MenuItem>
+
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#preferences" text="%menu.preferences">
                                     <graphic>
@@ -103,14 +126,6 @@
                         <FontAwesomeIconView styleClass="open-icon" />
                     </graphic>
                 </Button>
-                  <Button mnemonicParsing="false" onAction="#openConfig">
-                      <tooltip>
-                          <Tooltip text="%menu.open.config" />
-                      </tooltip>
-                      <graphic>
-                          <FontAwesomeIconView styleClass="config-icon" />
-                      </graphic>
-                  </Button>
                   <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveCsv">
                       <tooltip>
                           <Tooltip text="%menu.save" />
@@ -128,6 +143,44 @@
                         </graphic>
                     </Button>
               </HBox>
+                <Region styleClass="spacer" />
+                <HBox styleClass="segmented-button-bar">
+                    <Button fx:id="loadConfigButton" mnemonicParsing="false" disable="true" onAction="#openConfig">
+                        <tooltip>
+                            <Tooltip text="%menu.open.config" />
+                        </tooltip>
+                        <graphic>
+                            <FontAwesomeIconView styleClass="config-icon" />
+                        </graphic>
+                    </Button>
+                    <Button fx:id="saveConfigButton" disable="true" mnemonicParsing="false" onAction="#saveConfig">
+                        <tooltip>
+                            <Tooltip text="%menu.save.config" />
+                        </tooltip>
+                        <graphic>
+                            <GlyphsStack>
+                                <children>
+                                    <FontAwesomeIconView styleClass="save-icon" style="-fx-opacity: 0.7;" />
+                                    <FontAwesomeIconView styleClass="config-icon" />
+                                </children>
+                            </GlyphsStack>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="saveAsConfigButton" disable="true" mnemonicParsing="false" onAction="#saveAsConfig" styleClass="last" text="...">
+                        <tooltip>
+                            <Tooltip text="%menu.save.as.config" />
+                        </tooltip>
+                        <graphic>
+                            <GlyphsStack>
+                                <children>
+                                    <FontAwesomeIconView styleClass="save-icon" style="-fx-opacity: 0.7;" />
+                                    <FontAwesomeIconView styleClass="config-icon" />
+                                </children>
+                            </GlyphsStack>
+
+                        </graphic>
+                    </Button>
+                </HBox>
                 <Region styleClass="spacer" />
                 <HBox styleClass="segmented-button-bar">
                     <Button fx:id="deleteRowButton" disable="true" mnemonicParsing="false" onAction="#deleteRow" styleClass="first">
