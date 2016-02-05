@@ -2,8 +2,8 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
-
+   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>                                              
+                                                                                                                    
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,32 +21,35 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-
+  
 */
 
 package ninja.javafx.smartcsv.validation;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import ninja.javafx.smartcsv.FileReader;
+import ninja.javafx.smartcsv.FileWriter;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 /**
- * This class loads the constraints as json config
+ * file writer for the validation configuration
  */
 @Service
-public class ValidationFileReader implements FileReader {
+public class ValidationFileWriter implements FileWriter {
 
-    private ValidationConfiguration config;
+    private ValidationConfiguration validationConfiguration;
 
-    @Override
-    public void read(File file) throws IOException {
-        config = new GsonBuilder().create().fromJson(new java.io.FileReader(file), ValidationConfiguration.class);
+    public void setValidationConfiguration(ValidationConfiguration validationConfiguration) {
+        this.validationConfiguration = validationConfiguration;
     }
 
-    public ValidationConfiguration getValidationConfiguration() {
-        return config;
+    @Override
+    public void write(File file) throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Files.write(file.toPath(), gson.toJson(validationConfiguration).getBytes());
     }
 }

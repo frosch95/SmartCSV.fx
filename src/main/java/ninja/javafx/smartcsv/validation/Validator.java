@@ -107,7 +107,7 @@ public class Validator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void checkGroovy(String column, String value, ValidationError error) {
-        String groovyScript = validationConfig.groovyRuleFor(column);
+        String groovyScript = validationConfig.getGroovyRuleFor(column);
         if (groovyScript != null) {
 
             Script script = scriptCache.get(column);
@@ -143,7 +143,7 @@ public class Validator {
     }
 
     private void checkValueOf(String column, String value, ValidationError error) {
-        List<String> values = validationConfig.valueOfRuleFor(column);
+        List<String> values = validationConfig.getValueOfRuleFor(column);
         if (values != null) {
             if (!values.contains(value)) {
                 String commaSeparated = values.stream().collect(joining(", "));
@@ -153,7 +153,7 @@ public class Validator {
     }
 
     private void checkBlankOrNull(String column, String value, ValidationError error) {
-        if (validationConfig.notEmptyRuleFor(column)) {
+        if (validationConfig.getNotEmptyRuleFor(column) != null && validationConfig.getNotEmptyRuleFor(column)) {
             if (isBlankOrNull(value)) {
                 error.add("validation.message.not.empty");
             }
@@ -161,7 +161,7 @@ public class Validator {
     }
 
     private void checkInteger(String column, String value, ValidationError error) {
-        if (validationConfig.integerRuleFor(column)) {
+        if (validationConfig.getIntegerRuleFor(column) != null && validationConfig.getIntegerRuleFor(column)) {
             if (!isInt(value)) {
                 error.add("validation.message.integer");
             }
@@ -169,7 +169,7 @@ public class Validator {
     }
 
     private void checkDouble(String column, String value, ValidationError error) {
-        if (validationConfig.doubleRuleFor(column)) {
+        if (validationConfig.getDoubleRuleFor(column) != null && validationConfig.getDoubleRuleFor(column)) {
             if (!isDouble(value)) {
                 error.add("validation.message.double");
             }
@@ -177,7 +177,7 @@ public class Validator {
     }
 
     private void checkMinLength(String column, String value, ValidationError error) {
-        Integer minLength = validationConfig.minLengthRuleFor(column);
+        Integer minLength = validationConfig.getMinLengthRuleFor(column);
         if (minLength != null) {
             if (!minLength(value, minLength)) {
                 error.add("validation.message.min.length", minLength.toString());
@@ -186,7 +186,7 @@ public class Validator {
     }
 
     private void checkMaxLength(String column, String value, ValidationError error) {
-        Integer maxLength = validationConfig.maxLengthRuleFor(column);
+        Integer maxLength = validationConfig.getMaxLengthRuleFor(column);
         if (maxLength != null) {
             if (!maxLength(value, maxLength)) {
                 error.add("validation.message.max.length", maxLength.toString());
@@ -195,7 +195,7 @@ public class Validator {
     }
 
     private void checkDate(String column, String value, ValidationError error) {
-        String dateformat = validationConfig.dateRuleFor(column);
+        String dateformat = validationConfig.getDateRuleFor(column);
         if (dateformat != null && !dateformat.trim().isEmpty()) {
             if (!isDate(value, dateformat, true)) {
                 error.add("validation.message.date.format", dateformat);
@@ -204,7 +204,7 @@ public class Validator {
     }
 
     private void checkAlphaNumeric(String column, String value, ValidationError error) {
-        if (validationConfig.alphanumericRuleFor(column)) {
+        if (validationConfig.getAlphanumericRuleFor(column) != null && validationConfig.getAlphanumericRuleFor(column)) {
             if (!matchRegexp(value, "[0-9a-zA-Z]*")) {
                 error.add("validation.message.alphanumeric");
             }
@@ -212,7 +212,7 @@ public class Validator {
     }
 
     private void checkRegularExpression(String column, String value, ValidationError error) {
-        String regexp = validationConfig.regexpRuleFor(column);
+        String regexp = validationConfig.getRegexpRuleFor(column);
         if (regexp != null && !regexp.trim().isEmpty()) {
             if (!matchRegexp(value, regexp)) {
                 error.add("validation.message.regexp", regexp);

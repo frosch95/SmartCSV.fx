@@ -26,12 +26,8 @@
 
 package ninja.javafx.smartcsv.fx.preferences;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;

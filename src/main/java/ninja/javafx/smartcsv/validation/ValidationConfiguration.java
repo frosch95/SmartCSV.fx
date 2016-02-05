@@ -50,54 +50,107 @@ public class ValidationConfiguration {
         return headerConfiguration.getNames();
     }
 
-    public Boolean integerRuleFor(String column) {
-        if (noRulesFor(column)) return FALSE;
-        return defaultValue((Boolean)columnConfigurations.get(column).get("integer"), FALSE);
+    public Boolean getIntegerRuleFor(String column) {
+        return (Boolean)getValue(column, "integer");
     }
 
-    public Boolean doubleRuleFor(String column) {
-        if (noRulesFor(column)) return FALSE;
-        return defaultValue((Boolean)columnConfigurations.get(column).get("double"), FALSE);
+    public Boolean getDoubleRuleFor(String column) {
+        return (Boolean)getValue(column, "double");
     }
 
-    public Boolean notEmptyRuleFor(String column) {
-        if (noRulesFor(column)) return FALSE;
-        return defaultValue((Boolean)columnConfigurations.get(column).get("not empty"), FALSE);
+    public Boolean getNotEmptyRuleFor(String column) {
+        return (Boolean)getValue(column, "not empty");
     }
 
-    public Integer minLengthRuleFor(String column) {
+    public Integer getMinLengthRuleFor(String column) {
+        return doubleToInteger((Double)getValue(column, "minlength"));
+    }
+
+    public Integer getMaxLengthRuleFor(String column) {
         if (noRulesFor(column)) return null;
-        return doubleToInteger((Double)columnConfigurations.get(column).get("minlength"));
+        return doubleToInteger((Double)getValue(column, "maxlength"));
     }
 
-    public Integer maxLengthRuleFor(String column) {
+    public String getDateRuleFor(String column) {
         if (noRulesFor(column)) return null;
-        return doubleToInteger((Double)columnConfigurations.get(column).get("maxlength"));
+        return (String)getValue(column, "date");
     }
 
-    public String dateRuleFor(String column) {
+    public Boolean getAlphanumericRuleFor(String column) {
         if (noRulesFor(column)) return null;
-        return (String)columnConfigurations.get(column).get("date");
+        return (Boolean)getValue(column, "alphanumeric");
     }
 
-    public Boolean alphanumericRuleFor(String column) {
-        if (noRulesFor(column)) return FALSE;
-        return defaultValue((Boolean)columnConfigurations.get(column).get("alphanumeric"), FALSE);
-    }
-
-    public String regexpRuleFor(String column) {
+    public String getRegexpRuleFor(String column) {
         if (noRulesFor(column)) return null;
-        return (String)columnConfigurations.get(column).get("regexp");
+        return (String)getValue(column, "regexp");
     }
 
-    public List<String> valueOfRuleFor(String column) {
+    public List<String> getValueOfRuleFor(String column) {
         if (noRulesFor(column)) return null;
-        return (List<String>)columnConfigurations.get(column).get("value of");
+        return (List<String>)getValue(column, "value of");
     }
 
-    public String groovyRuleFor(String column) {
+    public String getGroovyRuleFor(String column) {
         if (noRulesFor(column)) return null;
-        return (String)columnConfigurations.get(column).get("groovy");
+        return (String)getValue(column, "groovy");
+    }
+
+    public void setIntegerRuleFor(String column, Boolean value) {
+        setValue(column, value, "integer");
+    }
+
+    public void setDoubleRuleFor(String column, Boolean value) {
+        setValue(column, value, "double");
+    }
+
+    public void setNotEmptyRuleFor(String column, Boolean value) {
+        setValue(column, value, "not empty");
+    }
+
+    public void setMinLengthRuleFor(String column, Integer value) {
+        setValue(column, value, "minlength");
+    }
+
+    public void setMaxLengthRuleFor(String column, Integer value) {
+        setValue(column, value, "maxlength");
+    }
+
+    public void setDateRuleFor(String column, String value) {
+        setValue(column, value, "date");
+    }
+
+    public void setAlphanumericRuleFor(String column, Boolean value) {
+        setValue(column, value, "alphanumeric");
+    }
+
+    public void setRegexpRuleFor(String column, String value) {
+        setValue(column, value, "regexp");
+    }
+
+    public void setValueOfRuleFor(String column, List<String> value) {
+        setValue(column, value, "value of");
+    }
+
+    public void setGroovyRuleFor(String column, String value) {
+        setValue(column, value, "groovy");
+    }
+
+    private void setValue(String column, Object value, String key) {
+        if (!columnConfigurations.containsKey(column)) {
+            columnConfigurations.put(column, new HashMap<>());
+        }
+
+        if (value == null && columnConfigurations.get(column).containsKey(key)) {
+            columnConfigurations.get(column).remove(key);
+        } else {
+            columnConfigurations.get(column).put(key, value);
+        }
+    }
+
+    private Object getValue(String column, String key) {
+        if (noRulesFor(column)) return null;
+        return columnConfigurations.get(column).get(key);
     }
 
     private boolean noHeader() {
@@ -106,11 +159,6 @@ public class ValidationConfiguration {
 
     private boolean noRulesFor(String column) {
         return columnConfigurations == null || columnConfigurations.get(column) == null;
-    }
-
-    private <T> T defaultValue(T value, T defaultValue) {
-        if (value == null) return defaultValue;
-        return value;
     }
 
     private Integer doubleToInteger(Double value) {

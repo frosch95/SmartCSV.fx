@@ -30,6 +30,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ListChangeListener;
+import javafx.collections.WeakListChangeListener;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -53,10 +55,12 @@ import ninja.javafx.smartcsv.fx.table.model.CSVRow;
 import ninja.javafx.smartcsv.fx.table.model.CSVValue;
 import ninja.javafx.smartcsv.fx.util.LoadFileService;
 import ninja.javafx.smartcsv.fx.util.SaveFileService;
+import ninja.javafx.smartcsv.fx.validation.ValidationEditorController;
 import ninja.javafx.smartcsv.preferences.PreferencesFileReader;
 import ninja.javafx.smartcsv.preferences.PreferencesFileWriter;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.ValidationFileReader;
+import ninja.javafx.smartcsv.validation.ValidationFileWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -69,6 +73,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static java.lang.Math.max;
+import static java.text.MessageFormat.format;
 import static javafx.application.Platform.exit;
 import static javafx.application.Platform.runLater;
 import static javafx.beans.binding.Bindings.*;
@@ -89,6 +94,10 @@ public class SmartCSVController extends FXMLController {
             ".SmartCSV.fx" +
             File.separator + "" +
             "preferences.json");
+    public static final String CSV_FILTER_TEXT = "CSV files (*.csv)";
+    public static final String CSV_FILTER_EXTENSION = "*.csv";
+    public static final String JSON_FILTER_TEXT = "JSON files (*.json)";
+    public static final String JSON_FILTER_EXTENSION = "*.json";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // injections
@@ -110,10 +119,16 @@ public class SmartCSVController extends FXMLController {
     private CSVFileWriter csvFileWriter;
 
     @Autowired
+    private ValidationFileWriter validationFileWriter;
+
+    @Autowired
     private AboutController aboutController;
 
     @Autowired
     private PreferencesController preferencesController;
+
+    @Autowired
+    private ValidationEditorController validationEditorController;
 
     @Autowired
     private LoadFileService loadFileService;
@@ -143,6 +158,15 @@ public class SmartCSVController extends FXMLController {
     private MenuItem saveAsMenuItem;
 
     @FXML
+    private MenuItem loadConfigMenuItem;
+
+    @FXML
+    private MenuItem saveConfigMenuItem;
+
+    @FXML
+    private MenuItem saveAsConfigMenuItem;
+
+    @FXML
     private MenuItem deleteRowMenuItem;
 
     @FXML
@@ -155,12 +179,19 @@ public class SmartCSVController extends FXMLController {
     private Button saveAsButton;
 
     @FXML
+    private Button loadConfigButton;
+
+    @FXML
+    private Button saveConfigButton;
+
+    @FXML
+    private Button saveAsConfigButton;
+
+    @FXML
     private Button deleteRowButton;
 
     @FXML
     private Button addRowButton;
-
-    private ErrorSideBar errorSideBar;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // members
@@ -170,11 +201,14 @@ public class SmartCSVController extends FXMLController {
 
     private CSVModel model;
     private TableView<CSVRow> tableView;
+    private ErrorSideBar errorSideBar;
     private BooleanProperty fileChanged = new SimpleBooleanProperty(true);
     private ResourceBundle resourceBundle;
     private ObjectProperty<File> currentCsvFile = new SimpleObjectProperty<>();
     private ObjectProperty<File> currentConfigFile= new SimpleObjectProperty<>();
 
+    private ListChangeListener<ValidationError> errorListListener = c -> tableView.refresh();
+    private WeakListChangeListener<ValidationError> weakErrorListListener = new WeakListChangeListener<>(errorListListener);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // init
@@ -185,20 +219,26 @@ public class SmartCSVController extends FXMLController {
         this.resourceBundle = resourceBundle;
 
         setupTableCellFactory();
+        setupErrorSideBar(resourceBundle);
 
-        errorSideBar = new ErrorSideBar(resourceBundle);
+        bindMenuItemsToFileExistence(currentCsvFile, saveMenuItem, saveAsMenuItem, addRowMenuItem, loadConfigMenuItem);
+        bindButtonsToFileExistence(currentCsvFile, saveButton, saveAsButton, addRowButton, loadConfigButton);
 
-        errorSideBar.selectedValidationErrorProperty().addListener((observable, oldValue, newValue) -> {
-            scrollToError(newValue);
-        });
-        applicationPane.setRight(errorSideBar);
+        bindMenuItemsToFileExistence(currentConfigFile, saveConfigMenuItem, saveAsConfigMenuItem);
+        bindButtonsToFileExistence(currentConfigFile, saveAsConfigButton, saveConfigButton);
 
-        bindMenuItemsToCsvFileExtistence(saveMenuItem, saveAsMenuItem, addRowMenuItem);
-        bindButtonsToCsvFileExistence(saveButton, saveAsButton, addRowButton);
         bindCsvFileName();
         bindConfigFileName();
 
         loadCsvPreferencesFromFile();
+    }
+
+    private void setupErrorSideBar(ResourceBundle resourceBundle) {
+        errorSideBar = new ErrorSideBar(resourceBundle);
+        errorSideBar.selectedValidationErrorProperty().addListener((observable, oldValue, newValue) -> {
+            scrollToError(newValue);
+        });
+        applicationPane.setRight(errorSideBar);
     }
 
     private void setupTableCellFactory() {
@@ -226,8 +266,8 @@ public class SmartCSVController extends FXMLController {
         currentCsvFile.setValue(
                 loadFile(
                         csvLoader,
-                        "CSV files (*.csv)",
-                        "*.csv",
+                        CSV_FILTER_TEXT,
+                        CSV_FILTER_EXTENSION,
                         "Open CSV",
                         currentCsvFile.getValue()));
     }
@@ -237,8 +277,8 @@ public class SmartCSVController extends FXMLController {
         currentConfigFile.setValue(
                 loadFile(
                         validationLoader,
-                        "JSON files (*.json)",
-                        "*.json",
+                        JSON_FILTER_TEXT,
+                        JSON_FILTER_EXTENSION,
                         "Open Validation Configuration",
                         currentConfigFile.getValue()));
     }
@@ -255,9 +295,26 @@ public class SmartCSVController extends FXMLController {
         currentCsvFile.setValue(
                 saveFile(
                         csvFileWriter,
-                        "CSV files (*.csv)",
-                        "*.csv",
+                        CSV_FILTER_TEXT,
+                        CSV_FILTER_EXTENSION,
                         currentCsvFile.getValue()));
+    }
+
+    @FXML
+    public void saveConfig(ActionEvent actionEvent) {
+        validationFileWriter.setValidationConfiguration(validationLoader.getValidationConfiguration());
+        useSaveFileService(validationFileWriter, currentConfigFile.getValue());
+    }
+
+    @FXML
+    public void saveAsConfig(ActionEvent actionEvent) {
+        validationFileWriter.setValidationConfiguration(validationLoader.getValidationConfiguration());
+        currentConfigFile.setValue(
+                saveFile(
+                        validationFileWriter,
+                        JSON_FILTER_TEXT,
+                        JSON_FILTER_EXTENSION,
+                        currentConfigFile.getValue()));
     }
 
     @FXML
@@ -334,6 +391,25 @@ public class SmartCSVController extends FXMLController {
         return canExit;
     }
 
+    public void showValidationEditor(String column) {
+        validationEditorController.setSelectedColumn(column);
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setGraphic(null);
+        alert.setTitle(resourceBundle.getString("dialog.validation.rules.title"));
+        alert.setHeaderText(format(resourceBundle.getString("dialog.validation.rules.header"), column));
+        alert.getDialogPane().setContent(validationEditorController.getView());
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == ButtonType.OK){
+            runLater(() -> {
+                validationEditorController.updateConfiguration();
+                fileChanged.setValue(true);
+                model.revalidate();
+            });
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -345,15 +421,15 @@ public class SmartCSVController extends FXMLController {
         tableView.getSelectionModel().select(lastRow);
     }
 
-    private void bindMenuItemsToCsvFileExtistence(MenuItem... items) {
+    private void bindMenuItemsToFileExistence(ObjectProperty<File> file, MenuItem... items) {
         for (MenuItem item: items) {
-            item.disableProperty().bind(isNull(currentCsvFile));
+            item.disableProperty().bind(isNull(file));
         }
     }
 
-    private void bindButtonsToCsvFileExistence(Button... items) {
+    private void bindButtonsToFileExistence(ObjectProperty<File> file, Button... items) {
         for (Button item: items) {
-            item.disableProperty().bind(isNull(currentCsvFile));
+            item.disableProperty().bind(isNull(file));
         }
     }
 
@@ -489,7 +565,9 @@ public class SmartCSVController extends FXMLController {
     private void resetContent() {
         model = csvLoader.getData();
         if (model != null) {
-            model.setValidator(validationLoader.getValidator());
+            model.getValidationError().addListener(weakErrorListListener);
+            model.setValidationConfiguration(validationLoader.getValidationConfiguration());
+            validationEditorController.setValidationConfiguration(validationLoader.getValidationConfiguration());
             tableView = new TableView<>();
 
             bindMenuItemsToTableSelection(deleteRowMenuItem);
@@ -521,6 +599,11 @@ public class SmartCSVController extends FXMLController {
         column.setCellValueFactory(new ObservableMapValueFactory(header));
         column.setCellFactory(cellFactory);
         column.setEditable(true);
+        column.setSortable(false);
+
+        ContextMenu contextMenu = contextMenuForColumn(header);
+        column.setContextMenu(contextMenu);
+
         column.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<CSVRow, CSVValue>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<CSVRow, CSVValue> event) {
@@ -534,6 +617,15 @@ public class SmartCSVController extends FXMLController {
         });
 
         tableView.getColumns().add(column);
+    }
+
+    private ContextMenu contextMenuForColumn(String header) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem editColumnRulesMenuItem = new MenuItem(resourceBundle.getString("context.menu.edit.column.rules"));
+        bindMenuItemsToFileExistence(currentConfigFile, editColumnRulesMenuItem);
+        editColumnRulesMenuItem.setOnAction(e -> showValidationEditor(header));
+        contextMenu.getItems().addAll(editColumnRulesMenuItem);
+        return contextMenu;
     }
 
     private void scrollToError(ValidationError entry) {
