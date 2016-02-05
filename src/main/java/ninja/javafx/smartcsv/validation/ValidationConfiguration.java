@@ -109,11 +109,11 @@ public class ValidationConfiguration {
     }
 
     public void setMinLengthRuleFor(String column, Integer value) {
-        setValue(column, value, "minlength");
+        setValue(column, value == null ? null : value.doubleValue(), "minlength");
     }
 
     public void setMaxLengthRuleFor(String column, Integer value) {
-        setValue(column, value, "maxlength");
+        setValue(column, value == null ? null : value.doubleValue(), "maxlength");
     }
 
     public void setDateRuleFor(String column, String value) {
