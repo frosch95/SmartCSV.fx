@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import de.jensd.fx.glyphs.GlyphsStack?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
@@ -23,8 +22,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
-<?import de.jensd.fx.glyphs.GlyphsStack?>
 <BorderPane fx:id="applicationPane" maxHeight="-Infinity" maxWidth="1000.0" minHeight="700.0" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
     <top>
         <VBox id="background" prefWidth="100.0" BorderPane.alignment="CENTER">
@@ -50,7 +47,7 @@
                                 </MenuItem>
 
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem fx:id="loadConfigMenuItem"  disable="true" mnemonicParsing="false" onAction="#openConfig" text="%menu.open.config">
+                                <MenuItem fx:id="loadConfigMenuItem" disable="true" mnemonicParsing="false" onAction="#openConfig" text="%menu.open.config">
                                     <graphic>
                                         <FontAwesomeIconView styleClass="config-icon" />
                                     </graphic>
@@ -59,7 +56,7 @@
                                     <graphic>
                                         <GlyphsStack>
                                             <children>
-                                                <FontAwesomeIconView styleClass="save-icon" style="-fx-opacity: 0.7;" />
+                                                <FontAwesomeIconView style="-fx-opacity: 0.7;" styleClass="save-icon" />
                                                 <FontAwesomeIconView styleClass="config-icon" />
                                             </children>
                                         </GlyphsStack>
@@ -69,7 +66,7 @@
                                     <graphic>
                                     <GlyphsStack>
                                         <children>
-                                            <FontAwesomeIconView styleClass="save-icon" style="-fx-opacity: 0.7;" />
+                                            <FontAwesomeIconView style="-fx-opacity: 0.7;" styleClass="save-icon" />
                                             <FontAwesomeIconView styleClass="config-icon" />
                                         </children>
                                     </GlyphsStack>
@@ -144,7 +141,7 @@
               </HBox>
                 <Region styleClass="spacer" />
                 <HBox styleClass="segmented-button-bar">
-                    <Button fx:id="loadConfigButton" mnemonicParsing="false" disable="true" onAction="#openConfig">
+                    <Button fx:id="loadConfigButton" disable="true" mnemonicParsing="false" onAction="#openConfig">
                         <tooltip>
                             <Tooltip text="%menu.open.config" />
                         </tooltip>
@@ -159,7 +156,7 @@
                         <graphic>
                             <GlyphsStack>
                                 <children>
-                                    <FontAwesomeIconView styleClass="save-icon" style="-fx-opacity: 0.7;" />
+                                    <FontAwesomeIconView style="-fx-opacity: 0.7;" styleClass="save-icon" />
                                     <FontAwesomeIconView styleClass="config-icon" />
                                 </children>
                             </GlyphsStack>
@@ -172,7 +169,7 @@
                         <graphic>
                             <GlyphsStack>
                                 <children>
-                                    <FontAwesomeIconView styleClass="save-icon" style="-fx-opacity: 0.7;" />
+                                    <FontAwesomeIconView style="-fx-opacity: 0.7;" styleClass="save-icon" />
                                     <FontAwesomeIconView styleClass="config-icon" />
                                 </children>
                             </GlyphsStack>
@@ -242,8 +239,8 @@
                 <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
-                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                 <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
