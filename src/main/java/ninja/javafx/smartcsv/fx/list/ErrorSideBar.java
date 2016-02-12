@@ -36,6 +36,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
+import ninja.javafx.smartcsv.fx.util.ColorConstants;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import org.controlsfx.control.PopOver;
 
@@ -44,6 +45,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static javafx.geometry.Pos.CENTER;
+import static ninja.javafx.smartcsv.fx.util.ColorConstants.ERROR_COLOR;
+import static ninja.javafx.smartcsv.fx.util.ColorConstants.OK_COLOR;
 import static ninja.javafx.smartcsv.fx.util.I18nValidationUtil.getI18nValidatioMessage;
 
 /**
@@ -52,6 +55,10 @@ import static ninja.javafx.smartcsv.fx.util.I18nValidationUtil.getI18nValidatioM
 public class ErrorSideBar extends Region {
 
     private static final double WIDTH = 20.0;
+    private static final int BORDER = 8;
+    private static final double STATUS_BLOCK_HEIGHT = WIDTH - BORDER;
+    private static final double STATUS_BLOCK_WIDTH = WIDTH - BORDER;
+    private static final double STATUS_BLOCK_OFFSET = WIDTH + BORDER / 2;
 
     private ListChangeListener<ValidationError> errorListListener = c -> setErrorMarker();
     private WeakListChangeListener<ValidationError> weakErrorListListener = new WeakListChangeListener<>(errorListListener);
@@ -59,12 +66,18 @@ public class ErrorSideBar extends Region {
     private ObjectProperty<ValidationError> selectedValidationError = new SimpleObjectProperty<>();
     private PopOver popOver = new PopOver();
     private ResourceBundle resourceBundle;
+    private Region statusBlock;
 
     public ErrorSideBar(ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
         initPopOver();
         setFixWidth();
         addModelListener();
+
+        statusBlock = new Region();
+        statusBlock.setPrefSize(STATUS_BLOCK_WIDTH, STATUS_BLOCK_HEIGHT);
+        statusBlock.setLayoutY(BORDER / 2);
+        statusBlock.setLayoutX(BORDER / 2);
     }
 
     private void initPopOver() {
@@ -111,11 +124,16 @@ public class ErrorSideBar extends Region {
 
     private void setErrorMarker() {
         List<Region> errorMarkerList = new ArrayList<>();
+        errorMarkerList.add(statusBlock);
+        statusBlock.setStyle("-fx-background-color: " + OK_COLOR);
         if (model.get() != null) {
             List<ValidationError> errorList = model.get().getValidationError();
             if (errorList != null && !errorList.isEmpty()) {
+
+                statusBlock.setStyle("-fx-background-color: " + ERROR_COLOR);
+
                 int rows = model.get().getRows().size();
-                double space = ((int)getHeight()) / rows;
+                double space = heightWithoutStatusBlock() / rows;
                 for (ValidationError error : errorList) {
                     errorMarkerList.add(generateErrorMarker(space, error));
                 }
@@ -124,11 +142,15 @@ public class ErrorSideBar extends Region {
         getChildren().setAll(errorMarkerList);
     }
 
+    private int heightWithoutStatusBlock() {
+        return (int)(getHeight() - STATUS_BLOCK_OFFSET);
+    }
+
     private Region generateErrorMarker(double space, ValidationError error) {
         Region errorMarker = new Region();
-        errorMarker.setLayoutY(space * error.getLineNumber());
+        errorMarker.setLayoutY(space * error.getLineNumber() + STATUS_BLOCK_OFFSET);
         errorMarker.setPrefSize(WIDTH, 2);
-        errorMarker.setStyle("-fx-background-color: #ff8888");
+        errorMarker.setStyle("-fx-background-color: " + ERROR_COLOR);
         errorMarker.setOnMouseClicked(event -> selectedValidationError.setValue(error));
         errorMarker.setOnMouseEntered(event -> {
             popOver.setContentNode(popupContent(getI18nValidatioMessage(resourceBundle, error)));

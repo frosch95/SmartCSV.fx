@@ -33,10 +33,12 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import ninja.javafx.smartcsv.fx.table.model.CSVRow;
 import ninja.javafx.smartcsv.fx.table.model.CSVValue;
+import ninja.javafx.smartcsv.fx.util.ColorConstants;
 
 import java.util.ResourceBundle;
 
 import static javafx.application.Platform.runLater;
+import static ninja.javafx.smartcsv.fx.util.ColorConstants.ERROR_COLOR;
 import static ninja.javafx.smartcsv.fx.util.I18nValidationUtil.getI18nValidatioMessage;
 
 /**
@@ -77,7 +79,7 @@ public class EditableValidationCell extends TableCell<CSVRow, CSVValue> {
             setStyle("");
             setTooltip(null);
         } else if (item.getValidationError() != null) {
-            setStyle("-fx-background-color: #ff8888");
+            setStyle("-fx-background-color: derive("+ ERROR_COLOR +", 30%)");
             setTooltip(new Tooltip(getI18nValidatioMessage(resourceBundle, item.getValidationError())));
         }
 
