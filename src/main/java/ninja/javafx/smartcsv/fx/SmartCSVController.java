@@ -457,6 +457,8 @@ public class SmartCSVController extends FXMLController {
         if (PREFERENCES_FILE.exists()) {
             useLoadFileService(preferencesLoader, PREFERENCES_FILE,
                     event -> setCsvPreference(preferencesLoader.getCSVpreference()));
+        } else {
+            setCsvPreference(CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
         }
     }
 
