@@ -66,8 +66,6 @@ public class PreferencesController extends FXMLController {
     @FXML
     private ComboBox<String> quoteMode;
 
-    private String endOfLineSymbols;
-
     private BooleanProperty valid = new SimpleBooleanProperty(true);
 
 
@@ -106,11 +104,10 @@ public class PreferencesController extends FXMLController {
         surroundingSpacesNeedQuotes.setSelected(csvPreference.isSurroundingSpacesNeedQuotes());
         ignoreEmptyLines.setSelected(csvPreference.isIgnoreEmptyLines());
         quoteMode.getSelectionModel().select(getQuoteModeName(csvPreference.getQuoteMode()));
-        endOfLineSymbols = csvPreference.getEndOfLineSymbols();
     }
 
     public CsvPreference getCsvPreference() {
-        return new CsvPreference.Builder(quoteChar.getText().charAt(0), delimiterChar.getText().charAt(0), endOfLineSymbols)
+        return new CsvPreference.Builder(quoteChar.getText().charAt(0), delimiterChar.getText().charAt(0), "\n")
                 .useQuoteMode(getQuoteMode(quoteMode.getSelectionModel().getSelectedItem()))
                 .surroundingSpacesNeedQuotes(surroundingSpacesNeedQuotes.isSelected())
                 .ignoreEmptyLines(ignoreEmptyLines.isSelected())
