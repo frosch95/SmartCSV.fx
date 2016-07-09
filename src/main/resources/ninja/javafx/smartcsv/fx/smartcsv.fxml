@@ -26,7 +26,7 @@
     <top>
         <VBox id="background" prefWidth="100.0" BorderPane.alignment="CENTER">
             <children>
-                <MenuBar>
+                <MenuBar useSystemMenuBar="true">
                     <menus>
                         <Menu mnemonicParsing="false" text="%menu.file">
                             <items>
