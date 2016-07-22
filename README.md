@@ -7,7 +7,7 @@ At work I have the need to fix wrong CSV files from customers. It is hard to fin
 even in a "normal" CSV editor. So I decided to write this simple JavaFX application.
 
 ##Video
-[![short video about the application](http://img.youtube.com/vi/SH0UAtPG6Eg/0.jpg)](https://youtu.be/SH0UAtPG6Eg)
+[![short video about the application](http://img.youtube.com/vi/eUh_WLx1OwI/0.jpg)](https://youtu.be/eUh_WLx1OwI)
 
 ##Links
 [GitHub Page](http://frosch95.github.io/SmartCSV.fx/)
