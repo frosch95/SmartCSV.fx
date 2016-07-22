@@ -9,6 +9,11 @@ even in a "normal" CSV editor. So I decided to write this simple JavaFX applicat
 ##Video
 [![short video about the application](http://img.youtube.com/vi/SH0UAtPG6Eg/0.jpg)](https://youtu.be/SH0UAtPG6Eg)
 
+##Links
+[GitHub Page](http://frosch95.github.io/SmartCSV.fx/)
+[Wiki & Documentation](https://github.com/frosch95/SmartCSV.fx/wiki)
+binary distribution of the [latest release (0.4)](https://drive.google.com/open?id=0BwY9gBUvn5qmREdCc0FvNDNEQTA)
+
 ##License
 ###The MIT License (MIT)
 
