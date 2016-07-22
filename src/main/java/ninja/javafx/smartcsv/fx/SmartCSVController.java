@@ -262,6 +262,7 @@ public class SmartCSVController extends FXMLController {
         currentConfigFile.setContent(currentCsvFile.getContent().createValidationConfiguration());
         currentConfigFile.setFile(null);
         currentConfigFile.setFileChanged(true);
+        resetContent();
     }
 
     @FXML
