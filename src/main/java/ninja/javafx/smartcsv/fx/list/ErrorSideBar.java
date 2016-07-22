@@ -38,6 +38,8 @@ import javafx.scene.text.Text;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
 import ninja.javafx.smartcsv.fx.util.ColorConstants;
 import ninja.javafx.smartcsv.validation.ValidationError;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.PopOver;
 
 import java.util.ArrayList;
@@ -53,6 +55,8 @@ import static ninja.javafx.smartcsv.fx.util.I18nValidationUtil.getI18nValidatioM
  * clickable side bar with error markers
  */
 public class ErrorSideBar extends Region {
+
+    private static final Logger logger = LogManager.getLogger(ErrorSideBar.class);
 
     private static final double WIDTH = 20.0;
     private static final int BORDER = 8;
@@ -133,7 +137,7 @@ public class ErrorSideBar extends Region {
                 statusBlock.setStyle("-fx-background-color: " + ERROR_COLOR);
 
                 int rows = model.get().getRows().size();
-                double space = heightWithoutStatusBlock() / rows;
+                double space = (double)heightWithoutStatusBlock() / rows;
                 for (ValidationError error : errorList) {
                     errorMarkerList.add(generateErrorMarker(space, error));
                 }
@@ -147,6 +151,8 @@ public class ErrorSideBar extends Region {
     }
 
     private Region generateErrorMarker(double space, ValidationError error) {
+        logger.info("generate error marker for {} errors in line {}", error.getMessages().size(), error.getLineNumber());
+        logger.info("layout y is set to {}", (space * error.getLineNumber() + STATUS_BLOCK_OFFSET));
         Region errorMarker = new Region();
         errorMarker.setLayoutY(space * error.getLineNumber() + STATUS_BLOCK_OFFSET);
         errorMarker.setPrefSize(WIDTH, 2);

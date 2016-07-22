@@ -15,48 +15,68 @@
 }
 
 .open-icon {
-    -glyph-name: "FILE_TEXT_ALT";
-    -glyph-size: 14px;
+    -glyph-name: "FILE_IMPORT";
+    -glyph-size: 16px;
+}
+
+.file-document-icon {
+    -glyph-name: "FILE_DOCUMENT";
+    -glyph-size: 16px;
 }
 
 .config-icon {
-    -glyph-name: "CHECK";
-    -glyph-size: 14px;
+    -glyph-name: "CLIPBOARD";
+    -glyph-size: 16px;
+}
+
+.create-config-icon {
+    -glyph-name: "STAR";
+    -glyph-size: 10px;
+}
+
+.load-config-icon {
+    -glyph-name: "ARROW_UP_BOLD";
+    -glyph-size: 10px;
+}
+
+.save-config-icon {
+    -glyph-name: "ARROW_DOWN_BOLD";
+    -glyph-size: 10px;
 }
 
 .save-icon {
-    -glyph-name: "FLOPPY_ALT";
-    -glyph-size: 14px;
+    -glyph-name: "FILE_EXPORT";
+    -glyph-size: 16px;
 }
 
 .exit-icon {
-    -glyph-name: "SIGN_OUT";
-    -glyph-size: 14px;
+    -glyph-name: "EXIT_TO_APP";
+    -glyph-size: 16px;
 }
 
 .info-icon {
-    -glyph-name: "INFO";
-    -glyph-size: 14px;
+    -glyph-name: "INFORMATION_OUTLINE";
+    -glyph-size: 16px;
 }
 
-.error-title-icon {
-    -glyph-name: "EXCLAMATION_TRIANGLE";
-    -glyph-size: 14px;
+.config-check-icon {
+    -glyph-name: "CLIPBOARD_CHECK";
+    -glyph-size: 16px;
 }
 
 .preferences-icon {
-    -glyph-name: "COG";
-    -glyph-size: 14px;
+    -glyph-name: "SETTINGS";
+    -glyph-size: 16px;
 }
 
 .delete-icon {
-    -glyph-name: "MINUS";
-    -glyph-size: 14px;
+    -glyph-name: "TABLE_ROW_REMOVE";
+    -glyph-size: 16px;
 }
 
 .add-icon {
-    -glyph-name: "PLUS";
-    -glyph-size: 14px;
+    -glyph-name: "TABLE_ROW_PLUS_AFTER";
+    -glyph-size: 16px;
 }
 
 /* toolbar customization based on http://fxexperience.com/2012/02/customized-segmented-toolbar-buttons/ */
@@ -88,6 +108,13 @@
 
 .tool-bar .config-icon {
     -glyph-size: 16px;
+    -fx-fill: white;
+}
+
+.menu-item .load-config-icon,
+.menu-item .save-config-icon,
+.menu-item .create-config-icon
+{
     -fx-fill: white;
 }
 

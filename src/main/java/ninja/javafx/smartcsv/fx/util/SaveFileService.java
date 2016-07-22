@@ -30,6 +30,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import ninja.javafx.smartcsv.FileWriter;
 import ninja.javafx.smartcsv.csv.CSVFileWriter;
+import ninja.javafx.smartcsv.files.FileStorage;
 
 import java.io.File;
 
@@ -41,14 +42,9 @@ import static javafx.application.Platform.runLater;
 @org.springframework.stereotype.Service
 public class SaveFileService extends Service {
 
-    private File file;
-    private FileWriter writer;
+    private FileStorage file;
 
-    public void setWriter(FileWriter writer) {
-        this.writer = writer;
-    }
-
-    public void setFile(File value) {
+    public void setFileStorage(FileStorage value) {
         file = value;
     }
 
@@ -58,7 +54,7 @@ public class SaveFileService extends Service {
             @Override
             protected Void call() throws Exception {
                 try {
-                    writer.write(file);
+                    file.save();
                 } catch (Throwable ex) {
                     ex.printStackTrace();
                 }

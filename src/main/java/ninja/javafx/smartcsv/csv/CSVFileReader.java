@@ -40,8 +40,7 @@ import java.util.Map;
 /**
  * reads the csv file and stores the values in csv model
  */
-@Service
-public class CSVFileReader extends CSVConfigurable implements FileReader {
+public class CSVFileReader extends CSVConfigurable implements FileReader<CSVModel> {
 
     private CSVModel model;
 
@@ -72,7 +71,7 @@ public class CSVFileReader extends CSVConfigurable implements FileReader {
         }
     }
 
-    public CSVModel getData() {
+    public CSVModel getContent() {
         return model;
     }
 

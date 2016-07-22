@@ -41,12 +41,11 @@ import java.util.Map;
 /**
  * Save preferences to configuration file
  */
-@Service
-public class PreferencesFileWriter implements FileWriter {
+public class PreferencesFileWriter implements FileWriter<CsvPreference> {
 
     private CsvPreference csvPreference;
 
-    public void setCsvPreference(CsvPreference csvPreference) {
+    public void setContent(CsvPreference csvPreference) {
         this.csvPreference = csvPreference;
     }
 

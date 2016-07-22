@@ -57,6 +57,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Label text="junit" />
@@ -77,6 +78,8 @@
                   <Hyperlink onAction="#openLinkInBrowser" text="https://bitbucket.org/Jerady/fontawesomefx" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                    <Label text="ControlsFX" GridPane.rowIndex="8" />
                    <Hyperlink onAction="#openLinkInBrowser" text="http://fxexperience.com/controlsfx/" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                   <Label text="Apache Log4j 2" GridPane.rowIndex="9" />
+                   <Hyperlink onAction="#openLinkInBrowser" text="http://logging.apache.org/log4j/2.x/" GridPane.columnIndex="1" GridPane.rowIndex="9" />
 
                </children>
                <padding>

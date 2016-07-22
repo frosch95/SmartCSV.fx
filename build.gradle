@@ -1,5 +1,5 @@
 group 'ninja.javafx'
-version '0.3-SNAPSHOT'
+version '0.4-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'groovy'
@@ -22,7 +22,12 @@ dependencies {
     compile group: 'org.springframework', name:'spring-context', version: '4.3.1.RELEASE'
     compile group: 'net.sf.supercsv', name: 'super-csv', version: '2.4.0'
     compile group: 'commons-validator', name: 'commons-validator', version: '1.5.1'
-    compile group: 'de.jensd', name: 'fontawesomefx', version: '8.9'
+    compile group: 'de.jensd', name: 'fontawesomefx-commons', version: '8.12'
+    compile group: 'de.jensd', name: 'fontawesomefx-fontawesome', version: '4.6.3'
+    compile group: 'de.jensd', name: 'fontawesomefx-materialdesignfont', version: '1.6.50'
+    compile group: 'de.jensd', name: 'fontawesomefx-materialicons', version: '2.2.0'
     compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.11'
     compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.6.2'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'
 }

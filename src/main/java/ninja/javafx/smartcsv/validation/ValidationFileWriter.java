@@ -38,12 +38,11 @@ import java.nio.file.Files;
 /**
  * file writer for the validation configuration
  */
-@Service
-public class ValidationFileWriter implements FileWriter {
+public class ValidationFileWriter implements FileWriter<ValidationConfiguration> {
 
     private ValidationConfiguration validationConfiguration;
 
-    public void setValidationConfiguration(ValidationConfiguration validationConfiguration) {
+    public void setContent(ValidationConfiguration validationConfiguration) {
         this.validationConfiguration = validationConfiguration;
     }
 

@@ -32,8 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.Boolean.FALSE;
-
 /**
  * validation configuration
  */
@@ -48,6 +46,10 @@ public class ValidationConfiguration {
     public String[] headerNames() {
         if (noHeader()) return null;
         return headerConfiguration.getNames();
+    }
+
+    public void setHeaderNames(String[] headerNames) {
+        headerConfiguration.setNames(headerNames);
     }
 
     public Boolean getIntegerRuleFor(String column) {

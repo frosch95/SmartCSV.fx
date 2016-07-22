@@ -42,12 +42,11 @@ import static java.util.stream.Collectors.toMap;
 /**
  * filewriter for the csv
  */
-@Service
-public class CSVFileWriter extends CSVConfigurable implements ninja.javafx.smartcsv.FileWriter {
+public class CSVFileWriter extends CSVConfigurable implements ninja.javafx.smartcsv.FileWriter<CSVModel> {
 
     private CSVModel model;
 
-    public void setModel(CSVModel model) {
+    public void setContent(CSVModel model) {
         this.model = model;
     }
 

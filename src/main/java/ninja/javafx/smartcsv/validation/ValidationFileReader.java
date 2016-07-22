@@ -36,8 +36,7 @@ import java.io.IOException;
 /**
  * This class loads the constraints as json config
  */
-@Service
-public class ValidationFileReader implements FileReader {
+public class ValidationFileReader implements FileReader<ValidationConfiguration> {
 
     private ValidationConfiguration config;
 
@@ -46,7 +45,7 @@ public class ValidationFileReader implements FileReader {
         config = new GsonBuilder().create().fromJson(new java.io.FileReader(file), ValidationConfiguration.class);
     }
 
-    public ValidationConfiguration getValidationConfiguration() {
+    public ValidationConfiguration getContent() {
         return config;
     }
 }
