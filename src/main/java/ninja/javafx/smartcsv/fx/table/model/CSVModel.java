@@ -28,6 +28,8 @@ package ninja.javafx.smartcsv.fx.table.model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import ninja.javafx.smartcsv.validation.ValidationConfiguration;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.Validator;
@@ -49,6 +51,7 @@ public class CSVModel {
     private ObservableList<CSVRow> rows = FXCollections.observableArrayList();
     private String[] header;
     private ObservableList<ValidationError> validationError  = FXCollections.observableArrayList();
+    private RevalidationService revalidationService = new RevalidationService();
 
     /**
      * sets the validator configuration for the data revalidates
@@ -111,42 +114,75 @@ public class CSVModel {
 
         if (!hasValidator()) return;
 
-        List<ValidationError> errors = new ArrayList<>();
-
-        if (header != null) {
-            ValidationError headerError = validator.isHeaderValid(header);
-            if (headerError != null) {
-                logger.info("revalidate: header error found");
-                errors.add(headerError);
-            }
-        }
-
-        for (int lineNumber = 0; lineNumber < rows.size(); lineNumber++) {
-            CSVRow row = rows.get(lineNumber);
-            row.setValidator(validator);
-            for (String column: row.getColumns().keySet()) {
-                CSVValue value = row.getColumns().get(column).getValue();
-                value.setValidator(validator);
-                if (validator != null) {
-                    ValidationError validationError = validator.isValid(column, value.getValue(), lineNumber);
-                    if (validationError != null) {
-                        logger.info("revalidate: {} errors found in line {}", validationError.getMessages().size(), lineNumber);
-                        errors.add(validationError);
-                        value.setValidationError(validationError);
-                    } else {
-                        value.setValidationError(null);
-                    }
-                } else {
-                    value.setValidationError(null);
-                }
-            }
-        }
-
-        validationError.setAll(errors);
+        revalidationService.setHeader(header);
+        revalidationService.setRows(rows);
+        revalidationService.setValidator(validator);
+        revalidationService.setOnSucceeded(t -> validationError.setAll(revalidationService.getValue()));
+        revalidationService.setOnFailed(t -> logger.error("revalidation service failed!"));
+        revalidationService.restart();
     }
 
     private boolean hasValidator() {
         return validator != null && validator.hasConfig();
+    }
+
+    private static class RevalidationService extends Service<List<ValidationError>> {
+
+        private Validator validator;
+        private List<CSVRow> rows;
+        private String[] header;
+
+        public void setValidator(Validator validator) {
+            this.validator = validator;
+        }
+
+        public void setRows(List<CSVRow> rows) {
+            this.rows = rows;
+        }
+
+        public void setHeader(String[] header) {
+            this.header = header;
+        }
+
+        @Override
+        protected Task<List<ValidationError>> createTask() {
+            return new Task<List<ValidationError>>() {
+                @Override
+                protected List<ValidationError> call() throws Exception {
+                    List<ValidationError> errors = new ArrayList<>();
+
+                    if (header != null) {
+                        ValidationError headerError = validator.isHeaderValid(header);
+                        if (headerError != null) {
+                            logger.info("revalidate: header error found");
+                            errors.add(headerError);
+                        }
+                    }
+
+                    for (int lineNumber = 0; lineNumber < rows.size(); lineNumber++) {
+                        CSVRow row = rows.get(lineNumber);
+                        row.setValidator(validator);
+                        for (String column: row.getColumns().keySet()) {
+                            CSVValue value = row.getColumns().get(column).getValue();
+                            value.setValidator(validator);
+                            if (validator != null) {
+                                ValidationError validationError = validator.isValid(column, value.getValue(), lineNumber);
+                                if (validationError != null) {
+                                    logger.info("revalidate: {} errors found in line {}", validationError.getMessages().size(), lineNumber);
+                                    errors.add(validationError);
+                                    value.setValidationError(validationError);
+                                } else {
+                                    value.setValidationError(null);
+                                }
+                            } else {
+                                value.setValidationError(null);
+                            }
+                        }
+                    }
+                    return errors;
+                }
+            };
+        }
     }
 
 }
