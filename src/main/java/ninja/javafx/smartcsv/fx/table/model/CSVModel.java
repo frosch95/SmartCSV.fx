@@ -31,6 +31,8 @@ import javafx.collections.ObservableList;
 import ninja.javafx.smartcsv.validation.ValidationConfiguration;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.Validator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,8 @@ import java.util.List;
  * It holds the data in rows, stores the header and manages the validator.
  */
 public class CSVModel {
+
+    private static final Logger logger = LogManager.getLogger(CSVModel.class);
 
     private Validator validator;
     private ObservableList<CSVRow> rows = FXCollections.observableArrayList();
@@ -103,6 +107,8 @@ public class CSVModel {
     public void revalidate() {
         validationError.clear();
 
+        logger.info("revalidate: hasValidator -> {}", hasValidator());
+
         if (!hasValidator()) return;
 
         List<ValidationError> errors = new ArrayList<>();
@@ -110,6 +116,7 @@ public class CSVModel {
         if (header != null) {
             ValidationError headerError = validator.isHeaderValid(header);
             if (headerError != null) {
+                logger.info("revalidate: header error found");
                 errors.add(headerError);
             }
         }
@@ -123,6 +130,7 @@ public class CSVModel {
                 if (validator != null) {
                     ValidationError validationError = validator.isValid(column, value.getValue(), lineNumber);
                     if (validationError != null) {
+                        logger.info("revalidate: {} errors found in line {}", validationError.getMessages().size(), lineNumber);
                         errors.add(validationError);
                         value.setValidationError(validationError);
                     } else {
