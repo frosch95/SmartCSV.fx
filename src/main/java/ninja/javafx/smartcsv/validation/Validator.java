@@ -67,7 +67,7 @@ public class Validator {
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // oublic methods
+    // public methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -78,7 +78,7 @@ public class Validator {
      */
     public ValidationError isValid(String column, String value, Integer lineNumber) {
         ValidationError result = null;
-        if (validationConfig != null) {
+        if (hasConfig()) {
 
             ValidationError error = ValidationError.withLineNumber(lineNumber);
             checkBlankOrNull(column, value, error);
@@ -101,6 +101,9 @@ public class Validator {
         return result;
     }
 
+    public boolean hasConfig() {
+        return validationConfig != null;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // private methods

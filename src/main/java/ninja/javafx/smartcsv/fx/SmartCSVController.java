@@ -26,10 +26,6 @@
 
 package ninja.javafx.smartcsv.fx;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.WeakListChangeListener;
 import javafx.concurrent.WorkerStateEvent;
@@ -41,10 +37,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
-import ninja.javafx.smartcsv.FileReader;
-import ninja.javafx.smartcsv.FileWriter;
 import ninja.javafx.smartcsv.csv.CSVFileReader;
 import ninja.javafx.smartcsv.csv.CSVFileWriter;
+import ninja.javafx.smartcsv.files.FileStorage;
 import ninja.javafx.smartcsv.fx.about.AboutController;
 import ninja.javafx.smartcsv.fx.list.ErrorSideBar;
 import ninja.javafx.smartcsv.fx.preferences.PreferencesController;
@@ -58,6 +53,7 @@ import ninja.javafx.smartcsv.fx.util.SaveFileService;
 import ninja.javafx.smartcsv.fx.validation.ValidationEditorController;
 import ninja.javafx.smartcsv.preferences.PreferencesFileReader;
 import ninja.javafx.smartcsv.preferences.PreferencesFileWriter;
+import ninja.javafx.smartcsv.validation.ValidationConfiguration;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.ValidationFileReader;
 import ninja.javafx.smartcsv.validation.ValidationFileWriter;
@@ -104,24 +100,6 @@ public class SmartCSVController extends FXMLController {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Autowired
-    private PreferencesFileReader preferencesLoader;
-
-    @Autowired
-    private PreferencesFileWriter preferencesWriter;
-
-    @Autowired
-    private CSVFileReader csvLoader;
-
-    @Autowired
-    private ValidationFileReader validationLoader;
-
-    @Autowired
-    private CSVFileWriter csvFileWriter;
-
-    @Autowired
-    private ValidationFileWriter validationFileWriter;
-
-    @Autowired
     private AboutController aboutController;
 
     @Autowired
@@ -134,7 +112,7 @@ public class SmartCSVController extends FXMLController {
     private LoadFileService loadFileService;
 
     @Autowired
-    private SaveFileService saveFileService;;
+    private SaveFileService saveFileService;
 
     @FXML
     private BorderPane applicationPane;
@@ -199,13 +177,13 @@ public class SmartCSVController extends FXMLController {
 
     private ValidationCellFactory cellFactory;
 
-    private CSVModel model;
     private TableView<CSVRow> tableView;
     private ErrorSideBar errorSideBar;
-    private BooleanProperty fileChanged = new SimpleBooleanProperty(true);
     private ResourceBundle resourceBundle;
-    private ObjectProperty<File> currentCsvFile = new SimpleObjectProperty<>();
-    private ObjectProperty<File> currentConfigFile= new SimpleObjectProperty<>();
+
+    private FileStorage<CSVModel> currentCsvFile = new FileStorage<>(new CSVFileReader(), new CSVFileWriter());
+    private FileStorage<ValidationConfiguration> currentConfigFile = new FileStorage<>(new ValidationFileReader(), new ValidationFileWriter());
+    private FileStorage<CsvPreference> csvPreferenceFile = new FileStorage<>(new PreferencesFileReader(), new PreferencesFileWriter());
 
     private ListChangeListener<ValidationError> errorListListener = c -> tableView.refresh();
     private WeakListChangeListener<ValidationError> weakErrorListListener = new WeakListChangeListener<>(errorListListener);
@@ -229,6 +207,8 @@ public class SmartCSVController extends FXMLController {
 
         bindCsvFileName();
         bindConfigFileName();
+
+        csvPreferenceFile.setFile(PREFERENCES_FILE);
 
         loadCsvPreferencesFromFile();
     }
@@ -263,58 +243,32 @@ public class SmartCSVController extends FXMLController {
 
     @FXML
     public void openCsv(ActionEvent actionEvent) {
-        currentCsvFile.setValue(
-                loadFile(
-                        csvLoader,
-                        CSV_FILTER_TEXT,
-                        CSV_FILTER_EXTENSION,
-                        "Open CSV",
-                        currentCsvFile.getValue()));
+        loadFile(CSV_FILTER_TEXT, CSV_FILTER_EXTENSION, "Open CSV", currentCsvFile);
     }
 
     @FXML
     public void openConfig(ActionEvent actionEvent) {
-        currentConfigFile.setValue(
-                loadFile(
-                        validationLoader,
-                        JSON_FILTER_TEXT,
-                        JSON_FILTER_EXTENSION,
-                        "Open Validation Configuration",
-                        currentConfigFile.getValue()));
+        loadFile(JSON_FILTER_TEXT, JSON_FILTER_EXTENSION, "Open Validation Configuration", currentConfigFile);
     }
 
     @FXML
     public void saveCsv(ActionEvent actionEvent) {
-        csvFileWriter.setModel(model);
-        useSaveFileService(csvFileWriter, currentCsvFile.getValue());
+        useSaveFileService(currentCsvFile);
     }
 
     @FXML
     public void saveAsCsv(ActionEvent actionEvent) {
-        csvFileWriter.setModel(model);
-        currentCsvFile.setValue(
-                saveFile(
-                        csvFileWriter,
-                        CSV_FILTER_TEXT,
-                        CSV_FILTER_EXTENSION,
-                        currentCsvFile.getValue()));
+        saveFile(CSV_FILTER_TEXT, CSV_FILTER_EXTENSION, currentCsvFile);
     }
 
     @FXML
     public void saveConfig(ActionEvent actionEvent) {
-        validationFileWriter.setValidationConfiguration(validationLoader.getValidationConfiguration());
-        useSaveFileService(validationFileWriter, currentConfigFile.getValue());
+        useSaveFileService(currentConfigFile);
     }
 
     @FXML
     public void saveAsConfig(ActionEvent actionEvent) {
-        validationFileWriter.setValidationConfiguration(validationLoader.getValidationConfiguration());
-        currentConfigFile.setValue(
-                saveFile(
-                        validationFileWriter,
-                        JSON_FILTER_TEXT,
-                        JSON_FILTER_EXTENSION,
-                        currentConfigFile.getValue()));
+        saveFile(JSON_FILTER_TEXT, JSON_FILTER_EXTENSION, currentConfigFile);
     }
 
     @FXML
@@ -351,24 +305,24 @@ public class SmartCSVController extends FXMLController {
             setCsvPreference(csvPreference);
             saveCsvPreferences(csvPreference);
         } else {
-            preferencesController.setCsvPreference(preferencesLoader.getCSVpreference());
+            preferencesController.setCsvPreference(csvPreferenceFile.getContent());
         }
     }
 
     @FXML
     public void deleteRow(ActionEvent actionEvent) {
-        model.getRows().removeAll(tableView.getSelectionModel().getSelectedItems());
-        fileChanged.setValue(true);
+        currentCsvFile.getContent().getRows().removeAll(tableView.getSelectionModel().getSelectedItems());
+        currentCsvFile.setFileChanged(true);
         resetContent();
     }
 
     @FXML
     public void addRow(ActionEvent actionEvent) {
-        CSVRow row = model.addRow();
-        for (String column : model.getHeader()) {
+        CSVRow row = currentCsvFile.getContent().addRow();
+        for (String column : currentCsvFile.getContent().getHeader()) {
             row.addValue(column, "");
         }
-        fileChanged.setValue(true);
+        currentCsvFile.setFileChanged(true);
         resetContent();
 
         selectNewRow();
@@ -376,7 +330,7 @@ public class SmartCSVController extends FXMLController {
 
     public boolean canExit() {
         boolean canExit = true;
-        if (model != null && fileChanged.get()) {
+        if (currentCsvFile.getContent() != null && currentCsvFile.isFileChanged()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(resourceBundle.getString("dialog.exit.title"));
             alert.setHeaderText(resourceBundle.getString("dialog.exit.header.text"));
@@ -404,8 +358,8 @@ public class SmartCSVController extends FXMLController {
         if (result.get() == ButtonType.OK){
             runLater(() -> {
                 validationEditorController.updateConfiguration();
-                fileChanged.setValue(true);
-                model.revalidate();
+                currentCsvFile.setFileChanged(true);
+                currentCsvFile.getContent().revalidate();
             });
         }
     }
@@ -421,15 +375,15 @@ public class SmartCSVController extends FXMLController {
         tableView.getSelectionModel().select(lastRow);
     }
 
-    private void bindMenuItemsToFileExistence(ObjectProperty<File> file, MenuItem... items) {
+    private void bindMenuItemsToFileExistence(FileStorage file, MenuItem... items) {
         for (MenuItem item: items) {
-            item.disableProperty().bind(isNull(file));
+            item.disableProperty().bind(isNull(file.fileProperty()));
         }
     }
 
-    private void bindButtonsToFileExistence(ObjectProperty<File> file, Button... items) {
+    private void bindButtonsToFileExistence(FileStorage file, Button... items) {
         for (Button item: items) {
-            item.disableProperty().bind(isNull(file));
+            item.disableProperty().bind(isNull(file.fileProperty()));
         }
     }
 
@@ -446,17 +400,16 @@ public class SmartCSVController extends FXMLController {
     }
 
     private void bindCsvFileName() {
-        csvName.textProperty().bind(selectString(currentCsvFile, "name"));
+        csvName.textProperty().bind(selectString(currentCsvFile.fileProperty(), "name"));
     }
 
     private void bindConfigFileName() {
-        configurationName.textProperty().bind(selectString(currentConfigFile, "name"));
+        configurationName.textProperty().bind(selectString(currentConfigFile.fileProperty(), "name"));
     }
 
     private void loadCsvPreferencesFromFile() {
-        if (PREFERENCES_FILE.exists()) {
-            useLoadFileService(preferencesLoader, PREFERENCES_FILE,
-                    event -> setCsvPreference(preferencesLoader.getCSVpreference()));
+        if (csvPreferenceFile.getFile().exists()) {
+            useLoadFileService(csvPreferenceFile, event -> setCsvPreference(csvPreferenceFile.getContent()));
         } else {
             setCsvPreference(CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
         }
@@ -465,37 +418,34 @@ public class SmartCSVController extends FXMLController {
     private void saveCsvPreferences(CsvPreference csvPreference) {
         try {
             createPreferenceFile();
-            preferencesWriter.setCsvPreference(csvPreference);
-            useSaveFileService(preferencesWriter, PREFERENCES_FILE);
+            csvPreferenceFile.setContent(csvPreference);
+            useSaveFileService(csvPreferenceFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void createPreferenceFile() throws IOException {
-        if (!PREFERENCES_FILE.exists()) {
+        if (!csvPreferenceFile.getFile().exists()) {
             createPreferencesFileFolder();
-            PREFERENCES_FILE.createNewFile();
+            csvPreferenceFile.getFile().createNewFile();
         }
     }
 
     private void createPreferencesFileFolder() {
-        if (!PREFERENCES_FILE.getParentFile().exists()) {
-            PREFERENCES_FILE.getParentFile().mkdir();
+        if (!csvPreferenceFile.getFile().getParentFile().exists()) {
+            csvPreferenceFile.getFile().getParentFile().mkdir();
         }
     }
 
     private void setCsvPreference(CsvPreference csvPreference) {
-        csvLoader.setCsvPreference(csvPreference);
-        csvFileWriter.setCsvPreference(csvPreference);
         preferencesController.setCsvPreference(csvPreference);
     }
 
-    private File loadFile(FileReader fileReader,
-                          String filterText,
+    private void loadFile(String filterText,
                           String filter,
                           String title,
-                          File initChildFile) {
+                          FileStorage storageFile) {
         final FileChooser fileChooser = new FileChooser();
 
         //Set extension filter
@@ -503,61 +453,57 @@ public class SmartCSVController extends FXMLController {
         fileChooser.getExtensionFilters().add(extFilter);
         fileChooser.setTitle(title);
 
-        if (initChildFile != null) {
-            fileChooser.setInitialDirectory(initChildFile.getParentFile());
+        if (storageFile.getFile() != null) {
+            fileChooser.setInitialDirectory(storageFile.getFile().getParentFile());
         }
 
         //Show open file dialog
         File file = fileChooser.showOpenDialog(applicationPane.getScene().getWindow());
         if (file != null) {
-            useLoadFileService(fileReader, file, event -> runLater(() -> {
+            storageFile.setFile(file);
+            useLoadFileService(storageFile, event -> runLater(() -> {
                 resetContent();
-                fileChanged.setValue(false);
+                storageFile.setFileChanged(false);
             }));
-            return file;
-        } else {
-            return initChildFile;
         }
     }
 
-    private File saveFile(FileWriter writer, String filterText, String filter, File initFile) {
-        File file = initFile;
-        if (model != null) {
+    private File saveFile(String filterText, String filter, FileStorage initFile) {
+        File file = initFile.getFile();
+        if (initFile.getContent() != null) {
             final FileChooser fileChooser = new FileChooser();
 
             //Set extension filter
             final FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(filterText, filter);
             fileChooser.getExtensionFilters().add(extFilter);
 
-            if (initFile != null) {
-                fileChooser.setInitialDirectory(initFile.getParentFile());
-                fileChooser.setInitialFileName(initFile.getName());
+            if (initFile.getFile() != null) {
+                fileChooser.setInitialDirectory(initFile.getFile().getParentFile());
+                fileChooser.setInitialFileName(initFile.getFile().getName());
             }
             fileChooser.setTitle("Save File");
 
             //Show open file dialog
             file = fileChooser.showSaveDialog(applicationPane.getScene().getWindow());
             if (file != null) {
-                useSaveFileService(writer, file);
+                initFile.setFile(file);
+                useSaveFileService(currentCsvFile);
             }
         }
         return file;
     }
 
-    private void useLoadFileService(FileReader fileReader, File file, EventHandler<WorkerStateEvent> value) {
-        loadFileService.setFile(file);
-        loadFileService.setFileReader(fileReader);
+    private void useLoadFileService(FileStorage fileStorage, EventHandler<WorkerStateEvent> value) {
+        loadFileService.setFileStorage(fileStorage);
         loadFileService.restart();
         loadFileService.setOnSucceeded(value);
     }
 
-    private void useSaveFileService(FileWriter writer, File file) {
-        saveFileService.setFile(file);
-        saveFileService.setWriter(writer);
+    private void useSaveFileService(FileStorage fileStorage) {
+        saveFileService.setFileStorage(fileStorage);
         saveFileService.restart();
         saveFileService.setOnSucceeded(event -> runLater(() -> {
             resetContent();
-            fileChanged.setValue(false);
         }));
     }
 
@@ -565,21 +511,20 @@ public class SmartCSVController extends FXMLController {
      * Creates new table view and add the new content
      */
     private void resetContent() {
-        model = csvLoader.getData();
-        if (model != null) {
-            model.getValidationError().addListener(weakErrorListListener);
-            model.setValidationConfiguration(validationLoader.getValidationConfiguration());
-            validationEditorController.setValidationConfiguration(validationLoader.getValidationConfiguration());
+        if (currentCsvFile.getContent() != null) {
+            currentCsvFile.getContent().getValidationError().addListener(weakErrorListListener);
+            currentCsvFile.getContent().setValidationConfiguration(currentConfigFile.getContent());
+            validationEditorController.setValidationConfiguration(currentConfigFile.getContent());
             tableView = new TableView<>();
 
             bindMenuItemsToTableSelection(deleteRowMenuItem);
             bindButtonsToTableSelection(deleteRowButton);
 
-            for (String column : model.getHeader()) {
+            for (String column : currentCsvFile.getContent().getHeader()) {
                 addColumn(column, tableView);
             }
 
-            tableView.getItems().setAll(model.getRows());
+            tableView.getItems().setAll(currentCsvFile.getContent().getRows());
             tableView.setEditable(true);
 
             setBottomAnchor(tableView, 0.0);
@@ -587,7 +532,7 @@ public class SmartCSVController extends FXMLController {
             setLeftAnchor(tableView, 0.0);
             setRightAnchor(tableView, 0.0);
             tableWrapper.getChildren().setAll(tableView);
-            errorSideBar.setModel(model);
+            errorSideBar.setModel(currentCsvFile.getContent());
         }
     }
 
@@ -612,8 +557,8 @@ public class SmartCSVController extends FXMLController {
                 event.getTableView().getItems().get(event.getTablePosition().getRow()).
                 getColumns().get(header).setValue(event.getNewValue());
                 runLater(() -> {
-                    fileChanged.setValue(true);
-                    model.revalidate();
+                    currentCsvFile.setFileChanged(true);
+                    currentCsvFile.getContent().revalidate();
                 });
             }
         });

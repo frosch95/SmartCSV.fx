@@ -29,6 +29,7 @@ package ninja.javafx.smartcsv.fx.util;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import ninja.javafx.smartcsv.FileReader;
+import ninja.javafx.smartcsv.files.FileStorage;
 
 import java.io.File;
 
@@ -38,14 +39,10 @@ import java.io.File;
 @org.springframework.stereotype.Service
 public class LoadFileService extends Service {
 
-    private File file;
-    private FileReader fileReader;
+    private FileStorage file;
 
-    public void setFile(File value) {
-        file = value;
-    }
-    public void setFileReader(FileReader fileReader) {
-        this.fileReader = fileReader;
+    public void setFileStorage(FileStorage file) {
+        this.file = file;
     }
 
     @Override
@@ -54,7 +51,7 @@ public class LoadFileService extends Service {
             @Override
             protected Void call() throws Exception {
                 if (file != null) {
-                    fileReader.read(file);
+                    file.load();
                 }
                 return null;
             }

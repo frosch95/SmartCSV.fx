@@ -42,8 +42,7 @@ import static ninja.javafx.smartcsv.preferences.QuoteModeHelper.getQuoteMode;
 /**
  * file reader for the preferences
  */
-@Service
-public class PreferencesFileReader implements FileReader {
+public class PreferencesFileReader implements FileReader<CsvPreference> {
 
     private Map config;
     private CsvPreference csvPreference;
@@ -74,7 +73,7 @@ public class PreferencesFileReader implements FileReader {
         }
     }
 
-    public CsvPreference getCSVpreference() {
+    public CsvPreference getContent() {
         return csvPreference;
     }
 

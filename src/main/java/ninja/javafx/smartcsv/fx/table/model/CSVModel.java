@@ -32,6 +32,9 @@ import ninja.javafx.smartcsv.validation.ValidationConfiguration;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.Validator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The CSVModel is the client representation for the csv filepath.
  * It holds the data in rows, stores the header and manages the validator.
@@ -100,8 +103,15 @@ public class CSVModel {
     public void revalidate() {
         validationError.clear();
 
-        if (header != null && validator != null) {
-            addValidationError(validator.isHeaderValid(header));
+        if (!hasValidator()) return;
+
+        List<ValidationError> errors = new ArrayList<>();
+
+        if (header != null) {
+            ValidationError headerError = validator.isHeaderValid(header);
+            if (headerError != null) {
+                errors.add(headerError);
+            }
         }
 
         for (int lineNumber = 0; lineNumber < rows.size(); lineNumber++) {
@@ -113,7 +123,7 @@ public class CSVModel {
                 if (validator != null) {
                     ValidationError validationError = validator.isValid(column, value.getValue(), lineNumber);
                     if (validationError != null) {
-                        addValidationError(validationError);
+                        errors.add(validationError);
                         value.setValidationError(validationError);
                     } else {
                         value.setValidationError(null);
@@ -123,12 +133,12 @@ public class CSVModel {
                 }
             }
         }
+
+        validationError.setAll(errors);
     }
 
-    private void addValidationError(ValidationError validationError) {
-        if (validationError != null) {
-            this.validationError.add(validationError);
-        }
+    private boolean hasValidator() {
+        return validator != null && validator.hasConfig();
     }
 
 }
