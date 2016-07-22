@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import de.jensd.fx.glyphs.GlyphsStack?>
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -22,6 +21,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
+<?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <BorderPane fx:id="applicationPane" maxHeight="-Infinity" maxWidth="1000.0" minHeight="700.0" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
     <top>
         <VBox id="background" prefWidth="100.0" BorderPane.alignment="CENTER">
@@ -32,57 +32,72 @@
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openCsv" text="%menu.open.csv">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="open-icon" />
+                                        <MaterialDesignIconView styleClass="open-icon" />
                                     </graphic>
                                 </MenuItem>
                                 <MenuItem fx:id="saveMenuItem" disable="true" mnemonicParsing="false" onAction="#saveCsv" text="%menu.save">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="save-icon" />
+                                        <MaterialDesignIconView styleClass="save-icon" />
                                     </graphic>
                                 </MenuItem>
                                 <MenuItem fx:id="saveAsMenuItem" disable="true" mnemonicParsing="false" onAction="#saveAsCsv" text="%menu.save.as">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="save-icon" />
+                                        <MaterialDesignIconView styleClass="save-icon" />
                                     </graphic>
                                 </MenuItem>
 
                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem fx:id="createConfigMenuItem" disable="true" mnemonicParsing="false" onAction="#createConfig" text="%menu.create.config">
+                                    <graphic>
+                                        <GlyphsStack>
+                                            <children>
+                                                <MaterialDesignIconView styleClass="config-icon" />
+                                                <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="create-config-icon" />
+                                            </children>
+                                        </GlyphsStack>
+                                    </graphic>
+                                </MenuItem>
                                 <MenuItem fx:id="loadConfigMenuItem" disable="true" mnemonicParsing="false" onAction="#openConfig" text="%menu.open.config">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="config-icon" />
+                                        <GlyphsStack>
+                                            <children>
+                                                <MaterialDesignIconView styleClass="config-icon" />
+                                                <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="load-config-icon" />
+                                            </children>
+                                        </GlyphsStack>
                                     </graphic>
                                 </MenuItem>
                                 <MenuItem fx:id="saveConfigMenuItem" disable="true" mnemonicParsing="false" onAction="#saveConfig" text="%menu.save.config">
                                     <graphic>
                                         <GlyphsStack>
                                             <children>
-                                                <FontAwesomeIconView style="-fx-opacity: 0.7;" styleClass="save-icon" />
-                                                <FontAwesomeIconView styleClass="config-icon" />
+                                                <MaterialDesignIconView styleClass="config-icon" />
+                                                <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="save-config-icon" />
                                             </children>
                                         </GlyphsStack>
                                     </graphic>
                                 </MenuItem>
                                 <MenuItem fx:id="saveAsConfigMenuItem" disable="true" mnemonicParsing="false" onAction="#saveAsConfig" text="%menu.save.as.config">
                                     <graphic>
-                                    <GlyphsStack>
-                                        <children>
-                                            <FontAwesomeIconView style="-fx-opacity: 0.7;" styleClass="save-icon" />
-                                            <FontAwesomeIconView styleClass="config-icon" />
-                                        </children>
-                                    </GlyphsStack>
+                                        <GlyphsStack>
+                                            <children>
+                                                <MaterialDesignIconView styleClass="config-icon" />
+                                                <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="save-config-icon" />
+                                            </children>
+                                        </GlyphsStack>
                                     </graphic>
                                 </MenuItem>
 
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#preferences" text="%menu.preferences">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="preferences-icon" />
+                                        <MaterialDesignIconView styleClass="preferences-icon" />
                                     </graphic>
                                 </MenuItem>
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#close" text="%menu.close">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="exit-icon" />
+                                        <MaterialDesignIconView styleClass="exit-icon" />
                                     </graphic>
                                 </MenuItem>
                             </items>
@@ -91,12 +106,12 @@
                             <items>
                                 <MenuItem fx:id="deleteRowMenuItem" disable="true" mnemonicParsing="false" onAction="#deleteRow" text="%menu.delete.row">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="delete-icon" />
+                                        <MaterialDesignIconView styleClass="delete-icon" />
                                     </graphic>
                                 </MenuItem>
                                 <MenuItem fx:id="addRowMenuItem" disable="true" mnemonicParsing="false" onAction="#addRow" text="%menu.add.row">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="add-icon" />
+                                        <MaterialDesignIconView styleClass="add-icon" />
                                     </graphic>
                                 </MenuItem>
                             </items>
@@ -105,7 +120,7 @@
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#about" text="%menu.about">
                                     <graphic>
-                                        <FontAwesomeIconView styleClass="info-icon" />
+                                        <MaterialDesignIconView styleClass="info-icon" />
                                     </graphic>
                                 </MenuItem>
                             </items>
@@ -119,7 +134,7 @@
                         <Tooltip text="%menu.open.csv" />
                     </tooltip>
                     <graphic>
-                        <FontAwesomeIconView styleClass="open-icon" />
+                        <MaterialDesignIconView styleClass="open-icon" />
                     </graphic>
                 </Button>
                   <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveCsv">
@@ -127,7 +142,7 @@
                           <Tooltip text="%menu.save" />
                       </tooltip>
                       <graphic>
-                          <FontAwesomeIconView styleClass="save-icon" />
+                          <MaterialDesignIconView styleClass="save-icon" />
                       </graphic>
                   </Button>
                     <Button fx:id="saveAsButton" disable="true" mnemonicParsing="false" onAction="#saveAsCsv" styleClass="last" text="...">
@@ -135,18 +150,36 @@
                             <Tooltip text="%menu.save.as" />
                         </tooltip>
                         <graphic>
-                            <FontAwesomeIconView styleClass="save-icon" />
+                            <MaterialDesignIconView styleClass="save-icon" />
                         </graphic>
                     </Button>
               </HBox>
                 <Region styleClass="spacer" />
                 <HBox styleClass="segmented-button-bar">
+                    <Button fx:id="createConfigButton" disable="true" mnemonicParsing="false" onAction="#createConfig">
+                        <tooltip>
+                            <Tooltip text="%menu.create.config" />
+                        </tooltip>
+                        <graphic>
+                            <GlyphsStack>
+                                <children>
+                                    <MaterialDesignIconView styleClass="config-icon" />
+                                    <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="create-config-icon" />
+                                </children>
+                            </GlyphsStack>
+                        </graphic>
+                    </Button>
                     <Button fx:id="loadConfigButton" disable="true" mnemonicParsing="false" onAction="#openConfig">
                         <tooltip>
                             <Tooltip text="%menu.open.config" />
                         </tooltip>
                         <graphic>
-                            <FontAwesomeIconView styleClass="config-icon" />
+                            <GlyphsStack>
+                                <children>
+                                    <MaterialDesignIconView styleClass="config-icon" />
+                                    <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="load-config-icon" />
+                                </children>
+                            </GlyphsStack>
                         </graphic>
                     </Button>
                     <Button fx:id="saveConfigButton" disable="true" mnemonicParsing="false" onAction="#saveConfig">
@@ -156,8 +189,8 @@
                         <graphic>
                             <GlyphsStack>
                                 <children>
-                                    <FontAwesomeIconView style="-fx-opacity: 0.7;" styleClass="save-icon" />
-                                    <FontAwesomeIconView styleClass="config-icon" />
+                                    <MaterialDesignIconView styleClass="config-icon" />
+                                    <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="save-config-icon" />
                                 </children>
                             </GlyphsStack>
                         </graphic>
@@ -169,8 +202,8 @@
                         <graphic>
                             <GlyphsStack>
                                 <children>
-                                    <FontAwesomeIconView style="-fx-opacity: 0.7;" styleClass="save-icon" />
-                                    <FontAwesomeIconView styleClass="config-icon" />
+                                    <MaterialDesignIconView styleClass="config-icon" />
+                                    <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="save-config-icon" />
                                 </children>
                             </GlyphsStack>
 
@@ -184,7 +217,7 @@
                             <Tooltip text="%menu.delete.row" />
                         </tooltip>
                         <graphic>
-                            <FontAwesomeIconView styleClass="delete-icon" />
+                            <MaterialDesignIconView styleClass="delete-icon" />
                         </graphic>
                     </Button>
                     <Button fx:id="addRowButton" disable="true" mnemonicParsing="false" onAction="#addRow" styleClass="last">
@@ -192,7 +225,7 @@
                             <Tooltip text="%menu.add.row" />
                         </tooltip>
                         <graphic>
-                            <FontAwesomeIconView styleClass="add-icon" />
+                            <MaterialDesignIconView styleClass="add-icon" />
                         </graphic>
                     </Button>
                 </HBox>
@@ -203,7 +236,7 @@
                             <Tooltip text="%menu.preferences" />
                         </tooltip>
                         <graphic>
-                            <FontAwesomeIconView styleClass="preferences-icon" />
+                            <MaterialDesignIconView styleClass="preferences-icon" />
                         </graphic>
                     </Button>
                     <Button mnemonicParsing="false" onAction="#close" styleClass="last">
@@ -211,7 +244,7 @@
                             <Tooltip text="%menu.close" />
                         </tooltip>
                         <graphic>
-                            <FontAwesomeIconView styleClass="exit-icon" />
+                            <MaterialDesignIconView styleClass="exit-icon" />
                         </graphic>
                     </Button>
                 </HBox>
@@ -248,10 +281,10 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <FontAwesomeIconView styleClass="open-icon" GridPane.hgrow="NEVER" />
+                <MaterialDesignIconView styleClass="file-document-icon" GridPane.hgrow="NEVER" />
                 <Label text="%stateline.csv" GridPane.columnIndex="1" GridPane.hgrow="NEVER" />
                 <Label fx:id="csvName" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" />
-                <FontAwesomeIconView styleClass="open-icon" GridPane.columnIndex="3" GridPane.hgrow="NEVER" />
+                <MaterialDesignIconView styleClass="config-check-icon" GridPane.columnIndex="3" GridPane.hgrow="NEVER" />
                 <Label text="%stateline.configuration" GridPane.columnIndex="4" GridPane.hgrow="NEVER" />
                 <Label fx:id="configurationName" GridPane.columnIndex="5" GridPane.hgrow="ALWAYS" />
             </children>

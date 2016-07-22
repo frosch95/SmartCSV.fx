@@ -136,6 +136,9 @@ public class SmartCSVController extends FXMLController {
     private MenuItem saveAsMenuItem;
 
     @FXML
+    private MenuItem createConfigMenuItem;
+
+    @FXML
     private MenuItem loadConfigMenuItem;
 
     @FXML
@@ -155,6 +158,9 @@ public class SmartCSVController extends FXMLController {
 
     @FXML
     private Button saveAsButton;
+
+    @FXML
+    private Button createConfigButton;
 
     @FXML
     private Button loadConfigButton;
@@ -199,11 +205,11 @@ public class SmartCSVController extends FXMLController {
         setupTableCellFactory();
         setupErrorSideBar(resourceBundle);
 
-        bindMenuItemsToFileExistence(currentCsvFile, saveMenuItem, saveAsMenuItem, addRowMenuItem, loadConfigMenuItem);
-        bindButtonsToFileExistence(currentCsvFile, saveButton, saveAsButton, addRowButton, loadConfigButton);
+        bindMenuItemsToContentExistence(currentCsvFile, saveMenuItem, saveAsMenuItem, addRowMenuItem, createConfigMenuItem, loadConfigMenuItem);
+        bindButtonsToContentExistence(currentCsvFile, saveButton, saveAsButton, addRowButton, createConfigButton, loadConfigButton);
 
-        bindMenuItemsToFileExistence(currentConfigFile, saveConfigMenuItem, saveAsConfigMenuItem);
-        bindButtonsToFileExistence(currentConfigFile, saveAsConfigButton, saveConfigButton);
+        bindMenuItemsToContentExistence(currentConfigFile, saveConfigMenuItem, saveAsConfigMenuItem);
+        bindButtonsToContentExistence(currentConfigFile, saveAsConfigButton, saveConfigButton);
 
         bindCsvFileName();
         bindConfigFileName();
@@ -252,6 +258,13 @@ public class SmartCSVController extends FXMLController {
     }
 
     @FXML
+    public void createConfig(ActionEvent actionEvent) {
+        currentConfigFile.setContent(currentCsvFile.getContent().createValidationConfiguration());
+        currentConfigFile.setFile(null);
+        currentConfigFile.setFileChanged(true);
+    }
+
+    @FXML
     public void saveCsv(ActionEvent actionEvent) {
         useSaveFileService(currentCsvFile);
     }
@@ -263,7 +276,11 @@ public class SmartCSVController extends FXMLController {
 
     @FXML
     public void saveConfig(ActionEvent actionEvent) {
-        useSaveFileService(currentConfigFile);
+        if (currentConfigFile.getFile() == null) {
+            saveAsConfig(actionEvent);
+        } else {
+            useSaveFileService(currentConfigFile);
+        }
     }
 
     @FXML
@@ -375,15 +392,15 @@ public class SmartCSVController extends FXMLController {
         tableView.getSelectionModel().select(lastRow);
     }
 
-    private void bindMenuItemsToFileExistence(FileStorage file, MenuItem... items) {
+    private void bindMenuItemsToContentExistence(FileStorage file, MenuItem... items) {
         for (MenuItem item: items) {
-            item.disableProperty().bind(isNull(file.fileProperty()));
+            item.disableProperty().bind(isNull(file.contentProperty()));
         }
     }
 
-    private void bindButtonsToFileExistence(FileStorage file, Button... items) {
+    private void bindButtonsToContentExistence(FileStorage file, Button... items) {
         for (Button item: items) {
-            item.disableProperty().bind(isNull(file.fileProperty()));
+            item.disableProperty().bind(isNull(file.contentProperty()));
         }
     }
 
@@ -461,50 +478,45 @@ public class SmartCSVController extends FXMLController {
         File file = fileChooser.showOpenDialog(applicationPane.getScene().getWindow());
         if (file != null) {
             storageFile.setFile(file);
-            useLoadFileService(storageFile, event -> runLater(() -> {
-                resetContent();
-                storageFile.setFileChanged(false);
-            }));
+            useLoadFileService(storageFile, t -> resetContent());
         }
     }
 
-    private File saveFile(String filterText, String filter, FileStorage initFile) {
-        File file = initFile.getFile();
-        if (initFile.getContent() != null) {
+    private File saveFile(String filterText, String filter, FileStorage fileStorage) {
+        File file = fileStorage.getFile();
+        if (fileStorage.getContent() != null) {
             final FileChooser fileChooser = new FileChooser();
 
             //Set extension filter
             final FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(filterText, filter);
             fileChooser.getExtensionFilters().add(extFilter);
 
-            if (initFile.getFile() != null) {
-                fileChooser.setInitialDirectory(initFile.getFile().getParentFile());
-                fileChooser.setInitialFileName(initFile.getFile().getName());
+            if (fileStorage.getFile() != null) {
+                fileChooser.setInitialDirectory(fileStorage.getFile().getParentFile());
+                fileChooser.setInitialFileName(fileStorage.getFile().getName());
             }
             fileChooser.setTitle("Save File");
 
             //Show open file dialog
             file = fileChooser.showSaveDialog(applicationPane.getScene().getWindow());
             if (file != null) {
-                initFile.setFile(file);
-                useSaveFileService(currentCsvFile);
+                fileStorage.setFile(file);
+                useSaveFileService(fileStorage);
             }
         }
         return file;
     }
 
-    private void useLoadFileService(FileStorage fileStorage, EventHandler<WorkerStateEvent> value) {
+    private void useLoadFileService(FileStorage fileStorage, EventHandler<WorkerStateEvent> onSucceededHandler) {
         loadFileService.setFileStorage(fileStorage);
         loadFileService.restart();
-        loadFileService.setOnSucceeded(value);
+        loadFileService.setOnSucceeded(onSucceededHandler);
     }
 
     private void useSaveFileService(FileStorage fileStorage) {
         saveFileService.setFileStorage(fileStorage);
         saveFileService.restart();
-        saveFileService.setOnSucceeded(event -> runLater(() -> {
-            resetContent();
-        }));
+        saveFileService.setOnSucceeded(t -> resetContent());
     }
 
     /**
@@ -569,7 +581,7 @@ public class SmartCSVController extends FXMLController {
     private ContextMenu contextMenuForColumn(String header) {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem editColumnRulesMenuItem = new MenuItem(resourceBundle.getString("context.menu.edit.column.rules"));
-        bindMenuItemsToFileExistence(currentConfigFile, editColumnRulesMenuItem);
+        bindMenuItemsToContentExistence(currentConfigFile, editColumnRulesMenuItem);
         editColumnRulesMenuItem.setOnAction(e -> showValidationEditor(header));
         contextMenu.getItems().addAll(editColumnRulesMenuItem);
         return contextMenu;

@@ -48,6 +48,10 @@ public class ValidationConfiguration {
         return headerConfiguration.getNames();
     }
 
+    public void setHeaderNames(String[] headerNames) {
+        headerConfiguration.setNames(headerNames);
+    }
+
     public Boolean getIntegerRuleFor(String column) {
         return (Boolean)getValue(column, "integer");
     }

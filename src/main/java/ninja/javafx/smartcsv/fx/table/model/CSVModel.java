@@ -126,6 +126,14 @@ public class CSVModel {
         return validator != null && validator.hasConfig();
     }
 
+    public ValidationConfiguration createValidationConfiguration() {
+        ValidationConfiguration newValidationConfiguration = new ValidationConfiguration();
+        newValidationConfiguration.setHeaderNames(this.header);
+        this.validator = new Validator(newValidationConfiguration);
+        this.revalidate();
+        return newValidationConfiguration;
+    }
+
     private static class RevalidationService extends Service<List<ValidationError>> {
 
         private Validator validator;
