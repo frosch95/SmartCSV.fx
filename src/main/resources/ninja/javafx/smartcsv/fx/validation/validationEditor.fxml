@@ -10,11 +10,11 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.65">
+<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1">
   <columnConstraints>
-    <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="100.0" />
-    <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
+      <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="50.0" prefWidth="50.0" />
+    <ColumnConstraints hgrow="NEVER" />
+    <ColumnConstraints hgrow="ALWAYS" />
   </columnConstraints>
   <rowConstraints>
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -31,37 +31,39 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Label text="%validation.rule.label.not_empty" GridPane.rowIndex="1" />
-      <Label text="%validation.rule.label.integer" GridPane.rowIndex="2" />
-      <Label text="%validation.rule.label.double" GridPane.rowIndex="3" />
-      <Label text="%validation.rule.label.minlength" GridPane.rowIndex="5" />
-      <Label text="%validation.rule.label.maxlength" GridPane.rowIndex="6" />
-      <Label text="%validation.rule.label.dateformat" GridPane.rowIndex="7" />
-      <Label text="%validation.rule.label.alphanumeric" GridPane.rowIndex="4" />
-      <Label text="%validation.rule.label.regexp" GridPane.rowIndex="8" />
-      <Label text="%validation.rule.label.value_of" GridPane.rowIndex="9" />
-      <Label text="%validation.rule.label.groovy" GridPane.rowIndex="10" />
-      <CheckBox fx:id="notEmptyRuleCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <CheckBox fx:id="integerRuleCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      <CheckBox fx:id="doublerRuleCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-      <CheckBox fx:id="alphanumericRuleCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-      <Spinner fx:id="minLengthSpinner" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-      <Spinner fx:id="maxLengthSpinner" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-      <TextField fx:id="dateformatRuleTextField" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-      <TextField fx:id="regexpRuleTextField" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-      <TextField fx:id="valueOfRuleTextField" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-      <TextArea fx:id="groovyRuleTextArea" prefHeight="300.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="10" GridPane.rowSpan="2" />
-      <CheckBox fx:id="enableNotEmptyRule" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-      <CheckBox fx:id="enableIntegerRule" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-      <CheckBox fx:id="enableDoubleRule" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-      <CheckBox fx:id="enableAlphanumericRule" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-      <CheckBox fx:id="enableMinLengthRule" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-      <CheckBox fx:id="enableMaxLengthRule" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-      <CheckBox fx:id="enableDateRule" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="7" />
-      <CheckBox fx:id="enableRegexpRule" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="8" />
-      <CheckBox fx:id="enableValueOfRule" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="9" />
-      <CheckBox fx:id="enableGroovyRule" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="10" />
-      <Label text="%validation.rules.active" GridPane.columnIndex="2" />
+      <Label text="%validation.rule.label.not_empty" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Label text="%validation.rule.label.integer" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Label text="%validation.rule.label.double" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <Label text="%validation.rule.label.minlength" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      <Label text="%validation.rule.label.maxlength" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      <Label text="%validation.rule.label.dateformat" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+      <Label text="%validation.rule.label.alphanumeric" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <Label text="%validation.rule.label.regexp" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+      <Label text="%validation.rule.label.value_of" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+      <Label text="%validation.rule.label.groovy" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+      <CheckBox fx:id="notEmptyRuleCheckBox" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+      <CheckBox fx:id="integerRuleCheckBox" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+      <CheckBox fx:id="doublerRuleCheckBox" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+      <CheckBox fx:id="alphanumericRuleCheckBox" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+      <Spinner fx:id="minLengthSpinner" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+      <Spinner fx:id="maxLengthSpinner" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+      <TextField fx:id="dateformatRuleTextField" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+      <TextField fx:id="regexpRuleTextField" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+      <TextField fx:id="valueOfRuleTextField" GridPane.columnIndex="2" GridPane.rowIndex="9" />
+      <TextArea fx:id="groovyRuleTextArea" prefHeight="300.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="10" GridPane.rowSpan="2" />
+      <CheckBox fx:id="enableNotEmptyRule" mnemonicParsing="false" GridPane.rowIndex="1" />
+      <CheckBox fx:id="enableIntegerRule" mnemonicParsing="false" GridPane.rowIndex="2" />
+      <CheckBox fx:id="enableDoubleRule" mnemonicParsing="false" GridPane.rowIndex="3" />
+      <CheckBox fx:id="enableAlphanumericRule" mnemonicParsing="false" GridPane.rowIndex="4" />
+      <CheckBox fx:id="enableMinLengthRule" mnemonicParsing="false" GridPane.rowIndex="5" />
+      <CheckBox fx:id="enableMaxLengthRule" mnemonicParsing="false" GridPane.rowIndex="6" />
+      <CheckBox fx:id="enableDateRule" mnemonicParsing="false" GridPane.rowIndex="7" />
+      <CheckBox fx:id="enableRegexpRule" mnemonicParsing="false" GridPane.rowIndex="8" />
+      <CheckBox fx:id="enableValueOfRule" mnemonicParsing="false" GridPane.rowIndex="9" />
+      <CheckBox fx:id="enableGroovyRule" mnemonicParsing="false" GridPane.rowIndex="10" />
+      <Label style="-fx-font-weight: bold;" text="%validation.rules.active" />
+      <Label style="-fx-font-weight: bold;" text="%validation.rules.name" GridPane.columnIndex="1" />
+      <Label style="-fx-font-weight: bold;" text="%validation.rules.value" GridPane.columnIndex="2" />
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
