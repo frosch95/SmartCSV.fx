@@ -10,6 +10,8 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
+<?import org.fxmisc.richtext.CodeArea?>
+<?import java.net.URL?>
 <GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1">
   <columnConstraints>
       <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="50.0" prefWidth="50.0" />
@@ -50,7 +52,7 @@
       <TextField fx:id="dateformatRuleTextField" GridPane.columnIndex="2" GridPane.rowIndex="7" />
       <TextField fx:id="regexpRuleTextField" GridPane.columnIndex="2" GridPane.rowIndex="8" />
       <TextField fx:id="valueOfRuleTextField" GridPane.columnIndex="2" GridPane.rowIndex="9" />
-      <TextArea fx:id="groovyRuleTextArea" prefHeight="300.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="10" GridPane.rowSpan="2" />
+      <CodeArea fx:id="groovyRuleTextArea" prefHeight="300.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="10" GridPane.rowSpan="2" />
       <CheckBox fx:id="enableNotEmptyRule" mnemonicParsing="false" GridPane.rowIndex="1" />
       <CheckBox fx:id="enableIntegerRule" mnemonicParsing="false" GridPane.rowIndex="2" />
       <CheckBox fx:id="enableDoubleRule" mnemonicParsing="false" GridPane.rowIndex="3" />
@@ -68,4 +70,7 @@
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
+    <stylesheets>
+        <URL value="@/ninja/javafx/smartcsv/fx/smartcsv.css" />
+    </stylesheets>
 </GridPane>

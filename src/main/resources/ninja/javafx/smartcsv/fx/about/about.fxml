@@ -58,6 +58,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Label text="junit" />
@@ -80,7 +81,8 @@
                    <Hyperlink onAction="#openLinkInBrowser" text="http://fxexperience.com/controlsfx/" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                    <Label text="Apache Log4j 2" GridPane.rowIndex="9" />
                    <Hyperlink onAction="#openLinkInBrowser" text="http://logging.apache.org/log4j/2.x/" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-
+                   <Label text="RichTextFX" GridPane.rowIndex="10" />
+                   <Hyperlink onAction="#openLinkInBrowser" text="https://github.com/TomasMikula/RichTextFX" GridPane.columnIndex="1" GridPane.rowIndex="10" />
                </children>
                <padding>
                   <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />

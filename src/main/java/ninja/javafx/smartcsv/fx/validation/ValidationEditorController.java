@@ -32,24 +32,68 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import ninja.javafx.smartcsv.fx.FXMLController;
 import ninja.javafx.smartcsv.validation.ValidationConfiguration;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.StyleSpans;
+import org.fxmisc.richtext.StyleSpansBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 
 /**
  * controller for editing column validations
+ *
+ * RichText groovy highlighting code is based on the java example of
+ * https://github.com/TomasMikula/RichTextFX
  */
 @Component
 public class ValidationEditorController extends FXMLController {
 
     private StringProperty selectedColumn = new SimpleStringProperty();
     private ValidationConfiguration validationConfiguration;
+
+    private static final String[] KEYWORDS = new String[] {
+            "abstract", "assert", "boolean", "break", "byte",
+            "case", "catch", "char", "class",
+            "continue", "def", "default", "do", "double", "else",
+            "enum", "extends", "false", "final", "finally", "float",
+            "for", "if", "implements", "import", "in",
+            "instanceof", "int", "interface", "length", "long", "native",
+            "new", "null", "package", "private", "property", "protected", "public",
+            "return", "short", "static", "super",
+            "switch", "synchronized", "this", "threadsafe", "throw", "throws",
+            "transient", "true", "try", "void", "volatile", "while"
+    };
+
+    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
+    private static final String PAREN_PATTERN = "\\(|\\)";
+    private static final String BRACE_PATTERN = "\\{|\\}";
+    private static final String BRACKET_PATTERN = "\\[|\\]";
+    private static final String SEMICOLON_PATTERN = "\\;";
+    private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
+    private static final String STRING2_PATTERN = "'([^'\\\\]|\\\\.)*'";
+    private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
+
+    private static final Pattern PATTERN = Pattern.compile(
+            "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
+                    + "|(?<PAREN>" + PAREN_PATTERN + ")"
+                    + "|(?<BRACE>" + BRACE_PATTERN + ")"
+                    + "|(?<BRACKET>" + BRACKET_PATTERN + ")"
+                    + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")"
+                    + "|(?<STRING>" + STRING_PATTERN + ")"
+                    + "|(?<STRING2>" + STRING2_PATTERN + ")"
+                    + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
+    );
 
     @FXML
     private CheckBox notEmptyRuleCheckBox;
@@ -79,7 +123,7 @@ public class ValidationEditorController extends FXMLController {
     private TextField valueOfRuleTextField;
 
     @FXML
-    private TextArea groovyRuleTextArea;
+    private CodeArea groovyRuleTextArea;
 
     @FXML
     private CheckBox enableNotEmptyRule;
@@ -133,7 +177,7 @@ public class ValidationEditorController extends FXMLController {
         initTextInputControl(dateformatRuleTextField, enableDateRule);
         initTextInputControl(regexpRuleTextField, enableRegexpRule);
         initTextInputControl(valueOfRuleTextField, enableValueOfRule);
-        initTextInputControl(groovyRuleTextArea, enableGroovyRule);
+        initCodeAreaControl(groovyRuleTextArea, enableGroovyRule);
 
         selectedColumn.addListener(observable -> {
             updateForm();
@@ -275,7 +319,7 @@ public class ValidationEditorController extends FXMLController {
                 enableValueOfRule
         );
 
-        updateTextInputControl(
+        updateCodeAreaControl(
                 groovyRuleTextArea,
                 validationConfiguration.getGroovyRuleFor(getSelectedColumn()),
                 enableGroovyRule
@@ -318,6 +362,15 @@ public class ValidationEditorController extends FXMLController {
         }
     }
 
+    private void updateCodeAreaControl(CodeArea rule, String value, CheckBox ruleEnabled) {
+        if (value == null) {
+            ruleEnabled.setSelected(false);
+        } else {
+            ruleEnabled.setSelected(true);
+            rule.replaceText(0, 0, value);
+        }
+    }
+
     private void initCheckBox(CheckBox rule, CheckBox ruleEnabled) {
         rule.disableProperty().bind(ruleEnabled.selectedProperty().not());
         ruleEnabled.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -343,6 +396,45 @@ public class ValidationEditorController extends FXMLController {
                 rule.setText("");
             }
         });
+    }
+
+    private void initCodeAreaControl(CodeArea rule, CheckBox ruleEnabled) {
+        rule.disableProperty().bind(ruleEnabled.selectedProperty().not());
+        ruleEnabled.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                rule.clear();
+            }
+        });
+        rule.setParagraphGraphicFactory(LineNumberFactory.get(rule));
+        rule.richChanges()
+                .filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
+                .subscribe(change -> {
+                    rule.setStyleSpans(0, computeHighlighting(rule.getText()));
+                });
+    }
+
+    private static StyleSpans<Collection<String>> computeHighlighting(String text) {
+        Matcher matcher = PATTERN.matcher(text);
+        int lastKwEnd = 0;
+        StyleSpansBuilder<Collection<String>> spansBuilder
+                = new StyleSpansBuilder<>();
+        while(matcher.find()) {
+            String styleClass =
+                    matcher.group("KEYWORD") != null ? "keyword" :
+                    matcher.group("PAREN") != null ? "paren" :
+                    matcher.group("BRACE") != null ? "brace" :
+                    matcher.group("BRACKET") != null ? "bracket" :
+                    matcher.group("SEMICOLON") != null ? "semicolon" :
+                    matcher.group("STRING") != null ? "string" :
+                    matcher.group("STRING2") != null ? "string" :
+                    matcher.group("COMMENT") != null ? "comment" :
+                        null; /* never happens */ assert styleClass != null;
+            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
+            spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
+            lastKwEnd = matcher.end();
+        }
+        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+        return spansBuilder.create();
     }
 
 }
