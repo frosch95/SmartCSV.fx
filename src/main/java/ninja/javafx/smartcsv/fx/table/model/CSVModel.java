@@ -158,34 +158,37 @@ public class CSVModel {
                 @Override
                 protected List<ValidationError> call() throws Exception {
                     List<ValidationError> errors = new ArrayList<>();
-
-                    if (header != null) {
-                        ValidationError headerError = validator.isHeaderValid(header);
-                        if (headerError != null) {
-                            logger.info("revalidate: header error found");
-                            errors.add(headerError);
+                    try {
+                        if (header != null) {
+                            ValidationError headerError = validator.isHeaderValid(header);
+                            if (headerError != null) {
+                                logger.info("revalidate: header error found");
+                                errors.add(headerError);
+                            }
                         }
-                    }
 
-                    for (int lineNumber = 0; lineNumber < rows.size(); lineNumber++) {
-                        CSVRow row = rows.get(lineNumber);
-                        row.setValidator(validator);
-                        for (String column: row.getColumns().keySet()) {
-                            CSVValue value = row.getColumns().get(column).getValue();
-                            value.setValidator(validator);
-                            if (validator != null) {
-                                ValidationError validationError = validator.isValid(column, value.getValue(), lineNumber);
-                                if (validationError != null) {
-                                    logger.info("revalidate: {} errors found in line {}", validationError.getMessages().size(), lineNumber);
-                                    errors.add(validationError);
-                                    value.setValidationError(validationError);
+                        for (int lineNumber = 0; lineNumber < rows.size(); lineNumber++) {
+                            CSVRow row = rows.get(lineNumber);
+                            row.setValidator(validator);
+                            for (String column : row.getColumns().keySet()) {
+                                CSVValue value = row.getColumns().get(column).getValue();
+                                value.setValidator(validator);
+                                if (validator != null) {
+                                    ValidationError validationError = validator.isValid(column, value.getValue(), lineNumber);
+                                    if (validationError != null) {
+                                        logger.info("revalidate: {} errors found in line {}", validationError.getMessages().size(), lineNumber);
+                                        errors.add(validationError);
+                                        value.setValidationError(validationError);
+                                    } else {
+                                        value.setValidationError(null);
+                                    }
                                 } else {
                                     value.setValidationError(null);
                                 }
-                            } else {
-                                value.setValidationError(null);
                             }
                         }
+                    } catch (Throwable t) {
+                        logger.error("validation error", t);
                     }
                     return errors;
                 }
