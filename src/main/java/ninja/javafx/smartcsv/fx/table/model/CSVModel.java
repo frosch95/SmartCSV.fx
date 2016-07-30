@@ -114,6 +114,7 @@ public class CSVModel {
 
         if (!hasValidator()) return;
 
+        validator.clearScriptCache();
         revalidationService.setHeader(header);
         revalidationService.setRows(rows);
         revalidationService.setValidator(validator);

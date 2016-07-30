@@ -252,4 +252,8 @@ public class Validator {
         }
         return result;
     }
+
+    public void clearScriptCache() {
+        scriptCache.clear();
+    }
 }
