@@ -16,6 +16,9 @@ even in a "normal" CSV editor. So I decided to write this simple JavaFX applicat
 
 binary distribution of the [latest release (0.4)](https://drive.google.com/open?id=0BwY9gBUvn5qmREdCc0FvNDNEQTA)
 
+##Talks
+[Introduction](http://javafx.ninja/talks/introduction/)
+
 ##License
 ###The MIT License (MIT)
 
