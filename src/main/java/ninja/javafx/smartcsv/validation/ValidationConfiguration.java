@@ -52,6 +52,10 @@ public class ValidationConfiguration {
         headerConfiguration.setNames(headerNames);
     }
 
+    public Boolean getUniquenessRuleFor(String column) {
+        return (Boolean)getValue(column, "unique");
+    }
+
     public Boolean getIntegerRuleFor(String column) {
         return (Boolean)getValue(column, "integer");
     }

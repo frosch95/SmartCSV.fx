@@ -79,6 +79,12 @@
     -glyph-size: 16px;
 }
 
+.goto-icon {
+    -glyph-name: "SUBDIRECTORY_ARROW_RIGHT";
+    -glyph-size: 16px;
+
+}
+
 /* toolbar customization based on http://fxexperience.com/2012/02/customized-segmented-toolbar-buttons/ */
 
 #background {

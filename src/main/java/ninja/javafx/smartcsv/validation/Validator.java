@@ -32,6 +32,7 @@ import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public class Validator {
     private ValidationConfiguration validationConfig;
     private GroovyShell shell = new GroovyShell();
     private Map<String, Script> scriptCache = new HashMap<>();
-
+    private Map<String, HashMap<String, Integer>> uniquenessLookupTable = new HashMap<>();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // constructors
@@ -92,6 +93,7 @@ public class Validator {
                 checkGroovy(column, value, error);
                 checkValueOf(column, value, error);
                 checkDouble(column, value, error);
+                checkUniqueness(column, value, lineNumber, error);
             }
 
             if (!error.isEmpty()) {
@@ -108,6 +110,29 @@ public class Validator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void checkUniqueness(String column, String value, Integer lineNumber, ValidationError error) {
+        if (validationConfig.getUniquenessRuleFor(column) != null && validationConfig.getUniquenessRuleFor(column)) {
+            HashMap<String, Integer> columnValueMap = uniquenessLookupTable.get(column);
+            columnValueMap = getColumnValueMap(column, columnValueMap);
+            Integer valueInLineNumber = columnValueMap.get(value);
+            if (valueInLineNumber != null) {
+                if (!valueInLineNumber.equals(lineNumber)) {
+                    error.add("validation.message.uniqueness", value, valueInLineNumber.toString());
+                }
+            } else {
+                columnValueMap.put(value, lineNumber);
+            }
+        }
+    }
+
+    private HashMap<String, Integer> getColumnValueMap(String column, HashMap<String, Integer> valueLineNumber) {
+        if (valueLineNumber == null) {
+            valueLineNumber = new HashMap<>();
+            uniquenessLookupTable.put(column, valueLineNumber);
+        }
+        return valueLineNumber;
+    }
 
     private void checkGroovy(String column, String value, ValidationError error) {
         String groovyScript = validationConfig.getGroovyRuleFor(column);

@@ -26,6 +26,10 @@
 
 package ninja.javafx.smartcsv.fx;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.WeakListChangeListener;
 import javafx.concurrent.WorkerStateEvent;
@@ -37,11 +41,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
+import javafx.util.converter.NumberStringConverter;
 import ninja.javafx.smartcsv.csv.CSVFileReader;
 import ninja.javafx.smartcsv.csv.CSVFileWriter;
 import ninja.javafx.smartcsv.files.FileStorage;
 import ninja.javafx.smartcsv.fx.about.AboutController;
 import ninja.javafx.smartcsv.fx.list.ErrorSideBar;
+import ninja.javafx.smartcsv.fx.list.GotoLineDialog;
 import ninja.javafx.smartcsv.fx.preferences.PreferencesController;
 import ninja.javafx.smartcsv.fx.table.ObservableMapValueFactory;
 import ninja.javafx.smartcsv.fx.table.ValidationCellFactory;
@@ -65,9 +71,11 @@ import org.supercsv.prefs.CsvPreference;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static java.lang.Integer.parseInt;
 import static java.lang.Math.max;
 import static java.text.MessageFormat.format;
 import static javafx.application.Platform.exit;
@@ -154,6 +162,9 @@ public class SmartCSVController extends FXMLController {
     private MenuItem addRowMenuItem;
 
     @FXML
+    private MenuItem gotoLineMenuItem;
+
+    @FXML
     private Button saveButton;
 
     @FXML
@@ -176,6 +187,9 @@ public class SmartCSVController extends FXMLController {
 
     @FXML
     private Button addRowButton;
+
+    @FXML
+    private Label currentLineNumber;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // members
@@ -205,7 +219,7 @@ public class SmartCSVController extends FXMLController {
         setupTableCellFactory();
         setupErrorSideBar(resourceBundle);
 
-        bindMenuItemsToContentExistence(currentCsvFile, saveMenuItem, saveAsMenuItem, addRowMenuItem, createConfigMenuItem, loadConfigMenuItem);
+        bindMenuItemsToContentExistence(currentCsvFile, saveMenuItem, saveAsMenuItem, addRowMenuItem, gotoLineMenuItem, createConfigMenuItem, loadConfigMenuItem);
         bindButtonsToContentExistence(currentCsvFile, saveButton, saveAsButton, addRowButton, createConfigButton, loadConfigButton);
 
         bindMenuItemsToContentExistence(currentConfigFile, saveConfigMenuItem, saveAsConfigMenuItem);
@@ -346,6 +360,23 @@ public class SmartCSVController extends FXMLController {
         selectNewRow();
     }
 
+    @FXML
+    public void gotoLine(ActionEvent actionEvent) {
+        int maxLineNumber = currentCsvFile.getContent().getRows().size();
+        GotoLineDialog dialog = new GotoLineDialog(maxLineNumber);
+        dialog.setTitle(resourceBundle.getString("dialog.goto.line.title"));
+        dialog.setHeaderText(format(resourceBundle.getString("dialog.goto.line.header.text"), maxLineNumber));
+        dialog.setContentText(resourceBundle.getString("dialog.goto.line.label"));
+        Optional<Integer> result = dialog.showAndWait();
+        if (result.isPresent()){
+            Integer lineNumber = result.get();
+            if (lineNumber != null) {
+                tableView.scrollTo(max(0, lineNumber - 2));
+                tableView.getSelectionModel().select(lineNumber - 1);
+            }
+        }
+    }
+
     public boolean canExit() {
         boolean canExit = true;
         if (currentCsvFile.getContent() != null && currentCsvFile.isFileChanged()) {
@@ -423,6 +454,10 @@ public class SmartCSVController extends FXMLController {
 
     private void bindConfigFileName() {
         configurationName.textProperty().bind(selectString(currentConfigFile.fileProperty(), "name"));
+    }
+
+    private void bindLineNumber() {
+        currentLineNumber.textProperty().bind(tableView.getSelectionModel().selectedIndexProperty().add(1).asString());
     }
 
     private void loadCsvPreferencesFromFile() {
@@ -529,6 +564,7 @@ public class SmartCSVController extends FXMLController {
             currentCsvFile.getContent().setValidationConfiguration(currentConfigFile.getContent());
             validationEditorController.setValidationConfiguration(currentConfigFile.getContent());
             tableView = new TableView<>();
+            bindLineNumber();
 
             bindMenuItemsToTableSelection(deleteRowMenuItem);
             bindButtonsToTableSelection(deleteRowButton);

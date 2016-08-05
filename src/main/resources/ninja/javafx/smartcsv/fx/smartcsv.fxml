@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import de.jensd.fx.glyphs.GlyphsStack?>
+<?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -21,8 +22,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
-<BorderPane fx:id="applicationPane" maxHeight="-Infinity" maxWidth="1000.0" minHeight="700.0" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="applicationPane" maxHeight="-Infinity" maxWidth="1000.0" minHeight="700.0" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1">
     <top>
         <VBox id="background" prefWidth="100.0" BorderPane.alignment="CENTER">
             <children>
@@ -52,7 +52,7 @@
                                         <GlyphsStack>
                                             <children>
                                                 <MaterialDesignIconView styleClass="config-icon" />
-                                                <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="create-config-icon" />
+                                                <MaterialDesignIconView style="-fx-opacity: 0.7;" styleClass="create-config-icon" />
                                             </children>
                                         </GlyphsStack>
                                     </graphic>
@@ -62,7 +62,7 @@
                                         <GlyphsStack>
                                             <children>
                                                 <MaterialDesignIconView styleClass="config-icon" />
-                                                <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="load-config-icon" />
+                                                <MaterialDesignIconView style="-fx-opacity: 0.7;" styleClass="load-config-icon" />
                                             </children>
                                         </GlyphsStack>
                                     </graphic>
@@ -72,7 +72,7 @@
                                         <GlyphsStack>
                                             <children>
                                                 <MaterialDesignIconView styleClass="config-icon" />
-                                                <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="save-config-icon" />
+                                                <MaterialDesignIconView style="-fx-opacity: 0.7;" styleClass="save-config-icon" />
                                             </children>
                                         </GlyphsStack>
                                     </graphic>
@@ -82,7 +82,7 @@
                                         <GlyphsStack>
                                             <children>
                                                 <MaterialDesignIconView styleClass="config-icon" />
-                                                <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="save-config-icon" />
+                                                <MaterialDesignIconView style="-fx-opacity: 0.7;" styleClass="save-config-icon" />
                                             </children>
                                         </GlyphsStack>
                                     </graphic>
@@ -112,6 +112,12 @@
                                 <MenuItem fx:id="addRowMenuItem" disable="true" mnemonicParsing="false" onAction="#addRow" text="%menu.add.row">
                                     <graphic>
                                         <MaterialDesignIconView styleClass="add-icon" />
+                                    </graphic>
+                                </MenuItem>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem fx:id="gotoLineMenuItem" disable="true" mnemonicParsing="false" onAction="#gotoLine" text="%menu.goto.line">
+                                    <graphic>
+                                        <MaterialDesignIconView styleClass="goto-icon" />
                                     </graphic>
                                 </MenuItem>
                             </items>
@@ -164,7 +170,7 @@
                             <GlyphsStack>
                                 <children>
                                     <MaterialDesignIconView styleClass="config-icon" />
-                                    <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="create-config-icon" />
+                                    <MaterialDesignIconView style="-fx-opacity: 0.7;" styleClass="create-config-icon" />
                                 </children>
                             </GlyphsStack>
                         </graphic>
@@ -177,7 +183,7 @@
                             <GlyphsStack>
                                 <children>
                                     <MaterialDesignIconView styleClass="config-icon" />
-                                    <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="load-config-icon" />
+                                    <MaterialDesignIconView style="-fx-opacity: 0.7;" styleClass="load-config-icon" />
                                 </children>
                             </GlyphsStack>
                         </graphic>
@@ -190,7 +196,7 @@
                             <GlyphsStack>
                                 <children>
                                     <MaterialDesignIconView styleClass="config-icon" />
-                                    <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="save-config-icon" />
+                                    <MaterialDesignIconView style="-fx-opacity: 0.7;" styleClass="save-config-icon" />
                                 </children>
                             </GlyphsStack>
                         </graphic>
@@ -203,7 +209,7 @@
                             <GlyphsStack>
                                 <children>
                                     <MaterialDesignIconView styleClass="config-icon" />
-                                    <MaterialDesignIconView  style="-fx-opacity: 0.7;" styleClass="save-config-icon" />
+                                    <MaterialDesignIconView style="-fx-opacity: 0.7;" styleClass="save-config-icon" />
                                 </children>
                             </GlyphsStack>
 
@@ -275,7 +281,8 @@
                 <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                 <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
-                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="NEVER" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -287,6 +294,8 @@
                 <MaterialDesignIconView styleClass="config-check-icon" GridPane.columnIndex="3" GridPane.hgrow="NEVER" />
                 <Label text="%stateline.configuration" GridPane.columnIndex="4" GridPane.hgrow="NEVER" />
                 <Label fx:id="configurationName" GridPane.columnIndex="5" GridPane.hgrow="ALWAYS" />
+                <Label text="%lineNumber" GridPane.columnIndex="7" />
+                <Label fx:id="currentLineNumber" text="" GridPane.columnIndex="8" />
             </children>
             <BorderPane.margin>
                 <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
