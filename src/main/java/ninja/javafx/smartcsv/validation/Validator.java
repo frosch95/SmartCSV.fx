@@ -32,7 +32,6 @@ import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -112,7 +111,7 @@ public class Validator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void checkUniqueness(String column, String value, Integer lineNumber, ValidationError error) {
-        if (validationConfig.getUniquenessRuleFor(column) != null && validationConfig.getUniquenessRuleFor(column)) {
+        if (validationConfig.getUniqueRuleFor(column) != null && validationConfig.getUniqueRuleFor(column)) {
             HashMap<String, Integer> columnValueMap = uniquenessLookupTable.get(column);
             columnValueMap = getColumnValueMap(column, columnValueMap);
             Integer valueInLineNumber = columnValueMap.get(value);

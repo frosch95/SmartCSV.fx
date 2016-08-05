@@ -108,6 +108,9 @@ public class ValidationEditorController extends FXMLController {
     private CheckBox alphanumericRuleCheckBox;
 
     @FXML
+    private CheckBox uniqueRuleCheckBox;
+
+    @FXML
     private Spinner<Integer> minLengthSpinner;
 
     @FXML
@@ -155,6 +158,9 @@ public class ValidationEditorController extends FXMLController {
     @FXML
     private CheckBox enableGroovyRule;
 
+    @FXML
+    private CheckBox enableUniqueRule;
+
 
     @Value("${fxml.smartcvs.validation.editor.view}")
     @Override
@@ -172,6 +178,7 @@ public class ValidationEditorController extends FXMLController {
         initCheckBox(integerRuleCheckBox, enableIntegerRule);
         initCheckBox(doublerRuleCheckBox, enableDoubleRule);
         initCheckBox(alphanumericRuleCheckBox, enableAlphanumericRule);
+        initCheckBox(uniqueRuleCheckBox, enableUniqueRule);
         initSpinner(minLengthSpinner, enableMinLengthRule);
         initSpinner(maxLengthSpinner, enableMaxLengthRule);
         initTextInputControl(dateformatRuleTextField, enableDateRule);
@@ -212,6 +219,12 @@ public class ValidationEditorController extends FXMLController {
             validationConfiguration.setNotEmptyRuleFor(selectedColumn.getValue(), notEmptyRuleCheckBox.isSelected());
         } else {
             validationConfiguration.setNotEmptyRuleFor(selectedColumn.getValue(), null);
+        }
+
+        if (enableUniqueRule.isSelected()) {
+            validationConfiguration.setUniqueRuleFor(selectedColumn.getValue(), uniqueRuleCheckBox.isSelected());
+        } else {
+            validationConfiguration.setUniqueRuleFor(selectedColumn.getValue(), null);
         }
 
         if (enableDoubleRule.isSelected()) {
@@ -287,6 +300,12 @@ public class ValidationEditorController extends FXMLController {
                 alphanumericRuleCheckBox,
                 validationConfiguration.getAlphanumericRuleFor(getSelectedColumn()),
                 enableAlphanumericRule
+        );
+
+        updateCheckBox(
+                uniqueRuleCheckBox,
+                validationConfiguration.getUniqueRuleFor(getSelectedColumn()),
+                enableUniqueRule
         );
 
         updateSpinner(

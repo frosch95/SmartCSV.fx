@@ -52,7 +52,7 @@ public class ValidationConfiguration {
         headerConfiguration.setNames(headerNames);
     }
 
-    public Boolean getUniquenessRuleFor(String column) {
+    public Boolean getUniqueRuleFor(String column) {
         return (Boolean)getValue(column, "unique");
     }
 
@@ -113,6 +113,11 @@ public class ValidationConfiguration {
     public void setNotEmptyRuleFor(String column, Boolean value) {
         setValue(column, value, "not empty");
     }
+
+    public void setUniqueRuleFor(String column, Boolean value) {
+        setValue(column, value, "unique");
+    }
+
 
     public void setMinLengthRuleFor(String column, Integer value) {
         setValue(column, value == null ? null : value.doubleValue(), "minlength");
