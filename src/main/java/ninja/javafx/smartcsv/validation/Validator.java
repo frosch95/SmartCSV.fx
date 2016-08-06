@@ -111,7 +111,8 @@ public class Validator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void checkUniqueness(String column, String value, Integer lineNumber, ValidationError error) {
-        if (validationConfig.getUniqueRuleFor(column) != null && validationConfig.getUniqueRuleFor(column)) {
+        Boolean uniqueRule = validationConfig.getUniqueRuleFor(column);
+        if (uniqueRule != null && uniqueRule) {
             HashMap<String, Integer> columnValueMap = uniquenessLookupTable.get(column);
             columnValueMap = getColumnValueMap(column, columnValueMap);
             Integer valueInLineNumber = columnValueMap.get(value);
@@ -180,7 +181,8 @@ public class Validator {
     }
 
     private void checkBlankOrNull(String column, String value, ValidationError error) {
-        if (validationConfig.getNotEmptyRuleFor(column) != null && validationConfig.getNotEmptyRuleFor(column)) {
+        Boolean notEmptyRule = validationConfig.getNotEmptyRuleFor(column);
+        if (notEmptyRule != null && notEmptyRule) {
             if (isBlankOrNull(value)) {
                 error.add("validation.message.not.empty");
             }
@@ -188,7 +190,8 @@ public class Validator {
     }
 
     private void checkInteger(String column, String value, ValidationError error) {
-        if (validationConfig.getIntegerRuleFor(column) != null && validationConfig.getIntegerRuleFor(column)) {
+        Boolean integerRule = validationConfig.getIntegerRuleFor(column);
+        if (integerRule != null && integerRule) {
             if (!isInt(value)) {
                 error.add("validation.message.integer");
             }
@@ -196,7 +199,8 @@ public class Validator {
     }
 
     private void checkDouble(String column, String value, ValidationError error) {
-        if (validationConfig.getDoubleRuleFor(column) != null && validationConfig.getDoubleRuleFor(column)) {
+        Boolean doubleRule = validationConfig.getDoubleRuleFor(column);
+        if (doubleRule != null && doubleRule) {
             if (!isDouble(value)) {
                 error.add("validation.message.double");
             }
@@ -231,7 +235,8 @@ public class Validator {
     }
 
     private void checkAlphaNumeric(String column, String value, ValidationError error) {
-        if (validationConfig.getAlphanumericRuleFor(column) != null && validationConfig.getAlphanumericRuleFor(column)) {
+        Boolean alphaNumericRule = validationConfig.getAlphanumericRuleFor(column);
+        if (alphaNumericRule != null && alphaNumericRule) {
             if (!matchRegexp(value, "[0-9a-zA-Z]*")) {
                 error.add("validation.message.alphanumeric");
             }

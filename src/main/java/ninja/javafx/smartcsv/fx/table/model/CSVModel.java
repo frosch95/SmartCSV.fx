@@ -26,6 +26,7 @@
 
 package ninja.javafx.smartcsv.fx.table.model;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
@@ -38,6 +39,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The CSVModel is the client representation for the csv filepath.
@@ -168,11 +171,16 @@ public class CSVModel {
                             }
                         }
 
-                        for (int lineNumber = 0; lineNumber < rows.size(); lineNumber++) {
+                        int maxRows = rows.size();
+                        for (int lineNumber = 0; lineNumber < maxRows; lineNumber++) {
                             CSVRow row = rows.get(lineNumber);
                             row.setValidator(validator);
-                            for (String column : row.getColumns().keySet()) {
-                                CSVValue value = row.getColumns().get(column).getValue();
+
+                            Map<String, ObjectProperty<CSVValue>> table = row.getColumns();
+                            Set<String> columns = table.keySet();
+
+                            for (String column : columns) {
+                                CSVValue value = table.get(column).getValue();
                                 value.setValidator(validator);
                                 if (validator != null) {
                                     ValidationError validationError = validator.isValid(column, value.getValue(), lineNumber);
@@ -188,6 +196,7 @@ public class CSVModel {
                                 }
                             }
                         }
+
                     } catch (Throwable t) {
                         logger.error("validation error", t);
                     }
