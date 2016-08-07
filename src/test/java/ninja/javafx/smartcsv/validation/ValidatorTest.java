@@ -70,8 +70,10 @@ public class ValidatorTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Test
     public void validation() {
+        System.out.println(column + "  " + value + "  " + expectedResult + "  " + expectedError);
+
         // execution
-        ValidationError result = sut.isValid(column, value, 0);
+        ValidationError result = sut.isValid(0, column, value);
 
         // assertion
         assertThat(result == null, is(expectedResult));
@@ -112,7 +114,7 @@ public class ValidatorTest {
     }
 
     public static String json(String column, String rule, Object value) {
-        String json = "{\"columns\":{\"" + column + "\":{\"" + rule + "\":";
+        String json = "{\"headers\": { \"list\": [\""+column+"\"]},\"columns\":{\"" + column + "\":{\"" + rule + "\":";
         if (value instanceof String) {
             json += "\""+ value + "\"";
         } else if (value instanceof List) {

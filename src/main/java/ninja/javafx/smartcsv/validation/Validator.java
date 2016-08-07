@@ -49,9 +49,7 @@ public class Validator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private ValidationConfiguration validationConfig;
-    private GroovyShell shell = new GroovyShell();
-    private Map<String, Script> scriptCache = new HashMap<>();
-    private Map<String, HashMap<String, Integer>> uniquenessLookupTable = new HashMap<>();
+    private ColumnValidations columnValidations = new ColumnValidations();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // constructors
@@ -63,6 +61,7 @@ public class Validator {
      */
     public Validator(ValidationConfiguration validationConfig) {
          this.validationConfig = validationConfig;
+        initColumnValidations();
     }
 
 
@@ -76,31 +75,17 @@ public class Validator {
      * @param value the value to check
      * @return ValidationError with information if valid and if not which getMessage happened
      */
-    public ValidationError isValid(String column, String value, Integer lineNumber) {
+    public ValidationError isValid(Integer lineNumber, String column, String value) {
         ValidationError result = null;
         if (hasConfig()) {
-
-            ValidationError error = ValidationError.withLineNumber(lineNumber);
-            checkBlankOrNull(column, value, error);
-            if (value != null && !value.isEmpty()) {
-                checkRegularExpression(column, value, error);
-                checkAlphaNumeric(column, value, error);
-                checkDate(column, value, error);
-                checkMaxLength(column, value, error);
-                checkMinLength(column, value, error);
-                checkInteger(column, value, error);
-                checkGroovy(column, value, error);
-                checkValueOf(column, value, error);
-                checkDouble(column, value, error);
-                checkUniqueness(column, value, lineNumber, error);
-            }
-
+            ValidationError error = columnValidations.isValid(lineNumber, column, value);
             if (!error.isEmpty()) {
                 result = error;
             }
         }
         return result;
     }
+
 
     public boolean hasConfig() {
         return validationConfig != null;
@@ -110,147 +95,67 @@ public class Validator {
     // private methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void checkUniqueness(String column, String value, Integer lineNumber, ValidationError error) {
-        Boolean uniqueRule = validationConfig.getUniqueRuleFor(column);
-        if (uniqueRule != null && uniqueRule) {
-            HashMap<String, Integer> columnValueMap = uniquenessLookupTable.get(column);
-            columnValueMap = getColumnValueMap(column, columnValueMap);
-            Integer valueInLineNumber = columnValueMap.get(value);
-            if (valueInLineNumber != null) {
-                if (!valueInLineNumber.equals(lineNumber)) {
-                    error.add("validation.message.uniqueness", value, valueInLineNumber.toString());
-                }
-            } else {
-                columnValueMap.put(value, lineNumber);
+    private void initColumnValidations() {
+        if (hasConfig()) {
+        String[] columns = validationConfig.headerNames();
+        for(String column: columns) {
+            Boolean alphaNumeric = validationConfig.getAlphanumericRuleFor(column);
+            if (alphaNumeric != null && alphaNumeric) {
+                columnValidations.add(column, new AlphaNumericValidation());
             }
+
+            Boolean doubleRule = validationConfig.getDoubleRuleFor(column);
+            if (doubleRule != null && doubleRule) {
+                columnValidations.add(column, new DoubleValidation());
+            }
+
+            Boolean integerRule = validationConfig.getIntegerRuleFor(column);
+            if (integerRule != null && integerRule) {
+                columnValidations.add(column, new IntegerValidation());
+            }
+
+            Boolean notEmptyRule = validationConfig.getNotEmptyRuleFor(column);
+            if (notEmptyRule != null && notEmptyRule) {
+                columnValidations.add(column, new NotEmptyValidation());
+            }
+
+            Boolean uniqueRule = validationConfig.getUniqueRuleFor(column);
+            if (uniqueRule != null && uniqueRule) {
+                columnValidations.add(column, new UniqueValidation());
+            }
+
+            String dateRule = validationConfig.getDateRuleFor(column);
+            if (dateRule != null && !dateRule.trim().isEmpty()) {
+                columnValidations.add(column, new DateValidation(dateRule));
+            }
+
+            Integer minLength = validationConfig.getMinLengthRuleFor(column);
+            if (minLength != null) {
+                columnValidations.add(column, new MinLengthValidation(minLength));
+            }
+
+            Integer maxLength = validationConfig.getMaxLengthRuleFor(column);
+            if (maxLength != null) {
+                columnValidations.add(column, new MaxLengthValidation(maxLength));
+            }
+
+            String regexp = validationConfig.getRegexpRuleFor(column);
+            if (regexp != null && !regexp.trim().isEmpty()) {
+                columnValidations.add(column, new RegExpValidation(regexp));
+            }
+
+            String groovy = validationConfig.getGroovyRuleFor(column);
+            if (groovy != null && !groovy.trim().isEmpty()) {
+                columnValidations.add(column, new GroovyValidation(groovy));
+            }
+            List<String> valueOfRule = validationConfig.getValueOfRuleFor(column);
+            if (valueOfRule != null && !valueOfRule.isEmpty()) {
+                columnValidations.add(column, new ValueOfValidation(valueOfRule));
+            }
+        }
         }
     }
 
-    private HashMap<String, Integer> getColumnValueMap(String column, HashMap<String, Integer> valueLineNumber) {
-        if (valueLineNumber == null) {
-            valueLineNumber = new HashMap<>();
-            uniquenessLookupTable.put(column, valueLineNumber);
-        }
-        return valueLineNumber;
-    }
-
-    private void checkGroovy(String column, String value, ValidationError error) {
-        String groovyScript = validationConfig.getGroovyRuleFor(column);
-        if (groovyScript != null) {
-
-            Script script = scriptCache.get(column);
-            if (script == null) {
-                script = shell.parse(groovyScript);
-                scriptCache.put(column, script);
-            }
-
-            Binding binding = new Binding();
-            binding.setVariable("value", value);
-            script.setBinding(binding);
-
-            Object groovyResult = null;
-            try {
-                groovyResult = script.run();
-            } catch (CompilationFailedException e) {
-                error.add("validation.message.groovy.exception", groovyScript, e.getMessage());
-                e.printStackTrace();
-            }
-            if (groovyResult == null) {
-                error.add("validation.message.groovy.return.null", groovyScript);
-            }
-
-            if (!isScriptResultTrue(groovyResult)) {
-                error.add(groovyResult.toString());
-            }
-
-        }
-    }
-
-    private boolean isScriptResultTrue(Object groovyResult) {
-        return groovyResult.equals(true) || groovyResult.toString().trim().toLowerCase().equals("true");
-    }
-
-    private void checkValueOf(String column, String value, ValidationError error) {
-        List<String> values = validationConfig.getValueOfRuleFor(column);
-        if (values != null) {
-            if (!values.contains(value)) {
-                String commaSeparated = values.stream().collect(joining(", "));
-                error.add("validation.message.value.of", value, commaSeparated);
-            }
-        }
-    }
-
-    private void checkBlankOrNull(String column, String value, ValidationError error) {
-        Boolean notEmptyRule = validationConfig.getNotEmptyRuleFor(column);
-        if (notEmptyRule != null && notEmptyRule) {
-            if (isBlankOrNull(value)) {
-                error.add("validation.message.not.empty");
-            }
-        }
-    }
-
-    private void checkInteger(String column, String value, ValidationError error) {
-        Boolean integerRule = validationConfig.getIntegerRuleFor(column);
-        if (integerRule != null && integerRule) {
-            if (!isInt(value)) {
-                error.add("validation.message.integer");
-            }
-        }
-    }
-
-    private void checkDouble(String column, String value, ValidationError error) {
-        Boolean doubleRule = validationConfig.getDoubleRuleFor(column);
-        if (doubleRule != null && doubleRule) {
-            if (!isDouble(value)) {
-                error.add("validation.message.double");
-            }
-        }
-    }
-
-    private void checkMinLength(String column, String value, ValidationError error) {
-        Integer minLength = validationConfig.getMinLengthRuleFor(column);
-        if (minLength != null) {
-            if (!minLength(value, minLength)) {
-                error.add("validation.message.min.length", minLength.toString());
-            }
-        }
-    }
-
-    private void checkMaxLength(String column, String value, ValidationError error) {
-        Integer maxLength = validationConfig.getMaxLengthRuleFor(column);
-        if (maxLength != null) {
-            if (!maxLength(value, maxLength)) {
-                error.add("validation.message.max.length", maxLength.toString());
-            }
-        }
-    }
-
-    private void checkDate(String column, String value, ValidationError error) {
-        String dateformat = validationConfig.getDateRuleFor(column);
-        if (dateformat != null && !dateformat.trim().isEmpty()) {
-            if (!isDate(value, dateformat, true)) {
-                error.add("validation.message.date.format", dateformat);
-            }
-        }
-    }
-
-    private void checkAlphaNumeric(String column, String value, ValidationError error) {
-        Boolean alphaNumericRule = validationConfig.getAlphanumericRuleFor(column);
-        if (alphaNumericRule != null && alphaNumericRule) {
-            if (!matchRegexp(value, "[0-9a-zA-Z]*")) {
-                error.add("validation.message.alphanumeric");
-            }
-        }
-    }
-
-    private void checkRegularExpression(String column, String value, ValidationError error) {
-        String regexp = validationConfig.getRegexpRuleFor(column);
-        if (regexp != null && !regexp.trim().isEmpty()) {
-            if (!matchRegexp(value, regexp)) {
-                error.add("validation.message.regexp", regexp);
-            }
-        }
-    }
 
     public ValidationError isHeaderValid(String[] headerNames) {
         ValidationError result = null;
@@ -280,9 +185,5 @@ public class Validator {
             }
         }
         return result;
-    }
-
-    public void clearScriptCache() {
-        scriptCache.clear();
     }
 }

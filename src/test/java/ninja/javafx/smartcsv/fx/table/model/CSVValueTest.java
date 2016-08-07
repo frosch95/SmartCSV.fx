@@ -55,6 +55,6 @@ public class CSVValueTest {
         sut.setValue(VALUE);
 
         // assertion
-        verify(validator).isValid(eq(COLUMN), eq(VALUE), anyInt());
+        verify(validator).isValid(anyInt(), eq(COLUMN), eq(VALUE));
     }
 }

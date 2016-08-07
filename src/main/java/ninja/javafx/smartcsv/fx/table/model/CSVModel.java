@@ -53,11 +53,12 @@ public class CSVModel {
     private Validator validator;
     private ObservableList<CSVRow> rows = FXCollections.observableArrayList();
     private String[] header;
-    private ObservableList<ValidationError> validationError  = FXCollections.observableArrayList();
+    private ObservableList<ValidationError> validationError = FXCollections.observableArrayList();
     private RevalidationService revalidationService = new RevalidationService();
 
     /**
      * sets the validator configuration for the data revalidates
+     *
      * @param validationConfiguration the validator configuration for this data
      */
     public void setValidationConfiguration(ValidationConfiguration validationConfiguration) {
@@ -67,6 +68,7 @@ public class CSVModel {
 
     /**
      * returns the data as a list of rows of the
+     *
      * @return list of rows
      */
     public ObservableList<CSVRow> getRows() {
@@ -79,6 +81,7 @@ public class CSVModel {
 
     /**
      * adds a new and empty row
+     *
      * @return the new row
      */
     public CSVRow addRow() {
@@ -91,6 +94,7 @@ public class CSVModel {
 
     /**
      * sets the column headers as string array
+     *
      * @param header the headers of the columns
      */
     public void setHeader(String[] header) {
@@ -100,6 +104,7 @@ public class CSVModel {
 
     /**
      * returns the column headers
+     *
      * @return the column headers
      */
     public String[] getHeader() {
@@ -116,8 +121,6 @@ public class CSVModel {
         logger.info("revalidate: hasValidator -> {}", hasValidator());
 
         if (!hasValidator()) return;
-
-        validator.clearScriptCache();
         revalidationService.setHeader(header);
         revalidationService.setRows(rows);
         revalidationService.setValidator(validator);
@@ -171,6 +174,7 @@ public class CSVModel {
                             }
                         }
 
+
                         int maxRows = rows.size();
                         for (int lineNumber = 0; lineNumber < maxRows; lineNumber++) {
                             CSVRow row = rows.get(lineNumber);
@@ -183,7 +187,7 @@ public class CSVModel {
                                 CSVValue value = table.get(column).getValue();
                                 value.setValidator(validator);
                                 if (validator != null) {
-                                    ValidationError validationError = validator.isValid(column, value.getValue(), lineNumber);
+                                    ValidationError validationError = validator.isValid(lineNumber, column, value.getValue());
                                     if (validationError != null) {
                                         logger.info("revalidate: {} errors found in line {}", validationError.getMessages().size(), lineNumber);
                                         errors.add(validationError);

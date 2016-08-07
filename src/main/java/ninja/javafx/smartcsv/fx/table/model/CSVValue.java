@@ -89,7 +89,7 @@ public class CSVValue {
      */
     public void setValue(String value) {
         if (validator != null) {
-            valid = validator.isValid(column, value, rowNumber);
+            valid = validator.isValid(rowNumber, column, value);
         }
         this.value.set(value);
     }
