@@ -29,8 +29,6 @@ package ninja.javafx.smartcsv.csv;
 import ninja.javafx.smartcsv.FileReader;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
 import ninja.javafx.smartcsv.fx.table.model.CSVRow;
-import ninja.javafx.smartcsv.fx.table.model.CSVValue;
-import org.springframework.stereotype.Service;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.ICsvMapReader;
 

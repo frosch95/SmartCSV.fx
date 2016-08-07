@@ -36,7 +36,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
-import ninja.javafx.smartcsv.fx.util.ColorConstants;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

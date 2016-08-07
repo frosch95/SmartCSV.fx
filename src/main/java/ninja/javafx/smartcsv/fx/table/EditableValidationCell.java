@@ -33,7 +33,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import ninja.javafx.smartcsv.fx.table.model.CSVRow;
 import ninja.javafx.smartcsv.fx.table.model.CSVValue;
-import ninja.javafx.smartcsv.fx.util.ColorConstants;
 
 import java.util.ResourceBundle;
 

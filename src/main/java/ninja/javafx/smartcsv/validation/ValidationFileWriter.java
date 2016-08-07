@@ -29,7 +29,6 @@ package ninja.javafx.smartcsv.validation;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ninja.javafx.smartcsv.FileWriter;
-import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;

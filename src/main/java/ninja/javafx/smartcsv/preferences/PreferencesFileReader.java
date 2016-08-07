@@ -28,7 +28,6 @@ package ninja.javafx.smartcsv.preferences;
 
 import com.google.gson.GsonBuilder;
 import ninja.javafx.smartcsv.FileReader;
-import org.springframework.stereotype.Service;
 import org.supercsv.prefs.CsvPreference;
 import org.supercsv.quote.AlwaysQuoteMode;
 

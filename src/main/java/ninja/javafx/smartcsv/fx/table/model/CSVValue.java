@@ -29,7 +29,6 @@ package ninja.javafx.smartcsv.fx.table.model;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import ninja.javafx.smartcsv.validation.ValidationError;
-import ninja.javafx.smartcsv.validation.Validator;
 
 /**
  * The csv value represents the value of a single cell.

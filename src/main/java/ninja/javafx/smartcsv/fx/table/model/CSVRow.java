@@ -28,11 +28,8 @@ package ninja.javafx.smartcsv.fx.table.model;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
-import ninja.javafx.smartcsv.validation.Validator;
 
 /**
  * This class represents a single row in the csv file.

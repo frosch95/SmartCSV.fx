@@ -28,10 +28,7 @@ package ninja.javafx.smartcsv.fx.util;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import ninja.javafx.smartcsv.FileReader;
 import ninja.javafx.smartcsv.files.FileStorage;
-
-import java.io.File;
 
 /**
  * Service class for async load of a csv file

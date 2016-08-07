@@ -26,10 +26,6 @@
 
 package ninja.javafx.smartcsv.fx;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.WeakListChangeListener;
 import javafx.concurrent.WorkerStateEvent;
@@ -41,7 +37,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
-import javafx.util.converter.NumberStringConverter;
 import ninja.javafx.smartcsv.csv.CSVFileReader;
 import ninja.javafx.smartcsv.csv.CSVFileWriter;
 import ninja.javafx.smartcsv.files.FileStorage;
@@ -71,12 +66,9 @@ import org.supercsv.prefs.CsvPreference;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.text.MessageFormat;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static java.lang.Integer.parseInt;
 import static java.lang.Math.max;
 import static java.text.MessageFormat.format;
 import static javafx.application.Platform.exit;
