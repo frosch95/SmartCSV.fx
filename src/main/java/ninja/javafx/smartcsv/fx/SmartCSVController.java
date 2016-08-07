@@ -72,6 +72,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -352,7 +353,7 @@ public class SmartCSVController extends FXMLController {
     public void addRow(ActionEvent actionEvent) {
         CSVRow row = currentCsvFile.getContent().addRow();
         for (String column : currentCsvFile.getContent().getHeader()) {
-            row.addValue(column, "");
+            currentCsvFile.getContent().addValue(row, column, "");
         }
         currentCsvFile.setFileChanged(true);
         resetContent();
@@ -408,7 +409,7 @@ public class SmartCSVController extends FXMLController {
             runLater(() -> {
                 validationEditorController.updateConfiguration();
                 currentCsvFile.setFileChanged(true);
-                currentCsvFile.getContent().revalidate();
+                currentCsvFile.getContent().revalidate(column);
             });
         }
     }
@@ -590,7 +591,7 @@ public class SmartCSVController extends FXMLController {
      * @param header name of the column header
      * @param tableView the tableview
      */
-    private void addColumn(String header, TableView tableView) {
+    private void addColumn(final String header, TableView tableView) {
         TableColumn column = new TableColumn(header);
         column.setCellValueFactory(new ObservableMapValueFactory(header));
         column.setCellFactory(cellFactory);
@@ -607,7 +608,6 @@ public class SmartCSVController extends FXMLController {
                 getColumns().get(header).setValue(event.getNewValue());
                 runLater(() -> {
                     currentCsvFile.setFileChanged(true);
-                    currentCsvFile.getContent().revalidate();
                 });
             }
         });

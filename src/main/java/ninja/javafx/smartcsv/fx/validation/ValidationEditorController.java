@@ -274,6 +274,8 @@ public class ValidationEditorController extends FXMLController {
         } else {
             validationConfiguration.setValueOfRuleFor(selectedColumn.getValue(), null);
         }
+
+
     }
 
     private void updateForm() {

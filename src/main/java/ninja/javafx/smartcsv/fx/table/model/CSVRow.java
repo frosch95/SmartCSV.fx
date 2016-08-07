@@ -28,6 +28,8 @@ package ninja.javafx.smartcsv.fx.table.model;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import ninja.javafx.smartcsv.validation.Validator;
@@ -36,17 +38,8 @@ import ninja.javafx.smartcsv.validation.Validator;
  * This class represents a single row in the csv file.
  */
 public class CSVRow {
-    private Validator validator;
     private ObservableMap<String, ObjectProperty<CSVValue>> columns = FXCollections.observableHashMap();
     private int rowNumber;
-
-    /**
-     * single row
-     * @param validator the reference to the validator
-     */
-    public void setValidator(Validator validator) {
-        this.validator = validator;
-    }
 
     /**
      * sets the row number
@@ -78,13 +71,11 @@ public class CSVRow {
      * @param column column name
      * @param value the value to store
      */
-    public void addValue(String column, String value) {
+    CSVValue addValue(String column, String value) {
         CSVValue v = new CSVValue();
-        v.setValidator(validator);
-        v.setColumn(column);
-        v.setRowNumber(rowNumber);
         v.setValue(value);
         columns.put(column, new SimpleObjectProperty<>(v));
+        return v;
     }
 
 }
