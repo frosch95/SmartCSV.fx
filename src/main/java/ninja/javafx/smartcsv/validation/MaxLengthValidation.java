@@ -2,8 +2,8 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>                                              
-                                                                                                                    
+   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,40 +21,32 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-  
+
 */
+package ninja.javafx.smartcsv.validation;
 
-package ninja.javafx.smartcsv.fx.util;
-
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import ninja.javafx.smartcsv.files.FileStorage;
+import static org.apache.commons.validator.GenericValidator.maxLength;
 
 /**
- * Service class for async load of a csv file
+ * Checks if the value is shorter or exactly as long as the given max length
  */
-@org.springframework.stereotype.Service
-public class SaveFileService extends Service {
+public class MaxLengthValidation implements Validation {
 
-    private FileStorage file;
+    private int maxLength;
 
-    public void setFileStorage(FileStorage value) {
-        file = value;
+    public MaxLengthValidation(int maxLength) {
+        this.maxLength = maxLength;
     }
 
     @Override
-    protected Task createTask() {
-        return new Task() {
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    file.save();
-                } catch (Throwable ex) {
-                    ex.printStackTrace();
-                }
-                return null;
-            }
-        };
+    public void check(int row, String value, ValidationError error) {
+        if (!maxLength(value, maxLength)) {
+            error.add("validation.message.max.length", Integer.toString(maxLength));
+        }
     }
 
+    @Override
+    public Type getType() {
+        return Type.MAX_LENGTH;
+    }
 }

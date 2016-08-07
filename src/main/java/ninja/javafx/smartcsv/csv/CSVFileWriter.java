@@ -28,7 +28,6 @@ package ninja.javafx.smartcsv.csv;
 
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
 import ninja.javafx.smartcsv.fx.table.model.CSVRow;
-import org.springframework.stereotype.Service;
 import org.supercsv.io.CsvMapWriter;
 import org.supercsv.io.ICsvMapWriter;
 

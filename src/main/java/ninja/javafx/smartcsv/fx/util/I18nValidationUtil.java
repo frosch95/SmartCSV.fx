@@ -62,7 +62,7 @@ public class I18nValidationUtil {
             if (resourceBundle.containsKey(validationMessage.getKey())) {
                 String resourceText = resourceBundle.getString(validationMessage.getKey());
                 if (validationMessage.getParameters().length > 0) {
-                    message.append(format(resourceText, validationMessage.getParameters())).append("\n");
+                    message.append(format(resourceText, (Object[]) validationMessage.getParameters())).append("\n");
                 } else {
                     message.append(resourceText).append("\n");
                 }

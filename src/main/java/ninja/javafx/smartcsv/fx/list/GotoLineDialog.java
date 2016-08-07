@@ -1,6 +1,5 @@
 package ninja.javafx.smartcsv.fx.list;
 
-import com.sun.javafx.scene.control.skin.resources.ControlResources;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;

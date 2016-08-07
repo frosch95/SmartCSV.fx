@@ -2,8 +2,8 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>                                              
-                                                                                                                    
+   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,40 +21,26 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-  
+
 */
+package ninja.javafx.smartcsv.validation;
 
-package ninja.javafx.smartcsv.fx.util;
-
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import ninja.javafx.smartcsv.files.FileStorage;
+import static org.apache.commons.validator.GenericValidator.isDouble;
 
 /**
- * Service class for async load of a csv file
+ * Checks if the value is a double
  */
-@org.springframework.stereotype.Service
-public class SaveFileService extends Service {
+public class DoubleValidation implements Validation {
 
-    private FileStorage file;
-
-    public void setFileStorage(FileStorage value) {
-        file = value;
+    @Override
+    public void check(int row, String value, ValidationError error) {
+        if (!isDouble(value)) {
+            error.add("validation.message.double");
+        }
     }
 
     @Override
-    protected Task createTask() {
-        return new Task() {
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    file.save();
-                } catch (Throwable ex) {
-                    ex.printStackTrace();
-                }
-                return null;
-            }
-        };
+    public Type getType() {
+        return Type.DOUBLE;
     }
-
 }
