@@ -31,5 +31,5 @@ package ninja.javafx.smartcsv.fx.util;
  */
 public class ColorConstants {
     public static final String OK_COLOR = "#22aa22";
-    public static final String ERROR_COLOR = "#ff6622";
+    public static final String ERROR_COLOR = "#ff3333";
 }
