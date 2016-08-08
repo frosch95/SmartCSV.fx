@@ -14,7 +14,7 @@ even in a "normal" CSV editor. So I decided to write this simple JavaFX applicat
 
 [Wiki & Documentation](https://github.com/frosch95/SmartCSV.fx/wiki)
 
-binary distribution of the [latest release (0.5)](https://drive.google.com/file/d/0BwY9gBUvn5qmejllOTRwbEJYdDA/view?usp=sharing)
+binary distribution of the [latest release (0.6)](https://github.com/frosch95/SmartCSV.fx/releases/download/0.6/SmartCSV.fx-0.6-SNAPSHOT.zip)
 
 ##Talks
 [Introduction](http://javafx.ninja/talks/introduction/)
