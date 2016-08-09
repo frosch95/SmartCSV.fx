@@ -30,7 +30,7 @@ import static org.apache.commons.validator.GenericValidator.isDate;
 /**
  * Checks if the date has the right format
  */
-public class DateValidation implements Validation {
+public class DateValidation extends EmptyAllowedValidation {
 
     private String dateformat;
 

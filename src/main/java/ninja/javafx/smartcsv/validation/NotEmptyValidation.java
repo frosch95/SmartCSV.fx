@@ -43,4 +43,9 @@ public class NotEmptyValidation implements Validation {
     public Type getType() {
         return Type.NOT_EMPTY;
     }
+
+    @Override
+    public boolean canBeChecked(String value) {
+        return true;
+    }
 }

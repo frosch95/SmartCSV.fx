@@ -30,7 +30,7 @@ import static org.apache.commons.validator.GenericValidator.maxLength;
 /**
  * Checks if the value is shorter or exactly as long as the given max length
  */
-public class MaxLengthValidation implements Validation {
+public class MaxLengthValidation extends EmptyAllowedValidation {
 
     private int maxLength;
 

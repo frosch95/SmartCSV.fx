@@ -30,7 +30,7 @@ import static org.apache.commons.validator.GenericValidator.matchRegexp;
 /**
  * Checks if the value is alpha numeric
  */
-public class AlphaNumericValidation implements Validation {
+public class AlphaNumericValidation extends EmptyAllowedValidation {
     @Override
     public void check(int row, String value, ValidationError error) {
         if (!matchRegexp(value, "[0-9a-zA-Z]*")) {
@@ -42,4 +42,6 @@ public class AlphaNumericValidation implements Validation {
     public Type getType() {
         return Type.ALPHANUMERIC;
     }
+
+
 }

@@ -30,7 +30,7 @@ import static org.apache.commons.validator.GenericValidator.matchRegexp;
 /**
  * Checks the value against the given reg exp
  */
-public class RegExpValidation implements Validation {
+public class RegExpValidation extends EmptyAllowedValidation {
 
     private String regexp;
 

@@ -30,7 +30,7 @@ import java.util.HashMap;
 /**
  * Checks if the value is unique in the column
  */
-public class UniqueValidation implements Validation {
+public class UniqueValidation extends EmptyAllowedValidation {
 
     private HashMap<String, Integer> columnValueMap = new HashMap<>();
 

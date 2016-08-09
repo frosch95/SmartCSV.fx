@@ -86,13 +86,8 @@ public class Validator {
             Map<Validation.Type, Validation> validationMap = columnValidationMap.get(column);
             if (validationMap != null) {
                 for (Validation validation: validationMap.values()) {
-
-                    if (validation.getType() == Validation.Type.NOT_EMPTY) {
+                    if (validation.canBeChecked(value)) {
                         validation.check(row, value, error);
-                    } else {
-                        if (value != null && !value.isEmpty()) {
-                            validation.check(row, value, error);
-                        }
                     }
                 }
             }
