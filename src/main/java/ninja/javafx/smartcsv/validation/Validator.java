@@ -26,6 +26,8 @@
 
 package ninja.javafx.smartcsv.validation;
 
+import ninja.javafx.smartcsv.fx.table.model.ColumnValueProvider;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,7 @@ public class Validator {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private ValidationConfiguration validationConfig;
+    private ColumnValueProvider columnValueProvider;
     private Map<String, Map<Validation.Type, Validation>> columnValidationMap = new HashMap<>();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,8 +55,9 @@ public class Validator {
      *
      * @param validationConfig
      */
-    public Validator(ValidationConfiguration validationConfig) {
+    public Validator(ValidationConfiguration validationConfig, ColumnValueProvider columnValueProvider) {
         this.validationConfig = validationConfig;
+        this.columnValueProvider = columnValueProvider;
         initColumnValidations();
     }
 
@@ -160,7 +164,7 @@ public class Validator {
 
         Boolean uniqueRule = validationConfig.getUniqueRuleFor(column);
         if (uniqueRule != null && uniqueRule) {
-            add(column, new UniqueValidation());
+            add(column, new UniqueValidation(columnValueProvider, column));
         }
 
         String dateRule = validationConfig.getDateRuleFor(column);

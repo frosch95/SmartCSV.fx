@@ -39,7 +39,7 @@ import org.apache.logging.log4j.Logger;
  * The CSVModel is the client representation for the csv filepath.
  * It holds the data in rows, stores the header and manages the validator.
  */
-public final class CSVModel {
+public final class CSVModel implements ColumnValueProvider {
 
     private static final Logger logger = LogManager.getLogger(CSVModel.class);
 
@@ -55,7 +55,7 @@ public final class CSVModel {
      * @param validationConfiguration the validator configuration for this data
      */
     public void setValidationConfiguration(ValidationConfiguration validationConfiguration) {
-        this.validator = new Validator(validationConfiguration);
+        this.validator = new Validator(validationConfiguration, this);
         revalidate();
     }
 
@@ -145,11 +145,19 @@ public final class CSVModel {
     public ValidationConfiguration createValidationConfiguration() {
         ValidationConfiguration newValidationConfiguration = new ValidationConfiguration();
         newValidationConfiguration.setHeaderNames(this.header);
-        this.validator = new Validator(newValidationConfiguration);
+        this.validator = new Validator(newValidationConfiguration, this);
         this.revalidate();
         return newValidationConfiguration;
     }
 
 
+    @Override
+    public String getValue(int row, String column) {
+        return rows.get(row).getColumns().get(column).getValue().getValue();
+    }
 
+    @Override
+    public int getNumberOfRows() {
+        return rows.size();
+    }
 }
