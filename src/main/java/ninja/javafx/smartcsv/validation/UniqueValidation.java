@@ -36,7 +36,7 @@ import static java.util.stream.Collectors.joining;
 /**
  * Checks if the value is unique in the column
  */
-public class UniqueValidation extends EmptyAllowedValidation {
+public class UniqueValidation extends EmptyValueIsValid {
 
     private ColumnValueProvider columnValueProvider;
     private String column;
@@ -55,7 +55,7 @@ public class UniqueValidation extends EmptyAllowedValidation {
         for (int currentRowOfIteration = 0; currentRowOfIteration < numberOfRows; currentRowOfIteration++) {
             String storedValue = columnValueProvider.getValue(currentRowOfIteration, column);
 
-            if (storedValue.equals(value) && currentRowOfIteration != row) {
+            if (value.equals(storedValue) && currentRowOfIteration != row) {
                 lineNumbers.add(currentRowOfIteration + 1); // show not 0 based line numbers to user
             }
         }

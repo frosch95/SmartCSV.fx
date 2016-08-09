@@ -32,7 +32,7 @@ import static java.util.stream.Collectors.joining;
 /**
  * Checks if the value is part of a list of values
  */
-public class ValueOfValidation extends EmptyAllowedValidation {
+public class ValueOfValidation extends EmptyValueIsValid {
 
     private List<String> values;
 

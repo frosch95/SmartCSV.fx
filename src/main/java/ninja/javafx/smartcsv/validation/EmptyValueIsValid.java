@@ -1,9 +1,9 @@
 package ninja.javafx.smartcsv.validation;
 
 /**
- * Created by abi on 09.08.2016.
+ * validations based on this are not validated when the value is null or empty
  */
-public abstract class EmptyAllowedValidation  implements Validation {
+public abstract class EmptyValueIsValid implements Validation {
 
     @Override
     public boolean canBeChecked(String value) {

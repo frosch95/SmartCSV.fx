@@ -30,7 +30,7 @@ import static org.apache.commons.validator.GenericValidator.minLength;
 /**
  * Checks if the value is at minimum long as the given min length
  */
-public class MinLengthValidation extends EmptyAllowedValidation {
+public class MinLengthValidation extends EmptyValueIsValid {
 
     private int minLength;
 

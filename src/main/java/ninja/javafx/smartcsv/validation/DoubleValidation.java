@@ -30,7 +30,7 @@ import static org.apache.commons.validator.GenericValidator.isDouble;
 /**
  * Checks if the value is a double
  */
-public class DoubleValidation extends EmptyAllowedValidation {
+public class DoubleValidation extends EmptyValueIsValid {
 
     @Override
     public void check(int row, String value, ValidationError error) {

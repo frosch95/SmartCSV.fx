@@ -33,7 +33,7 @@ import org.codehaus.groovy.control.CompilationFailedException;
 /**
  * Executes the given groovy as check
  */
-public class GroovyValidation extends EmptyAllowedValidation {
+public class GroovyValidation extends EmptyValueIsValid {
 
     private String groovyScript;
     private GroovyShell shell = new GroovyShell();

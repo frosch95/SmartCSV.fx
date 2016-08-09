@@ -30,7 +30,7 @@ import static org.apache.commons.validator.GenericValidator.isInt;
 /**
  * Checks if the value is an integer
  */
-public class IntegerValidation extends EmptyAllowedValidation {
+public class IntegerValidation extends EmptyValueIsValid {
 
     @Override
     public void check(int row, String value, ValidationError error) {
