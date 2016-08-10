@@ -78,6 +78,11 @@
                                         <MaterialDesignIconView styleClass="preferences-icon" />
                                     </graphic>
                                 </MenuItem>
+                                <MenuItem fx:id="exportMenuItem" disable="true" mnemonicParsing="false" onAction="#export" text="%menu.export">
+                                    <graphic>
+                                        <MaterialDesignIconView styleClass="export-icon" />
+                                    </graphic>
+                                </MenuItem>
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#close" text="%menu.close">
                                     <graphic>
@@ -227,6 +232,14 @@
                         </tooltip>
                         <graphic>
                             <MaterialDesignIconView styleClass="preferences-icon" />
+                        </graphic>
+                    </Button>
+                    <Button fx:id="exportButton" disable="true" mnemonicParsing="false" onAction="#export">
+                        <tooltip>
+                            <Tooltip text="%menu.export" />
+                        </tooltip>
+                        <graphic>
+                            <MaterialDesignIconView styleClass="export-icon" />
                         </graphic>
                     </Button>
                     <Button mnemonicParsing="false" onAction="#close" styleClass="last">

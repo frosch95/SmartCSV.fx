@@ -82,8 +82,13 @@
 .goto-icon {
     -glyph-name: "SUBDIRECTORY_ARROW_RIGHT";
     -glyph-size: 16px;
-
 }
+
+.export-icon {
+    -glyph-name: "BUG";
+    -glyph-size: 16px;
+}
+
 
 /* toolbar customization based on http://fxexperience.com/2012/02/customized-segmented-toolbar-buttons/ */
 
@@ -145,6 +150,11 @@
 }
 
 .tool-bar .add-icon {
+    -glyph-size: 16px;
+    -fx-fill: white;
+}
+
+.tool-bar .export-icon {
     -glyph-size: 16px;
     -fx-fill: white;
 }

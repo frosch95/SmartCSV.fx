@@ -54,11 +54,20 @@ public class I18nValidationUtil {
         return "";
     }
 
+    public static String getI18nValidatioMessageWithColumn(ResourceBundle resourceBundle, ValidationError error) {
+        return getI18nValidatioMessage(resourceBundle, error, resourceBundle.getString("column") + " " + error.getColumn() + " : ");
+    }
+
     public static String getI18nValidatioMessage(ResourceBundle resourceBundle, ValidationError error) {
+        return getI18nValidatioMessage(resourceBundle, error, "");
+    }
+
+    private static String getI18nValidatioMessage(ResourceBundle resourceBundle, ValidationError error, String prefix) {
 
         List<ValidationMessage> validationMessages = error.getMessages();
         StringWriter message = new StringWriter();
         for (ValidationMessage validationMessage: validationMessages) {
+            message.append(prefix);
             if (resourceBundle.containsKey(validationMessage.getKey())) {
                 String resourceText = resourceBundle.getString(validationMessage.getKey());
                 if (validationMessage.getParameters().length > 0) {

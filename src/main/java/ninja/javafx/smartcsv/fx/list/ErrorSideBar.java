@@ -48,7 +48,7 @@ import java.util.ResourceBundle;
 import static javafx.geometry.Pos.CENTER;
 import static ninja.javafx.smartcsv.fx.util.ColorConstants.ERROR_COLOR;
 import static ninja.javafx.smartcsv.fx.util.ColorConstants.OK_COLOR;
-import static ninja.javafx.smartcsv.fx.util.I18nValidationUtil.getI18nValidatioMessage;
+import static ninja.javafx.smartcsv.fx.util.I18nValidationUtil.getI18nValidatioMessageWithColumn;
 
 /**
  * clickable side bar with error markers
@@ -158,7 +158,7 @@ public class ErrorSideBar extends Region {
         errorMarker.setStyle("-fx-background-color: " + ERROR_COLOR);
         errorMarker.setOnMouseClicked(event -> selectedValidationError.setValue(error));
         errorMarker.setOnMouseEntered(event -> {
-            popOver.setContentNode(popupContent(getI18nValidatioMessage(resourceBundle, error)));
+            popOver.setContentNode(popupContent(getI18nValidatioMessageWithColumn(resourceBundle, error)));
             popOver.show(errorMarker, -16);
         });
         return errorMarker;

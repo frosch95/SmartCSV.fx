@@ -38,6 +38,7 @@ public class ValidationError {
 
     private List<ValidationMessage> messages = new ArrayList<>();
     private Integer lineNumber;
+    private String column = "";
 
     private ValidationError(Integer lineNumber) {
         this.lineNumber = lineNumber;
@@ -51,8 +52,17 @@ public class ValidationError {
         return new ValidationError(-1);
     }
 
+    public ValidationError column(String column) {
+        this.column = column;
+        return this;
+    }
+
     public Integer getLineNumber() {
         return lineNumber;
+    }
+
+    public String getColumn() {
+        return column;
     }
 
     public List<ValidationMessage> getMessages() {

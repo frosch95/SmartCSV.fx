@@ -86,7 +86,7 @@ public class Validator {
     public ValidationError isValid(Integer row, String column, String value) {
         ValidationError result = null;
         if (hasConfig()) {
-            ValidationError error = ValidationError.withLineNumber(row);
+            ValidationError error = ValidationError.withLineNumber(row).column(column);
             Map<Validation.Type, Validation> validationMap = columnValidationMap.get(column);
             if (validationMap != null) {
                 for (Validation validation: validationMap.values()) {

@@ -26,6 +26,7 @@
 
 package ninja.javafx.smartcsv.fx;
 
+import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.collections.WeakListChangeListener;
 import javafx.concurrent.WorkerStateEvent;
@@ -39,6 +40,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import ninja.javafx.smartcsv.csv.CSVFileReader;
 import ninja.javafx.smartcsv.csv.CSVFileWriter;
+import ninja.javafx.smartcsv.export.ErrorExport;
 import ninja.javafx.smartcsv.files.FileStorage;
 import ninja.javafx.smartcsv.fx.about.AboutController;
 import ninja.javafx.smartcsv.fx.list.ErrorSideBar;
@@ -95,6 +97,9 @@ public class SmartCSVController extends FXMLController {
     public static final String CSV_FILTER_EXTENSION = "*.csv";
     public static final String JSON_FILTER_TEXT = "JSON files (*.json)";
     public static final String JSON_FILTER_EXTENSION = "*.json";
+    public static final String EXPORT_LOG_FILTER_TEXT = "Error log files (*.log)";
+    public static final String EXPORT_LOG_FILTER_EXTENSION = "*.log";
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // injections
@@ -114,6 +119,9 @@ public class SmartCSVController extends FXMLController {
 
     @Autowired
     private SaveFileService saveFileService;
+
+    @Autowired
+    private ErrorExport errorExport;
 
     @FXML
     private BorderPane applicationPane;
@@ -158,6 +166,9 @@ public class SmartCSVController extends FXMLController {
     private MenuItem gotoLineMenuItem;
 
     @FXML
+    private MenuItem exportMenuItem;
+
+    @FXML
     private Button saveButton;
 
     @FXML
@@ -180,6 +191,9 @@ public class SmartCSVController extends FXMLController {
 
     @FXML
     private Button addRowButton;
+
+    @FXML
+    private Button exportButton;
 
     @FXML
     private Label currentLineNumber;
@@ -370,6 +384,26 @@ public class SmartCSVController extends FXMLController {
         }
     }
 
+    @FXML
+    public void export(ActionEvent actionEvent) {
+        final FileChooser fileChooser = new FileChooser();
+
+        //Set extension filter
+        final FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(EXPORT_LOG_FILTER_TEXT, EXPORT_LOG_FILTER_EXTENSION);
+        fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.setTitle("Save");
+
+        //Show open file dialog
+        File file = fileChooser.showSaveDialog(applicationPane.getScene().getWindow());
+        if (file != null) {
+            errorExport.setCsvFilename(currentCsvFile.getFile().getName());
+            errorExport.setModel(currentCsvFile.getContent());
+            errorExport.setFile(file);
+            errorExport.setResourceBundle(resourceBundle);
+            errorExport.restart();
+        }
+    }
+
     public boolean canExit() {
         boolean canExit = true;
         if (currentCsvFile.getContent() != null && currentCsvFile.isFileChanged()) {
@@ -552,6 +586,8 @@ public class SmartCSVController extends FXMLController {
      * Creates new table view and add the new content
      */
     private void resetContent() {
+        resetExportButtons();
+
         if (currentCsvFile.getContent() != null) {
             currentCsvFile.getContent().getValidationError().addListener(weakErrorListListener);
             currentCsvFile.getContent().setValidationConfiguration(currentConfigFile.getContent());
@@ -575,7 +611,20 @@ public class SmartCSVController extends FXMLController {
             setRightAnchor(tableView, 0.0);
             tableWrapper.getChildren().setAll(tableView);
             errorSideBar.setModel(currentCsvFile.getContent());
+            binExportButtons();
         }
+    }
+
+    private void binExportButtons() {
+        exportButton.disableProperty().bind(Bindings.isEmpty(currentCsvFile.getContent().getValidationError()));
+        exportMenuItem.disableProperty().bind(Bindings.isEmpty(currentCsvFile.getContent().getValidationError()));
+    }
+
+    private void resetExportButtons() {
+        exportButton.disableProperty().unbind();
+        exportMenuItem.disableProperty().unbind();
+        exportButton.disableProperty().setValue(true);
+        exportMenuItem.disableProperty().setValue(true);
     }
 
     /**
