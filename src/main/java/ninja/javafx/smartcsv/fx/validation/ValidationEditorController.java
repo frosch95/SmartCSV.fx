@@ -26,12 +26,14 @@
 
 package ninja.javafx.smartcsv.fx.validation;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import ninja.javafx.smartcsv.fx.FXMLController;
 import ninja.javafx.smartcsv.validation.ValidationConfiguration;
 import org.fxmisc.richtext.CodeArea;
@@ -51,6 +53,7 @@ import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
+import static javafx.beans.binding.Bindings.when;
 
 /**
  * controller for editing column validations
@@ -173,8 +176,7 @@ public class ValidationEditorController extends FXMLController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        minLengthSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
-        maxLengthSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
+        initMinMaxSpinner();
 
         initSpinner(minLengthSpinner, enableMinLengthRule);
         initSpinner(maxLengthSpinner, enableMaxLengthRule);
@@ -190,22 +192,23 @@ public class ValidationEditorController extends FXMLController {
         });
     }
 
-    private void listenToExcludingRuleCombinations() {
-        addDependencyListener(enableIntegerRule, enableDoubleRule, enableAlphanumericRule, enableDateRule);
-        addDependencyListener(enableDoubleRule, enableIntegerRule, enableAlphanumericRule, enableDateRule);
-        addDependencyListener(enableAlphanumericRule, enableIntegerRule, enableDoubleRule, enableDateRule);
-        addDependencyListener(enableDateRule, enableIntegerRule, enableDoubleRule, enableAlphanumericRule);
+    private void initMinMaxSpinner() {
+        IntegerSpinnerValueFactory minValueFactory = new IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0);
+        minLengthSpinner.setValueFactory(minValueFactory);
+        IntegerSpinnerValueFactory maxValueFactory = new IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0);
+        maxLengthSpinner.setValueFactory(maxValueFactory);
+
+        minValueFactory.maxProperty().bind(
+                when(enableMaxLengthRule.selectedProperty()).
+                        then(maxLengthSpinner.valueProperty()).
+                        otherwise(Integer.MAX_VALUE));
+        maxValueFactory.minProperty().bind(
+                when(enableMinLengthRule.selectedProperty()).
+                        then(minLengthSpinner.valueProperty()).
+                        otherwise(0));
+
     }
 
-    private void addDependencyListener(CheckBox rule, CheckBox... dependentRules) {
-        rule.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                for (CheckBox dependentRule: dependentRules) {
-                    dependentRule.selectedProperty().setValue(false);
-                }
-            }
-        });
-    }
 
     public String getSelectedColumn() {
         return selectedColumn.get();
@@ -291,7 +294,23 @@ public class ValidationEditorController extends FXMLController {
             validationConfiguration.setValueOfRuleFor(selectedColumn.getValue(), null);
         }
 
+    }
 
+    private void listenToExcludingRuleCombinations() {
+        addDependencyListener(enableIntegerRule, enableDoubleRule, enableAlphanumericRule, enableDateRule);
+        addDependencyListener(enableDoubleRule, enableIntegerRule, enableAlphanumericRule, enableDateRule);
+        addDependencyListener(enableAlphanumericRule, enableIntegerRule, enableDoubleRule, enableDateRule);
+        addDependencyListener(enableDateRule, enableIntegerRule, enableDoubleRule, enableAlphanumericRule);
+    }
+
+    private void addDependencyListener(CheckBox rule, CheckBox... dependentRules) {
+        rule.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                for (CheckBox dependentRule: dependentRules) {
+                    dependentRule.selectedProperty().setValue(false);
+                }
+            }
+        });
     }
 
     private void updateForm() {
