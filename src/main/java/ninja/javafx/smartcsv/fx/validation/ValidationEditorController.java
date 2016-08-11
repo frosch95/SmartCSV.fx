@@ -95,20 +95,20 @@ public class ValidationEditorController extends FXMLController {
                     + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
     );
 
-    @FXML
-    private CheckBox notEmptyRuleCheckBox;
-
-    @FXML
-    private CheckBox integerRuleCheckBox;
-
-    @FXML
-    private CheckBox doublerRuleCheckBox;
-
-    @FXML
-    private CheckBox alphanumericRuleCheckBox;
-
-    @FXML
-    private CheckBox uniqueRuleCheckBox;
+//    @FXML
+//    private CheckBox notEmptyRuleCheckBox;
+//
+//    @FXML
+//    private CheckBox integerRuleCheckBox;
+//
+//    @FXML
+//    private CheckBox doublerRuleCheckBox;
+//
+//    @FXML
+//    private CheckBox alphanumericRuleCheckBox;
+//
+//    @FXML
+//    private CheckBox uniqueRuleCheckBox;
 
     @FXML
     private Spinner<Integer> minLengthSpinner;
@@ -174,11 +174,6 @@ public class ValidationEditorController extends FXMLController {
         minLengthSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
         maxLengthSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
 
-        initCheckBox(notEmptyRuleCheckBox, enableNotEmptyRule);
-        initCheckBox(integerRuleCheckBox, enableIntegerRule);
-        initCheckBox(doublerRuleCheckBox, enableDoubleRule);
-        initCheckBox(alphanumericRuleCheckBox, enableAlphanumericRule);
-        initCheckBox(uniqueRuleCheckBox, enableUniqueRule);
         initSpinner(minLengthSpinner, enableMinLengthRule);
         initSpinner(maxLengthSpinner, enableMaxLengthRule);
         initTextInputControl(dateformatRuleTextField, enableDateRule);
@@ -210,31 +205,31 @@ public class ValidationEditorController extends FXMLController {
     public void updateConfiguration() {
 
         if (enableIntegerRule.isSelected()) {
-            validationConfiguration.setIntegerRuleFor(selectedColumn.getValue(), integerRuleCheckBox.isSelected());
+            validationConfiguration.setIntegerRuleFor(selectedColumn.getValue(), enableIntegerRule.isSelected());
         } else {
             validationConfiguration.setIntegerRuleFor(selectedColumn.getValue(), null);
         }
 
         if (enableNotEmptyRule.isSelected()) {
-            validationConfiguration.setNotEmptyRuleFor(selectedColumn.getValue(), notEmptyRuleCheckBox.isSelected());
+            validationConfiguration.setNotEmptyRuleFor(selectedColumn.getValue(), enableNotEmptyRule.isSelected());
         } else {
             validationConfiguration.setNotEmptyRuleFor(selectedColumn.getValue(), null);
         }
 
         if (enableUniqueRule.isSelected()) {
-            validationConfiguration.setUniqueRuleFor(selectedColumn.getValue(), uniqueRuleCheckBox.isSelected());
+            validationConfiguration.setUniqueRuleFor(selectedColumn.getValue(), enableUniqueRule.isSelected());
         } else {
             validationConfiguration.setUniqueRuleFor(selectedColumn.getValue(), null);
         }
 
         if (enableDoubleRule.isSelected()) {
-            validationConfiguration.setDoubleRuleFor(selectedColumn.getValue(), doublerRuleCheckBox.isSelected());
+            validationConfiguration.setDoubleRuleFor(selectedColumn.getValue(), enableDoubleRule.isSelected());
         } else {
             validationConfiguration.setDoubleRuleFor(selectedColumn.getValue(), null);
         }
 
         if (enableAlphanumericRule.isSelected()) {
-            validationConfiguration.setAlphanumericRuleFor(selectedColumn.getValue(), alphanumericRuleCheckBox.isSelected());
+            validationConfiguration.setAlphanumericRuleFor(selectedColumn.getValue(), enableAlphanumericRule.isSelected());
         } else {
             validationConfiguration.setAlphanumericRuleFor(selectedColumn.getValue(), null);
         }
@@ -281,31 +276,26 @@ public class ValidationEditorController extends FXMLController {
     private void updateForm() {
 
         updateCheckBox(
-                notEmptyRuleCheckBox,
                 validationConfiguration.getNotEmptyRuleFor(getSelectedColumn()),
                 enableNotEmptyRule
         );
 
         updateCheckBox(
-                integerRuleCheckBox,
                 validationConfiguration.getIntegerRuleFor(getSelectedColumn()),
                 enableIntegerRule
         );
 
         updateCheckBox(
-                doublerRuleCheckBox,
                 validationConfiguration.getDoubleRuleFor(getSelectedColumn()),
                 enableDoubleRule
         );
 
         updateCheckBox(
-                alphanumericRuleCheckBox,
                 validationConfiguration.getAlphanumericRuleFor(getSelectedColumn()),
                 enableAlphanumericRule
         );
 
         updateCheckBox(
-                uniqueRuleCheckBox,
                 validationConfiguration.getUniqueRuleFor(getSelectedColumn()),
                 enableUniqueRule
         );
@@ -347,12 +337,11 @@ public class ValidationEditorController extends FXMLController {
         );
     }
 
-    private void updateCheckBox(CheckBox rule, Boolean value, CheckBox ruleEnabled) {
+    private void updateCheckBox(Boolean value, CheckBox ruleEnabled) {
         if (value == null) {
             ruleEnabled.setSelected(false);
         } else {
-            rule.setSelected(value);
-            ruleEnabled.setSelected(true);
+            ruleEnabled.setSelected(value);
         }
     }
 
@@ -390,15 +379,6 @@ public class ValidationEditorController extends FXMLController {
             ruleEnabled.setSelected(true);
             rule.replaceText(0, 0, value);
         }
-    }
-
-    private void initCheckBox(CheckBox rule, CheckBox ruleEnabled) {
-        rule.disableProperty().bind(ruleEnabled.selectedProperty().not());
-        ruleEnabled.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                rule.setSelected(false);
-            }
-        });
     }
 
     private void initSpinner(Spinner rule, CheckBox ruleEnabled) {

@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import org.fxmisc.richtext.CodeArea?>
 <?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import org.fxmisc.richtext.CodeArea?>
+
 <GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1">
   <columnConstraints>
       <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="50.0" prefWidth="50.0" />
@@ -39,15 +45,10 @@
       <Label text="%validation.rule.label.groovy" GridPane.columnIndex="1" GridPane.rowIndex="11" />
       <Label text="%validation.rule.label.unique" GridPane.columnIndex="1" GridPane.rowIndex="5" />
        <CheckBox fx:id="enableNotEmptyRule" mnemonicParsing="false" GridPane.rowIndex="1" />
-      <CheckBox fx:id="notEmptyRuleCheckBox" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="1" />
        <CheckBox fx:id="enableIntegerRule" mnemonicParsing="false" GridPane.rowIndex="2" />
-      <CheckBox fx:id="integerRuleCheckBox" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
        <CheckBox fx:id="enableDoubleRule" mnemonicParsing="false" GridPane.rowIndex="3" />
-      <CheckBox fx:id="doublerRuleCheckBox" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="3" />
        <CheckBox fx:id="enableAlphanumericRule" mnemonicParsing="false" GridPane.rowIndex="4" />
-      <CheckBox fx:id="alphanumericRuleCheckBox" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="4" />
        <CheckBox fx:id="enableUniqueRule" mnemonicParsing="false" GridPane.rowIndex="5" />
-      <CheckBox fx:id="uniqueRuleCheckBox" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="5" />
        <CheckBox fx:id="enableMinLengthRule" mnemonicParsing="false" GridPane.rowIndex="6" />
       <Spinner fx:id="minLengthSpinner" GridPane.columnIndex="2" GridPane.rowIndex="6" />
        <CheckBox fx:id="enableMaxLengthRule" mnemonicParsing="false" GridPane.rowIndex="7" />
