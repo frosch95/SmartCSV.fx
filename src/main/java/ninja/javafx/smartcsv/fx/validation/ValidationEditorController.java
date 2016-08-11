@@ -28,6 +28,8 @@ package ninja.javafx.smartcsv.fx.validation;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import ninja.javafx.smartcsv.fx.FXMLController;
@@ -181,8 +183,27 @@ public class ValidationEditorController extends FXMLController {
         initTextInputControl(valueOfRuleTextField, enableValueOfRule);
         initCodeAreaControl(groovyRuleTextArea, enableGroovyRule);
 
+        listenToExcludingRuleCombinations();
+
         selectedColumn.addListener(observable -> {
             updateForm();
+        });
+    }
+
+    private void listenToExcludingRuleCombinations() {
+        addDependencyListener(enableIntegerRule, enableDoubleRule, enableAlphanumericRule, enableDateRule);
+        addDependencyListener(enableDoubleRule, enableIntegerRule, enableAlphanumericRule, enableDateRule);
+        addDependencyListener(enableAlphanumericRule, enableIntegerRule, enableDoubleRule, enableDateRule);
+        addDependencyListener(enableDateRule, enableIntegerRule, enableDoubleRule, enableAlphanumericRule);
+    }
+
+    private void addDependencyListener(CheckBox rule, CheckBox... dependentRules) {
+        rule.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                for (CheckBox dependentRule: dependentRules) {
+                    dependentRule.selectedProperty().setValue(false);
+                }
+            }
         });
     }
 
