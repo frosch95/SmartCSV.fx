@@ -42,6 +42,7 @@ public class ValidationFileReader implements FileReader<ValidationConfiguration>
     @Override
     public void read(File file) throws IOException {
         config = new GsonBuilder().create().fromJson(new java.io.FileReader(file), ValidationConfiguration.class);
+        System.out.println("brechpunkt");
     }
 
     public ValidationConfiguration getContent() {

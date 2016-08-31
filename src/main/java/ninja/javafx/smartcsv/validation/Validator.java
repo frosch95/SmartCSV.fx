@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ninja.javafx.smartcsv.validation.DateFormatHelper.dateFormat;
+
 /**
  * This class checks all the validations defined in the
  * Config against a given value
@@ -134,68 +136,90 @@ public class Validator {
 
     private void initColumnValidations() {
         if (hasConfig()) {
-            String[] columns = validationConfig.headerNames();
-            for (String column : columns) {
+            for (FieldConfiguration column : validationConfig.getFieldConfigurations()) {
                 initializeColumnWithRules(column);
             }
         }
     }
 
-    private void initializeColumnWithRules(String column) {
-        Boolean alphaNumeric = validationConfig.getAlphanumericRuleFor(column);
-        if (alphaNumeric != null && alphaNumeric) {
-            add(column, new AlphaNumericValidation());
+    private void initializeColumnWithRules(String columnName) {
+        if (hasConfig()) {
+            for (FieldConfiguration column : validationConfig.getFieldConfigurations()) {
+                if (column.getName().equals(columnName)) {
+                    initializeColumnWithRules(column);
+                    break;
+                }
+            }
         }
 
-        Boolean doubleRule = validationConfig.getDoubleRuleFor(column);
-        if (doubleRule != null && doubleRule) {
-            add(column, new DoubleValidation());
+    }
+
+    private void initializeColumnWithRules(FieldConfiguration column) {
+
+        if (column.getType() != null) {
+            if (column.getType().equals("number")) {
+                add(column.getName(), new DoubleValidation());
+            }
+
+            if (column.getType().equals("integer")) {
+                add(column.getName(), new IntegerValidation());
+            }
+
+            if (column.getType().equals("date")) {
+                String format = dateFormat(column.getFormat(), "YYYY-MM-DD");
+                add(column.getName(), new DateValidation(format));
+            }
+
+            if (column.getType().equals("datetime")) {
+                String format = dateFormat(column.getFormat(), "YYYY-MM-DDThh:mm:ssZ");
+                add(column.getName(), new DateValidation(format));
+            }
+
+            if (column.getType().equals("time")) {
+                String format = dateFormat(column.getFormat(), "hh:mm:ss");
+                add(column.getName(), new DateValidation(format));
+            }
         }
 
-        Boolean integerRule = validationConfig.getIntegerRuleFor(column);
-        if (integerRule != null && integerRule) {
-            add(column, new IntegerValidation());
-        }
+        if (column.getConstraints() != null) {
+            Boolean notEmptyRule = (Boolean)column.getConstraints().get("required");
+            if (notEmptyRule != null && notEmptyRule) {
+                add(column.getName(), new NotEmptyValidation());
+            }
 
-        Boolean notEmptyRule = validationConfig.getNotEmptyRuleFor(column);
-        if (notEmptyRule != null && notEmptyRule) {
-            add(column, new NotEmptyValidation());
-        }
+            Boolean uniqueRule = (Boolean)column.getConstraints().get("unique");
+            if (uniqueRule != null && uniqueRule) {
+                add(column.getName(), new UniqueValidation(columnValueProvider, column.getName()));
+            }
 
-        Boolean uniqueRule = validationConfig.getUniqueRuleFor(column);
-        if (uniqueRule != null && uniqueRule) {
-            add(column, new UniqueValidation(columnValueProvider, column));
-        }
+            Integer minLength = doubleToInteger((Double)column.getConstraints().get("minLength"));
+            if (minLength != null) {
+                add(column.getName(), new MinLengthValidation(minLength));
+            }
 
-        String dateRule = validationConfig.getDateRuleFor(column);
-        if (dateRule != null && !dateRule.trim().isEmpty()) {
-            add(column, new DateValidation(dateRule));
-        }
+            Integer maxLength = doubleToInteger((Double)column.getConstraints().get("maxLength"));
+            if (maxLength != null) {
+                add(column.getName(), new MaxLengthValidation(maxLength));
+            }
 
-        Integer minLength = validationConfig.getMinLengthRuleFor(column);
-        if (minLength != null) {
-            add(column, new MinLengthValidation(minLength));
-        }
+            String regexp = (String)column.getConstraints().get("pattern");
+            if (regexp != null && !regexp.trim().isEmpty()) {
+                add(column.getName(), new RegExpValidation(regexp));
+            }
 
-        Integer maxLength = validationConfig.getMaxLengthRuleFor(column);
-        if (maxLength != null) {
-            add(column, new MaxLengthValidation(maxLength));
-        }
+            String groovy = (String)column.getConstraints().get("groovy");
+            if (groovy != null && !groovy.trim().isEmpty()) {
+                add(column.getName(), new GroovyValidation(groovy));
+            }
 
-        String regexp = validationConfig.getRegexpRuleFor(column);
-        if (regexp != null && !regexp.trim().isEmpty()) {
-            add(column, new RegExpValidation(regexp));
-        }
-
-        String groovy = validationConfig.getGroovyRuleFor(column);
-        if (groovy != null && !groovy.trim().isEmpty()) {
-            add(column, new GroovyValidation(groovy));
-        }
-        List<String> valueOfRule = validationConfig.getValueOfRuleFor(column);
-        if (valueOfRule != null && !valueOfRule.isEmpty()) {
-            add(column, new ValueOfValidation(valueOfRule));
+            List<String> valueOfRule =  (List<String>)column.getConstraints().get("enum");
+            if (valueOfRule != null && !valueOfRule.isEmpty()) {
+                add(column.getName(), new ValueOfValidation(valueOfRule));
+            }
         }
     }
+
+
 
 
     public ValidationError isHeaderValid(String[] headerNames) {
@@ -226,5 +250,10 @@ public class Validator {
             }
         }
         return result;
+    }
+
+    private Integer doubleToInteger(Double value) {
+        if (value == null) return null;
+        return (int)Math.round(value);
     }
 }

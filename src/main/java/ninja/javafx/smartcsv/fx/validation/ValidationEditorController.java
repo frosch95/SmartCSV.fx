@@ -228,71 +228,71 @@ public class ValidationEditorController extends FXMLController {
 
     public void updateConfiguration() {
 
-        if (enableIntegerRule.isSelected()) {
-            validationConfiguration.setIntegerRuleFor(selectedColumn.getValue(), enableIntegerRule.isSelected());
-        } else {
-            validationConfiguration.setIntegerRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableNotEmptyRule.isSelected()) {
-            validationConfiguration.setNotEmptyRuleFor(selectedColumn.getValue(), enableNotEmptyRule.isSelected());
-        } else {
-            validationConfiguration.setNotEmptyRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableUniqueRule.isSelected()) {
-            validationConfiguration.setUniqueRuleFor(selectedColumn.getValue(), enableUniqueRule.isSelected());
-        } else {
-            validationConfiguration.setUniqueRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableDoubleRule.isSelected()) {
-            validationConfiguration.setDoubleRuleFor(selectedColumn.getValue(), enableDoubleRule.isSelected());
-        } else {
-            validationConfiguration.setDoubleRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableAlphanumericRule.isSelected()) {
-            validationConfiguration.setAlphanumericRuleFor(selectedColumn.getValue(), enableAlphanumericRule.isSelected());
-        } else {
-            validationConfiguration.setAlphanumericRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableDateRule.isSelected()) {
-            validationConfiguration.setDateRuleFor(selectedColumn.getValue(), dateformatRuleTextField.getText());
-        } else {
-            validationConfiguration.setDateRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableGroovyRule.isSelected()) {
-            validationConfiguration.setGroovyRuleFor(selectedColumn.getValue(), groovyRuleTextArea.getText());
-        } else {
-            validationConfiguration.setGroovyRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableMinLengthRule.isSelected()) {
-            validationConfiguration.setMinLengthRuleFor(selectedColumn.getValue(), minLengthSpinner.getValue());
-        } else {
-            validationConfiguration.setMinLengthRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableMaxLengthRule.isSelected()) {
-            validationConfiguration.setMaxLengthRuleFor(selectedColumn.getValue(), maxLengthSpinner.getValue());
-        } else {
-            validationConfiguration.setMaxLengthRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableRegexpRule.isSelected()) {
-            validationConfiguration.setRegexpRuleFor(selectedColumn.getValue(), regexpRuleTextField.getText());
-        } else {
-            validationConfiguration.setRegexpRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableValueOfRule.isSelected()) {
-            validationConfiguration.setValueOfRuleFor(selectedColumn.getValue(), asList(valueOfRuleTextField.getText().split(", ")));
-        } else {
-            validationConfiguration.setValueOfRuleFor(selectedColumn.getValue(), null);
-        }
+//        if (enableIntegerRule.isSelected()) {
+//            validationConfiguration.setIntegerRuleFor(selectedColumn.getValue(), enableIntegerRule.isSelected());
+//        } else {
+//            validationConfiguration.setIntegerRuleFor(selectedColumn.getValue(), null);
+//        }
+//
+//        if (enableNotEmptyRule.isSelected()) {
+//            validationConfiguration.setNotEmptyRuleFor(selectedColumn.getValue(), enableNotEmptyRule.isSelected());
+//        } else {
+//            validationConfiguration.setNotEmptyRuleFor(selectedColumn.getValue(), null);
+//        }
+//
+//        if (enableUniqueRule.isSelected()) {
+//            validationConfiguration.setUniqueRuleFor(selectedColumn.getValue(), enableUniqueRule.isSelected());
+//        } else {
+//            validationConfiguration.setUniqueRuleFor(selectedColumn.getValue(), null);
+//        }
+//
+//        if (enableDoubleRule.isSelected()) {
+//            validationConfiguration.setDoubleRuleFor(selectedColumn.getValue(), enableDoubleRule.isSelected());
+//        } else {
+//            validationConfiguration.setDoubleRuleFor(selectedColumn.getValue(), null);
+//        }
+//
+//        if (enableAlphanumericRule.isSelected()) {
+//            validationConfiguration.setAlphanumericRuleFor(selectedColumn.getValue(), enableAlphanumericRule.isSelected());
+//        } else {
+//            validationConfiguration.setAlphanumericRuleFor(selectedColumn.getValue(), null);
+//        }
+//
+//        if (enableDateRule.isSelected()) {
+//            validationConfiguration.setDateRuleFor(selectedColumn.getValue(), dateformatRuleTextField.getText());
+//        } else {
+//            validationConfiguration.setDateRuleFor(selectedColumn.getValue(), null);
+//        }
+//
+//        if (enableGroovyRule.isSelected()) {
+//            validationConfiguration.setGroovyRuleFor(selectedColumn.getValue(), groovyRuleTextArea.getText());
+//        } else {
+//            validationConfiguration.setGroovyRuleFor(selectedColumn.getValue(), null);
+//        }
+//
+//        if (enableMinLengthRule.isSelected()) {
+//            validationConfiguration.setMinLengthRuleFor(selectedColumn.getValue(), minLengthSpinner.getValue());
+//        } else {
+//            validationConfiguration.setMinLengthRuleFor(selectedColumn.getValue(), null);
+//        }
+//
+//        if (enableMaxLengthRule.isSelected()) {
+//            validationConfiguration.setMaxLengthRuleFor(selectedColumn.getValue(), maxLengthSpinner.getValue());
+//        } else {
+//            validationConfiguration.setMaxLengthRuleFor(selectedColumn.getValue(), null);
+//        }
+//
+//        if (enableRegexpRule.isSelected()) {
+//            validationConfiguration.setRegexpRuleFor(selectedColumn.getValue(), regexpRuleTextField.getText());
+//        } else {
+//            validationConfiguration.setRegexpRuleFor(selectedColumn.getValue(), null);
+//        }
+//
+//        if (enableValueOfRule.isSelected()) {
+//            validationConfiguration.setValueOfRuleFor(selectedColumn.getValue(), asList(valueOfRuleTextField.getText().split(", ")));
+//        } else {
+//            validationConfiguration.setValueOfRuleFor(selectedColumn.getValue(), null);
+//        }
 
     }
 
@@ -315,66 +315,66 @@ public class ValidationEditorController extends FXMLController {
 
     private void updateForm() {
 
-        updateCheckBox(
-                validationConfiguration.getNotEmptyRuleFor(getSelectedColumn()),
-                enableNotEmptyRule
-        );
-
-        updateCheckBox(
-                validationConfiguration.getIntegerRuleFor(getSelectedColumn()),
-                enableIntegerRule
-        );
-
-        updateCheckBox(
-                validationConfiguration.getDoubleRuleFor(getSelectedColumn()),
-                enableDoubleRule
-        );
-
-        updateCheckBox(
-                validationConfiguration.getAlphanumericRuleFor(getSelectedColumn()),
-                enableAlphanumericRule
-        );
-
-        updateCheckBox(
-                validationConfiguration.getUniqueRuleFor(getSelectedColumn()),
-                enableUniqueRule
-        );
-
-        updateSpinner(
-                minLengthSpinner,
-                validationConfiguration.getMinLengthRuleFor(getSelectedColumn()),
-                enableMinLengthRule
-        );
-
-        updateSpinner(
-                maxLengthSpinner,
-                validationConfiguration.getMaxLengthRuleFor(getSelectedColumn()),
-                enableMaxLengthRule
-        );
-
-        updateTextInputControl(
-                dateformatRuleTextField,
-                validationConfiguration.getDateRuleFor(getSelectedColumn()),
-                enableDateRule
-        );
-
-        updateTextInputControl(
-                regexpRuleTextField,
-                validationConfiguration.getRegexpRuleFor(getSelectedColumn()),
-                enableRegexpRule
-        );
-
-        updateTextInputControl(
-                valueOfRuleTextField,
-                validationConfiguration.getValueOfRuleFor(getSelectedColumn()),
-                enableValueOfRule
-        );
-
-        updateCodeAreaControl(
-                groovyRuleTextArea,
-                validationConfiguration.getGroovyRuleFor(getSelectedColumn()),
-                enableGroovyRule
-        );
+//        updateCheckBox(
+//                validationConfiguration.getNotEmptyRuleFor(getSelectedColumn()),
+//                enableNotEmptyRule
+//        );
+//
+//        updateCheckBox(
+//                validationConfiguration.getIntegerRuleFor(getSelectedColumn()),
+//                enableIntegerRule
+//        );
+//
+//        updateCheckBox(
+//                validationConfiguration.getDoubleRuleFor(getSelectedColumn()),
+//                enableDoubleRule
+//        );
+//
+//        updateCheckBox(
+//                validationConfiguration.getAlphanumericRuleFor(getSelectedColumn()),
+//                enableAlphanumericRule
+//        );
+//
+//        updateCheckBox(
+//                validationConfiguration.getUniqueRuleFor(getSelectedColumn()),
+//                enableUniqueRule
+//        );
+//
+//        updateSpinner(
+//                minLengthSpinner,
+//                validationConfiguration.getMinLengthRuleFor(getSelectedColumn()),
+//                enableMinLengthRule
+//        );
+//
+//        updateSpinner(
+//                maxLengthSpinner,
+//                validationConfiguration.getMaxLengthRuleFor(getSelectedColumn()),
+//                enableMaxLengthRule
+//        );
+//
+//        updateTextInputControl(
+//                dateformatRuleTextField,
+//                validationConfiguration.getDateRuleFor(getSelectedColumn()),
+//                enableDateRule
+//        );
+//
+//        updateTextInputControl(
+//                regexpRuleTextField,
+//                validationConfiguration.getRegexpRuleFor(getSelectedColumn()),
+//                enableRegexpRule
+//        );
+//
+//        updateTextInputControl(
+//                valueOfRuleTextField,
+//                validationConfiguration.getValueOfRuleFor(getSelectedColumn()),
+//                enableValueOfRule
+//        );
+//
+//        updateCodeAreaControl(
+//                groovyRuleTextArea,
+//                validationConfiguration.getGroovyRuleFor(getSelectedColumn()),
+//                enableGroovyRule
+//        );
     }
 
     private void updateCheckBox(Boolean value, CheckBox ruleEnabled) {
