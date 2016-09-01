@@ -3,7 +3,7 @@ package ninja.javafx.smartcsv.validation;
 /**
  * @author abi
  */
-public class DateFormatHelper {
+public class ValidationFormatHelper {
 
 
     public static String dateFormat(String format, String defaultFormat) {
@@ -34,5 +34,10 @@ public class DateFormatHelper {
             }
         }
         return defaultFormat;
+    }
+
+    public static Integer doubleToInteger(Double value) {
+        if (value == null) return null;
+        return (int)Math.round(value);
     }
 }

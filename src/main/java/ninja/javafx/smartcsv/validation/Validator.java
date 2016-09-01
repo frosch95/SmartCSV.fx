@@ -32,7 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ninja.javafx.smartcsv.validation.DateFormatHelper.dateFormat;
+import static ninja.javafx.smartcsv.validation.ValidationFormatHelper.dateFormat;
+import static ninja.javafx.smartcsv.validation.ValidationFormatHelper.doubleToInteger;
 
 /**
  * This class checks all the validations defined in the
@@ -252,8 +253,5 @@ public class Validator {
         return result;
     }
 
-    private Integer doubleToInteger(Double value) {
-        if (value == null) return null;
-        return (int)Math.round(value);
-    }
+
 }

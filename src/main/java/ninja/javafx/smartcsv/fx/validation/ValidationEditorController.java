@@ -55,6 +55,7 @@ import java.util.regex.Pattern;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static javafx.beans.binding.Bindings.when;
+import static ninja.javafx.smartcsv.validation.ValidationFormatHelper.doubleToInteger;
 
 /**
  * controller for editing column validations
@@ -111,9 +112,6 @@ public class ValidationEditorController extends FXMLController {
     private Spinner<Integer>  maxLengthSpinner;
 
     @FXML
-    private TextField dateformatRuleTextField;
-
-    @FXML
     private TextField regexpRuleTextField;
 
     @FXML
@@ -130,9 +128,6 @@ public class ValidationEditorController extends FXMLController {
 
     @FXML
     private CheckBox enableMaxLengthRule;
-
-    @FXML
-    private CheckBox enableDateRule;
 
     @FXML
     private CheckBox enableRegexpRule;
@@ -167,7 +162,6 @@ public class ValidationEditorController extends FXMLController {
 
         initSpinner(minLengthSpinner, enableMinLengthRule);
         initSpinner(maxLengthSpinner, enableMaxLengthRule);
-        initTextInputControl(dateformatRuleTextField, enableDateRule);
         initTextInputControl(regexpRuleTextField, enableRegexpRule);
         initTextInputControl(valueOfRuleTextField, enableValueOfRule);
         initCodeAreaControl(groovyRuleTextArea, enableGroovyRule);
@@ -294,66 +288,45 @@ public class ValidationEditorController extends FXMLController {
 
     private void updateForm() {
 
-//        updateCheckBox(
-//                validationConfiguration.getNotEmptyRuleFor(getSelectedColumn()),
-//                enableNotEmptyRule
-//        );
-//
-//        updateCheckBox(
-//                validationConfiguration.getIntegerRuleFor(getSelectedColumn()),
-//                enableIntegerRule
-//        );
-//
-//        updateCheckBox(
-//                validationConfiguration.getDoubleRuleFor(getSelectedColumn()),
-//                enableDoubleRule
-//        );
-//
-//        updateCheckBox(
-//                validationConfiguration.getAlphanumericRuleFor(getSelectedColumn()),
-//                enableAlphanumericRule
-//        );
-//
-//        updateCheckBox(
-//                validationConfiguration.getUniqueRuleFor(getSelectedColumn()),
-//                enableUniqueRule
-//        );
-//
-//        updateSpinner(
-//                minLengthSpinner,
-//                validationConfiguration.getMinLengthRuleFor(getSelectedColumn()),
-//                enableMinLengthRule
-//        );
-//
-//        updateSpinner(
-//                maxLengthSpinner,
-//                validationConfiguration.getMaxLengthRuleFor(getSelectedColumn()),
-//                enableMaxLengthRule
-//        );
-//
-//        updateTextInputControl(
-//                dateformatRuleTextField,
-//                validationConfiguration.getDateRuleFor(getSelectedColumn()),
-//                enableDateRule
-//        );
-//
-//        updateTextInputControl(
-//                regexpRuleTextField,
-//                validationConfiguration.getRegexpRuleFor(getSelectedColumn()),
-//                enableRegexpRule
-//        );
-//
-//        updateTextInputControl(
-//                valueOfRuleTextField,
-//                validationConfiguration.getValueOfRuleFor(getSelectedColumn()),
-//                enableValueOfRule
-//        );
-//
-//        updateCodeAreaControl(
-//                groovyRuleTextArea,
-//                validationConfiguration.getGroovyRuleFor(getSelectedColumn()),
-//                enableGroovyRule
-//        );
+        updateCheckBox(
+                (Boolean)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("required"),
+                enableNotEmptyRule
+        );
+
+        updateCheckBox(
+                (Boolean)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("unique"),
+                enableUniqueRule
+        );
+
+        updateSpinner(
+                minLengthSpinner,
+                doubleToInteger((Double)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("minLength")),
+                enableMinLengthRule
+        );
+
+        updateSpinner(
+                maxLengthSpinner,
+                doubleToInteger((Double)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("maxLength")),
+                enableMaxLengthRule
+        );
+
+        updateTextInputControl(
+                regexpRuleTextField,
+                (String)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("pattern"),
+                enableRegexpRule
+        );
+
+        updateTextInputControl(
+                valueOfRuleTextField,
+                (String)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("enum"),
+                enableValueOfRule
+        );
+
+        updateCodeAreaControl(
+                groovyRuleTextArea,
+                (String)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("groovy"),
+                enableGroovyRule
+        );
     }
 
     private void updateCheckBox(Boolean value, CheckBox ruleEnabled) {

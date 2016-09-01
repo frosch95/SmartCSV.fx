@@ -47,6 +47,15 @@ public class ValidationConfiguration {
         this.fieldConfigurations = fieldConfigurations;
     }
 
+    public FieldConfiguration getFieldConfiguration(String column) {
+        for (FieldConfiguration fieldConfiguration: fieldConfigurations) {
+            if (fieldConfiguration.getName().equals(column)) {
+                return fieldConfiguration;
+            }
+        }
+        return null;
+    }
+
     public String[] headerNames() {
         if (fieldConfigurations != null) {
             List<String> headerNames = new ArrayList<>();

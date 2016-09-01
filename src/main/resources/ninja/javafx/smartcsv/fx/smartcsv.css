@@ -1,16 +1,16 @@
-.list-view {
+.table-view .list-view {
     -fx-background-color: -fx-background;
     -fx-padding: 1;
 }
 
-.list-cell {
+.table-view .list-cell {
     -fx-padding: 1.0em 1.0em 1.0em 1.0em;
 }
-.list-cell:odd {
+.table-view .list-cell:odd {
     -fx-background: -fx-control-inner-background-alt;
 }
 
-.list-cell:even {
+.table-view .list-cell:even {
     -fx-background: -fx-control-inner-background;
 }
 
