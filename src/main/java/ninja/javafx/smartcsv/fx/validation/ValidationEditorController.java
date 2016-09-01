@@ -35,6 +35,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import ninja.javafx.smartcsv.fx.FXMLController;
+import ninja.javafx.smartcsv.validation.FieldConfiguration;
 import ninja.javafx.smartcsv.validation.ValidationConfiguration;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -100,20 +101,8 @@ public class ValidationEditorController extends FXMLController {
                     + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
     );
 
-//    @FXML
-//    private CheckBox notEmptyRuleCheckBox;
-//
-//    @FXML
-//    private CheckBox integerRuleCheckBox;
-//
-//    @FXML
-//    private CheckBox doublerRuleCheckBox;
-//
-//    @FXML
-//    private CheckBox alphanumericRuleCheckBox;
-//
-//    @FXML
-//    private CheckBox uniqueRuleCheckBox;
+    @FXML
+    private ComboBox<FieldConfiguration.Type> typeComboBox;
 
     @FXML
     private Spinner<Integer> minLengthSpinner;
@@ -135,15 +124,6 @@ public class ValidationEditorController extends FXMLController {
 
     @FXML
     private CheckBox enableNotEmptyRule;
-
-    @FXML
-    private CheckBox enableIntegerRule;
-
-    @FXML
-    private CheckBox enableDoubleRule;
-
-    @FXML
-    private CheckBox enableAlphanumericRule;
 
     @FXML
     private CheckBox enableMinLengthRule;
@@ -176,6 +156,13 @@ public class ValidationEditorController extends FXMLController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        typeComboBox.getItems().addAll(FieldConfiguration.Type.STRING,
+                FieldConfiguration.Type.INTEGER,
+                FieldConfiguration.Type.NUMBER,
+                FieldConfiguration.Type.DATE,
+                FieldConfiguration.Type.DATETIME,
+                FieldConfiguration.Type.TIME);
+
         initMinMaxSpinner();
 
         initSpinner(minLengthSpinner, enableMinLengthRule);
@@ -185,7 +172,6 @@ public class ValidationEditorController extends FXMLController {
         initTextInputControl(valueOfRuleTextField, enableValueOfRule);
         initCodeAreaControl(groovyRuleTextArea, enableGroovyRule);
 
-        listenToExcludingRuleCombinations();
 
         selectedColumn.addListener(observable -> {
             updateForm();
@@ -294,13 +280,6 @@ public class ValidationEditorController extends FXMLController {
 //            validationConfiguration.setValueOfRuleFor(selectedColumn.getValue(), null);
 //        }
 
-    }
-
-    private void listenToExcludingRuleCombinations() {
-        addDependencyListener(enableIntegerRule, enableDoubleRule, enableAlphanumericRule, enableDateRule);
-        addDependencyListener(enableDoubleRule, enableIntegerRule, enableAlphanumericRule, enableDateRule);
-        addDependencyListener(enableAlphanumericRule, enableIntegerRule, enableDoubleRule, enableDateRule);
-        addDependencyListener(enableDateRule, enableIntegerRule, enableDoubleRule, enableAlphanumericRule);
     }
 
     private void addDependencyListener(CheckBox rule, CheckBox... dependentRules) {

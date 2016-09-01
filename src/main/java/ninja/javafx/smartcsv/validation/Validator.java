@@ -157,25 +157,25 @@ public class Validator {
     private void initializeColumnWithRules(FieldConfiguration column) {
 
         if (column.getType() != null) {
-            if (column.getType().equals("number")) {
+            if (column.getType() == FieldConfiguration.Type.NUMBER) {
                 add(column.getName(), new DoubleValidation());
             }
 
-            if (column.getType().equals("integer")) {
+            if (column.getType() == FieldConfiguration.Type.INTEGER) {
                 add(column.getName(), new IntegerValidation());
             }
 
-            if (column.getType().equals("date")) {
+            if (column.getType() == FieldConfiguration.Type.DATE) {
                 String format = dateFormat(column.getFormat(), "YYYY-MM-DD");
                 add(column.getName(), new DateValidation(format));
             }
 
-            if (column.getType().equals("datetime")) {
+            if (column.getType() == FieldConfiguration.Type.DATETIME) {
                 String format = dateFormat(column.getFormat(), "YYYY-MM-DDThh:mm:ssZ");
                 add(column.getName(), new DateValidation(format));
             }
 
-            if (column.getType().equals("time")) {
+            if (column.getType() == FieldConfiguration.Type.TIME) {
                 String format = dateFormat(column.getFormat(), "hh:mm:ss");
                 add(column.getName(), new DateValidation(format));
             }

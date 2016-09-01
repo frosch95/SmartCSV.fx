@@ -1,5 +1,7 @@
 package ninja.javafx.smartcsv.validation;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 import java.util.Map;
 
@@ -8,9 +10,18 @@ import java.util.Map;
  */
 public class FieldConfiguration {
 
+    public enum Type {
+        @SerializedName("string") STRING,
+        @SerializedName("integer") INTEGER,
+        @SerializedName("number") NUMBER,
+        @SerializedName("date") DATE,
+        @SerializedName("datetime") DATETIME,
+        @SerializedName("time") TIME
+    }
+
     private String name;
     private String title;
-    private String type;
+    private Type type;
     private String description;
     private String format;
     private Object missingValue;
@@ -32,11 +43,11 @@ public class FieldConfiguration {
         this.title = title;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
