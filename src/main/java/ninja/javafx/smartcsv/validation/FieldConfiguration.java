@@ -2,9 +2,6 @@ package ninja.javafx.smartcsv.validation;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * @author abi
  */
@@ -25,7 +22,9 @@ public class FieldConfiguration {
     private String description;
     private String format;
     private Object missingValue;
-    private Map<String, Object> constraints;
+    private ConstraintsConfiguration constraints;
+    private String groovy;
+
 
     public String getName() {
         return name;
@@ -75,11 +74,20 @@ public class FieldConfiguration {
         this.missingValue = missingValue;
     }
 
-    public Map<String, Object> getConstraints() {
+    public ConstraintsConfiguration getConstraints() {
         return constraints;
     }
 
-    public void setConstraints(Map<String, Object> constraints) {
+    public void setConstraints(ConstraintsConfiguration constraints) {
         this.constraints = constraints;
     }
+
+    public String getGroovy() {
+        return groovy;
+    }
+
+    public void setGroovy(String groovy) {
+        this.groovy = groovy;
+    }
+
 }

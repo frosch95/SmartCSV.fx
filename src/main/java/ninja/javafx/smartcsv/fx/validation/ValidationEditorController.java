@@ -26,15 +26,13 @@
 
 package ninja.javafx.smartcsv.fx.validation;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import ninja.javafx.smartcsv.fx.FXMLController;
+import ninja.javafx.smartcsv.validation.ConstraintsConfiguration;
 import ninja.javafx.smartcsv.validation.FieldConfiguration;
 import ninja.javafx.smartcsv.validation.ValidationConfiguration;
 import org.fxmisc.richtext.CodeArea;
@@ -52,10 +50,8 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static javafx.beans.binding.Bindings.when;
-import static ninja.javafx.smartcsv.validation.ValidationFormatHelper.doubleToInteger;
 
 /**
  * controller for editing column validations
@@ -82,7 +78,7 @@ public class ValidationEditorController extends FXMLController {
             "transient", "true", "try", "void", "volatile", "while"
     };
 
-    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
+    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", (CharSequence[]) KEYWORDS) + ")\\b";
     private static final String PAREN_PATTERN = "\\(|\\)";
     private static final String BRACE_PATTERN = "\\{|\\}";
     private static final String BRACKET_PATTERN = "\\[|\\]";
@@ -157,6 +153,7 @@ public class ValidationEditorController extends FXMLController {
                 FieldConfiguration.Type.DATE,
                 FieldConfiguration.Type.DATETIME,
                 FieldConfiguration.Type.TIME);
+        typeComboBox.setValue(FieldConfiguration.Type.STRING);
 
         initMinMaxSpinner();
 
@@ -288,45 +285,49 @@ public class ValidationEditorController extends FXMLController {
 
     private void updateForm() {
 
-        updateCheckBox(
-                (Boolean)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("required"),
-                enableNotEmptyRule
+        FieldConfiguration config = validationConfiguration.getFieldConfiguration(getSelectedColumn());
+
+        if (config.getType() != null) {
+            typeComboBox.setValue(config.getType());
+        } else {
+            typeComboBox.setValue(FieldConfiguration.Type.STRING);
+        }
+
+        updateCodeAreaControl(
+                groovyRuleTextArea,
+                config.getGroovy(),
+                enableGroovyRule
         );
 
-        updateCheckBox(
-                (Boolean)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("unique"),
-                enableUniqueRule
-        );
+        ConstraintsConfiguration constraints = config.getConstraints();
+        updateCheckBox(constraints != null ? constraints.getRequired() : false, enableNotEmptyRule);
+        updateCheckBox(constraints != null ? constraints.getUnique() : false, enableUniqueRule);
 
         updateSpinner(
                 minLengthSpinner,
-                doubleToInteger((Double)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("minLength")),
+                constraints != null ? constraints.getMinLength() : null,
                 enableMinLengthRule
         );
 
         updateSpinner(
                 maxLengthSpinner,
-                doubleToInteger((Double)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("maxLength")),
+                constraints != null ? constraints.getMaxLength() : null,
                 enableMaxLengthRule
         );
 
         updateTextInputControl(
                 regexpRuleTextField,
-                (String)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("pattern"),
+                constraints != null ? constraints.getPattern() : null,
                 enableRegexpRule
         );
 
         updateTextInputControl(
                 valueOfRuleTextField,
-                (String)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("enum"),
+                constraints != null ? constraints.getEnumeration() : null,
                 enableValueOfRule
         );
 
-        updateCodeAreaControl(
-                groovyRuleTextArea,
-                (String)validationConfiguration.getFieldConfiguration(getSelectedColumn()).getConstraints().get("groovy"),
-                enableGroovyRule
-        );
+
     }
 
     private void updateCheckBox(Boolean value, CheckBox ruleEnabled) {

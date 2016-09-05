@@ -182,38 +182,41 @@ public class Validator {
             }
         }
 
-        if (column.getConstraints() != null) {
-            Boolean notEmptyRule = (Boolean)column.getConstraints().get("required");
+        String groovy = column.getGroovy();
+        if (groovy != null && !groovy.trim().isEmpty()) {
+            add(column.getName(), new GroovyValidation(groovy));
+        }
+
+        ConstraintsConfiguration constraints = column.getConstraints();
+        if (constraints != null) {
+            Boolean notEmptyRule = constraints.getRequired();
             if (notEmptyRule != null && notEmptyRule) {
                 add(column.getName(), new NotEmptyValidation());
             }
 
-            Boolean uniqueRule = (Boolean)column.getConstraints().get("unique");
+            Boolean uniqueRule = constraints.getUnique();
             if (uniqueRule != null && uniqueRule) {
                 add(column.getName(), new UniqueValidation(columnValueProvider, column.getName()));
             }
 
-            Integer minLength = doubleToInteger((Double)column.getConstraints().get("minLength"));
+            Integer minLength = constraints.getMinLength();
             if (minLength != null) {
                 add(column.getName(), new MinLengthValidation(minLength));
             }
 
-            Integer maxLength = doubleToInteger((Double)column.getConstraints().get("maxLength"));
+            Integer maxLength = constraints.getMaxLength();
             if (maxLength != null) {
                 add(column.getName(), new MaxLengthValidation(maxLength));
             }
 
-            String regexp = (String)column.getConstraints().get("pattern");
+            String regexp = constraints.getPattern();
             if (regexp != null && !regexp.trim().isEmpty()) {
                 add(column.getName(), new RegExpValidation(regexp));
             }
 
-            String groovy = (String)column.getConstraints().get("groovy");
-            if (groovy != null && !groovy.trim().isEmpty()) {
-                add(column.getName(), new GroovyValidation(groovy));
-            }
 
-            List<String> valueOfRule =  (List<String>)column.getConstraints().get("enum");
+
+            List<String> valueOfRule =  constraints.getEnumeration();
             if (valueOfRule != null && !valueOfRule.isEmpty()) {
                 add(column.getName(), new ValueOfValidation(valueOfRule));
             }
