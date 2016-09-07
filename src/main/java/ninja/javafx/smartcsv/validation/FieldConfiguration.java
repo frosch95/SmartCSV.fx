@@ -14,6 +14,12 @@ public class FieldConfiguration {
         @SerializedName("date") DATE,
         @SerializedName("datetime") DATETIME,
         @SerializedName("time") TIME
+// TODO: currently not supported
+//        @SerializedName("object") OBJECT,
+//        @SerializedName("array") ARRAY,
+//        @SerializedName("duration") DURATION,
+//        @SerializedName("geopoint") GEOPOINT,
+//        @SerializedName("geojson") GEOJSON
     }
 
     private String name;

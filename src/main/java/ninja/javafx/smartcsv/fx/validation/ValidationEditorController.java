@@ -50,6 +50,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static javafx.beans.binding.Bindings.when;
 
@@ -203,73 +204,129 @@ public class ValidationEditorController extends FXMLController {
         this.validationConfiguration = validationConfiguration;
     }
 
+    private void changeFormatInput() {
+        switch (typeComboBox.getValue()) {
+            case STRING:
+                /*
+                default: any valid string.
+                email: A valid email address.
+                uri: A valid URI.
+                binary: A base64 encoded string representing binary data.
+                uuid: A string that is a uuid
+                 */
+                break;
+            case NUMBER:
+                /*
+                decimalChar: A string whose value is used to represent a decimal point within the number. The default value is ".".
+                groupChar: A string whose value is used to group digits within the number. The default value is null. A common value is "," e.g. "100,000".
+                currency
+                 */
+                break;
+            case DATE:
+                /*
+                default: An ISO8601 format string.
+                   This MUST be in ISO8601 format YYYY-MM-DD
+                any: Any parsable representation of the type. The implementing library can attempt to parse the datetime via a range of strategies.
+                     An example is dateutil.parser.parse from the python-dateutils library.
+                fmt:PATTERN: date/time values in this field conform to PATTERN where [PATTERN] follows the syntax of standard Python / C strptime.
+                 */
+                break;
+            case DATETIME:
+                /*
+                default: An ISO8601 format string.
+                   datetime: a date-time. This MUST be in ISO 8601 format of YYYY-MM-DDThhssZ in UTC time
+                any: Any parsable representation of the type. The implementing library can attempt to parse the datetime via a range of strategies.
+                     An example is dateutil.parser.parse from the python-dateutils library.
+                fmt:PATTERN: date/time values in this field conform to PATTERN where [PATTERN] follows the syntax of standard Python / C strptime.
+                 */
+                break;
+            case TIME:
+                /*
+                default: An ISO8601 format string.
+                   time: a time without a date
+                any: Any parsable representation of the type. The implementing library can attempt to parse the datetime via a range of strategies.
+                     An example is dateutil.parser.parse from the python-dateutils library.
+                fmt:PATTERN: date/time values in this field conform to PATTERN where [PATTERN] follows the syntax of standard Python / C strptime.
+                 */
+                break;
+//            case GEOPOINT:
+//                /*
+//                default: A string of the pattern "lon, lat", where lon is the longitude and lat is the latitude.
+//                array: An array of exactly two items, where each item is either a number, or a string parsable as a number, and the first item is lon and the second item is lat.
+//                object: A JSON object with exactly two keys, lat and lon
+//                 */
+//                break;
+//            case GEOJSON:
+//                /*
+//                default: A geojson object as per the GeoJSON spec.
+//                topojson: A topojson object as per the TopoJSON spec
+//                 */
+//            case DURATION:
+//            case OBJECT:
+//            case ARRAY:
+            case INTEGER:
+            default:
+                // format: no options
+                break;
+        }
+    }
+
+
+
     public void updateConfiguration() {
 
-//        if (enableIntegerRule.isSelected()) {
-//            validationConfiguration.setIntegerRuleFor(selectedColumn.getValue(), enableIntegerRule.isSelected());
-//        } else {
-//            validationConfiguration.setIntegerRuleFor(selectedColumn.getValue(), null);
-//        }
-//
-//        if (enableNotEmptyRule.isSelected()) {
-//            validationConfiguration.setNotEmptyRuleFor(selectedColumn.getValue(), enableNotEmptyRule.isSelected());
-//        } else {
-//            validationConfiguration.setNotEmptyRuleFor(selectedColumn.getValue(), null);
-//        }
-//
-//        if (enableUniqueRule.isSelected()) {
-//            validationConfiguration.setUniqueRuleFor(selectedColumn.getValue(), enableUniqueRule.isSelected());
-//        } else {
-//            validationConfiguration.setUniqueRuleFor(selectedColumn.getValue(), null);
-//        }
-//
-//        if (enableDoubleRule.isSelected()) {
-//            validationConfiguration.setDoubleRuleFor(selectedColumn.getValue(), enableDoubleRule.isSelected());
-//        } else {
-//            validationConfiguration.setDoubleRuleFor(selectedColumn.getValue(), null);
-//        }
-//
-//        if (enableAlphanumericRule.isSelected()) {
-//            validationConfiguration.setAlphanumericRuleFor(selectedColumn.getValue(), enableAlphanumericRule.isSelected());
-//        } else {
-//            validationConfiguration.setAlphanumericRuleFor(selectedColumn.getValue(), null);
-//        }
-//
-//        if (enableDateRule.isSelected()) {
-//            validationConfiguration.setDateRuleFor(selectedColumn.getValue(), dateformatRuleTextField.getText());
-//        } else {
-//            validationConfiguration.setDateRuleFor(selectedColumn.getValue(), null);
-//        }
-//
-//        if (enableGroovyRule.isSelected()) {
-//            validationConfiguration.setGroovyRuleFor(selectedColumn.getValue(), groovyRuleTextArea.getText());
-//        } else {
-//            validationConfiguration.setGroovyRuleFor(selectedColumn.getValue(), null);
-//        }
-//
-//        if (enableMinLengthRule.isSelected()) {
-//            validationConfiguration.setMinLengthRuleFor(selectedColumn.getValue(), minLengthSpinner.getValue());
-//        } else {
-//            validationConfiguration.setMinLengthRuleFor(selectedColumn.getValue(), null);
-//        }
-//
-//        if (enableMaxLengthRule.isSelected()) {
-//            validationConfiguration.setMaxLengthRuleFor(selectedColumn.getValue(), maxLengthSpinner.getValue());
-//        } else {
-//            validationConfiguration.setMaxLengthRuleFor(selectedColumn.getValue(), null);
-//        }
-//
-//        if (enableRegexpRule.isSelected()) {
-//            validationConfiguration.setRegexpRuleFor(selectedColumn.getValue(), regexpRuleTextField.getText());
-//        } else {
-//            validationConfiguration.setRegexpRuleFor(selectedColumn.getValue(), null);
-//        }
-//
-//        if (enableValueOfRule.isSelected()) {
-//            validationConfiguration.setValueOfRuleFor(selectedColumn.getValue(), asList(valueOfRuleTextField.getText().split(", ")));
-//        } else {
-//            validationConfiguration.setValueOfRuleFor(selectedColumn.getValue(), null);
-//        }
+        FieldConfiguration config = validationConfiguration.getFieldConfiguration(getSelectedColumn());
+        config.setType(typeComboBox.getValue());
+
+        if (enableGroovyRule.isSelected()) {
+            config.setGroovy(groovyRuleTextArea.getText());
+        } else {
+            config.setGroovy(null);
+        }
+
+        ConstraintsConfiguration constraints = config.getConstraints();
+        if (constraints == null) {
+            constraints = new ConstraintsConfiguration();
+        }
+
+
+
+
+        if (enableNotEmptyRule.isSelected()) {
+            constraints.setRequired(enableNotEmptyRule.isSelected());
+        } else {
+            constraints.setRequired(null);
+        }
+
+        if (enableUniqueRule.isSelected()) {
+            constraints.setUnique(enableUniqueRule.isSelected());
+        } else {
+            constraints.setUnique(null);
+        }
+
+        if (enableMinLengthRule.isSelected()) {
+            constraints.setMinLength(minLengthSpinner.getValue());
+        } else {
+            constraints.setMinLength(null);
+        }
+
+        if (enableMaxLengthRule.isSelected()) {
+            constraints.setMaxLength(maxLengthSpinner.getValue());
+        } else {
+            constraints.setMaxLength(null);
+        }
+
+        if (enableRegexpRule.isSelected()) {
+            constraints.setPattern(regexpRuleTextField.getText());
+        } else {
+            constraints.setPattern(null);
+        }
+
+        if (enableValueOfRule.isSelected()) {
+            constraints.setEnumeration(asList(valueOfRuleTextField.getText().split(", ")));
+        } else {
+            constraints.setEnumeration(null);
+        }
 
     }
 
