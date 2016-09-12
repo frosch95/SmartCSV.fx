@@ -29,7 +29,7 @@ package ninja.javafx.smartcsv.fx.table.model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ninja.javafx.smartcsv.validation.RevalidationService;
-import ninja.javafx.smartcsv.validation.ValidationConfiguration;
+import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.Validator;
 import org.apache.logging.log4j.LogManager;

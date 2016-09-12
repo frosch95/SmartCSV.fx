@@ -23,9 +23,10 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
 import ninja.javafx.smartcsv.fx.table.model.ColumnValueProvider;
+import ninja.javafx.smartcsv.validation.ValidationError;
 
 import java.util.ArrayList;
 import java.util.List;

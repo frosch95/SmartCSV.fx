@@ -27,13 +27,16 @@
 package ninja.javafx.smartcsv.validation;
 
 import ninja.javafx.smartcsv.fx.table.model.ColumnValueProvider;
+import ninja.javafx.smartcsv.validation.checker.*;
+import ninja.javafx.smartcsv.validation.configuration.ConstraintsConfiguration;
+import ninja.javafx.smartcsv.validation.configuration.FieldConfiguration;
+import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static ninja.javafx.smartcsv.validation.ValidationFormatHelper.dateFormat;
-import static ninja.javafx.smartcsv.validation.ValidationFormatHelper.doubleToInteger;
 
 /**
  * This class checks all the validations defined in the

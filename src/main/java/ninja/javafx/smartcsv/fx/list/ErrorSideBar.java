@@ -137,9 +137,7 @@ public class ErrorSideBar extends Region {
 
                 int rows = model.get().getRows().size();
                 double space = (double)heightWithoutStatusBlock() / rows;
-                for (ValidationError error : errorList) {
-                    errorMarkerList.add(generateErrorMarker(space, error));
-                }
+                errorList.forEach(error -> errorMarkerList.add(generateErrorMarker(space, error)));
             }
         }
         getChildren().setAll(errorMarkerList);

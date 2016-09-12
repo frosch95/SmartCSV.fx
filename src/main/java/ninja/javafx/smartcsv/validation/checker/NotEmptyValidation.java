@@ -23,33 +23,31 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import java.util.List;
+import ninja.javafx.smartcsv.validation.ValidationError;
 
-import static java.util.stream.Collectors.joining;
+import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 
 /**
- * Checks if the value is part of a list of values
+ * Checks if the value is not empty
  */
-public class ValueOfValidation extends EmptyValueIsValid {
-
-    private List<String> values;
-
-    public ValueOfValidation(List<String> values) {
-        this.values = values;
-    }
+public class NotEmptyValidation implements Validation {
 
     @Override
     public void check(int row, String value, ValidationError error) {
-        if (!values.contains(value)) {
-            String commaSeparated = values.stream().collect(joining(", "));
-            error.add("validation.message.value.of", value, commaSeparated);
+        if (isBlankOrNull(value)) {
+            error.add("validation.message.not.empty");
         }
     }
 
     @Override
     public Type getType() {
-        return Type.VALUE_OF;
+        return Type.NOT_EMPTY;
+    }
+
+    @Override
+    public boolean canBeChecked(String value) {
+        return true;
     }
 }

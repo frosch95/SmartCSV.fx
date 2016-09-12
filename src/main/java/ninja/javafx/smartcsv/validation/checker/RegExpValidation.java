@@ -23,30 +23,32 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import static org.apache.commons.validator.GenericValidator.minLength;
+import ninja.javafx.smartcsv.validation.ValidationError;
+
+import static org.apache.commons.validator.GenericValidator.matchRegexp;
 
 /**
- * Checks if the value is at minimum long as the given min length
+ * Checks the value against the given reg exp
  */
-public class MinLengthValidation extends EmptyValueIsValid {
+public class RegExpValidation extends EmptyValueIsValid {
 
-    private int minLength;
+    private String regexp;
 
-    public MinLengthValidation(int minLength) {
-        this.minLength = minLength;
+    public RegExpValidation(String regexp) {
+        this.regexp = regexp;
     }
 
     @Override
     public void check(int row, String value, ValidationError error) {
-        if (!minLength(value, minLength)) {
-            error.add("validation.message.min.length", Integer.toString(minLength));
+        if (!matchRegexp(value, regexp)) {
+            error.add("validation.message.regexp", regexp);
         }
     }
 
     @Override
     public Type getType() {
-        return Type.MIN_LENGTH;
+        return Type.REGEXP;
     }
 }

@@ -51,13 +51,13 @@ public class ErrorExport extends Service {
                             format(resourceBundle.getString("log.header.message"),
                                    csvFilename,
                                    Integer.toString(model.getValidationError().size()))).append("\n\n");
-                    for (ValidationError error:model.getValidationError()) {
+                    model.getValidationError().forEach(error ->
                         log.append(
                                 format(resourceBundle.getString("log.message"),
                                        error.getLineNumber().toString(),
                                        error.getColumn(),
-                                       getI18nValidatioMessage(resourceBundle, error))).append("\n");
-                    }
+                                       getI18nValidatioMessage(resourceBundle, error))).append("\n")
+                    );
                     Files.write(file.toPath(), log.toString().getBytes());
 
                 } catch (Throwable ex) {

@@ -23,24 +23,33 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import static org.apache.commons.validator.GenericValidator.isInt;
+import ninja.javafx.smartcsv.validation.ValidationError;
+
+import static org.apache.commons.validator.GenericValidator.isDate;
 
 /**
- * Checks if the value is an integer
+ * Checks if the date has the right format
  */
-public class IntegerValidation extends EmptyValueIsValid {
+public class DateValidation extends EmptyValueIsValid {
+
+    private String dateformat;
+
+    public DateValidation(String dateformat) {
+        assert dateformat != null && !dateformat.trim().isEmpty() : "empty date format for date validation";
+        this.dateformat = dateformat;
+    }
 
     @Override
     public void check(int row, String value, ValidationError error) {
-        if (!isInt(value)) {
-            error.add("validation.message.integer");
+        if (!isDate(value, dateformat, true)) {
+            error.add("validation.message.date.format", dateformat);
         }
     }
 
     @Override
     public Type getType() {
-        return Type.INTEGER;
+        return Type.DATE;
     }
 }

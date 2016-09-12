@@ -24,7 +24,7 @@
   
 */
 
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.configuration;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -29,6 +29,7 @@ package ninja.javafx.smartcsv.validation;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ninja.javafx.smartcsv.FileWriter;
+import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 
 import java.io.File;
 import java.io.IOException;

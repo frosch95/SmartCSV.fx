@@ -1,6 +1,10 @@
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.configuration;
 
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author abi
@@ -20,6 +24,45 @@ public class FieldConfiguration {
 //        @SerializedName("duration") DURATION,
 //        @SerializedName("geopoint") GEOPOINT,
 //        @SerializedName("geojson") GEOJSON
+    }
+
+    public enum StringFormat {
+        @SerializedName("default") DEFAULT,
+        @SerializedName("email") EMAIL,
+        @SerializedName("uri") URI,
+        @SerializedName("binary") BINARY,
+        @SerializedName("uuid") UUID
+    }
+
+    public static List<String> getStringFormats() {
+        return Stream.of(StringFormat.values())
+                .map(StringFormat::name)
+                .collect(Collectors.toList());
+    }
+
+    public enum NumberFormat {
+        @SerializedName("decimalChar") DECIMAL_CHAR,
+        @SerializedName("groupChar") GROUP_CHAR,
+        @SerializedName("currency") CURRENCY
+    }
+
+    public static List<String> getNumberFormats() {
+        return Stream.of(NumberFormat.values())
+                .map(NumberFormat::name)
+                .collect(Collectors.toList());
+    }
+
+
+    public enum DateFormat {
+        @SerializedName("default") DEFAULT,
+        @SerializedName("any") ANY,
+        @SerializedName("fmtPattern") FMT_PATTERN
+    }
+
+    public static List<String> getDateFormats() {
+        return Stream.of(DateFormat.values())
+                .map(DateFormat::name)
+                .collect(Collectors.toList());
     }
 
     private String name;

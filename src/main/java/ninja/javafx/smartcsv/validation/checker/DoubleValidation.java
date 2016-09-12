@@ -23,7 +23,9 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
+
+import ninja.javafx.smartcsv.validation.ValidationError;
 
 import static org.apache.commons.validator.GenericValidator.isDouble;
 

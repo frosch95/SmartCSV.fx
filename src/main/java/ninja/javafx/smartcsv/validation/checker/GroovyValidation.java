@@ -23,11 +23,12 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import ninja.javafx.smartcsv.validation.ValidationError;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 /**

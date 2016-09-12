@@ -23,29 +23,32 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
+import ninja.javafx.smartcsv.validation.ValidationError;
+
+import static org.apache.commons.validator.GenericValidator.maxLength;
 
 /**
- * Checks if the value is not empty
+ * Checks if the value is shorter or exactly as long as the given max length
  */
-public class NotEmptyValidation implements Validation {
+public class MaxLengthValidation extends EmptyValueIsValid {
+
+    private int maxLength;
+
+    public MaxLengthValidation(int maxLength) {
+        this.maxLength = maxLength;
+    }
 
     @Override
     public void check(int row, String value, ValidationError error) {
-        if (isBlankOrNull(value)) {
-            error.add("validation.message.not.empty");
+        if (!maxLength(value, maxLength)) {
+            error.add("validation.message.max.length", Integer.toString(maxLength));
         }
     }
 
     @Override
     public Type getType() {
-        return Type.NOT_EMPTY;
-    }
-
-    @Override
-    public boolean canBeChecked(String value) {
-        return true;
+        return Type.MAX_LENGTH;
     }
 }

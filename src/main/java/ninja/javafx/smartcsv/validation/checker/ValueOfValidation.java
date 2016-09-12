@@ -23,30 +23,35 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import static org.apache.commons.validator.GenericValidator.maxLength;
+import ninja.javafx.smartcsv.validation.ValidationError;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.joining;
 
 /**
- * Checks if the value is shorter or exactly as long as the given max length
+ * Checks if the value is part of a list of values
  */
-public class MaxLengthValidation extends EmptyValueIsValid {
+public class ValueOfValidation extends EmptyValueIsValid {
 
-    private int maxLength;
+    private List<String> values;
 
-    public MaxLengthValidation(int maxLength) {
-        this.maxLength = maxLength;
+    public ValueOfValidation(List<String> values) {
+        this.values = values;
     }
 
     @Override
     public void check(int row, String value, ValidationError error) {
-        if (!maxLength(value, maxLength)) {
-            error.add("validation.message.max.length", Integer.toString(maxLength));
+        if (!values.contains(value)) {
+            String commaSeparated = values.stream().collect(joining(", "));
+            error.add("validation.message.value.of", value, commaSeparated);
         }
     }
 
     @Override
     public Type getType() {
-        return Type.MAX_LENGTH;
+        return Type.VALUE_OF;
     }
 }

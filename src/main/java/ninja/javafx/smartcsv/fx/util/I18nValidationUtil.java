@@ -43,9 +43,8 @@ public class I18nValidationUtil {
     public static String getI18nValidatioMessage(ResourceBundle resourceBundle, List<ValidationError> errors) {
 
         StringWriter message = new StringWriter();
-        for (ValidationError validationError: errors) {
-            message.append(getI18nValidatioMessage(resourceBundle, validationError)).append("\n");
-        }
+        errors.forEach(error -> message.append(getI18nValidatioMessage(resourceBundle, error)).append("\n"));
+
 
         if (message.toString().length() != 0) {
             return cutOffLastLineBreak(message.toString());
@@ -66,7 +65,7 @@ public class I18nValidationUtil {
 
         List<ValidationMessage> validationMessages = error.getMessages();
         StringWriter message = new StringWriter();
-        for (ValidationMessage validationMessage: validationMessages) {
+        validationMessages.forEach(validationMessage -> {
             message.append(prefix);
             if (resourceBundle.containsKey(validationMessage.getKey())) {
                 String resourceText = resourceBundle.getString(validationMessage.getKey());
@@ -78,7 +77,7 @@ public class I18nValidationUtil {
             } else {
                 message.append(validationMessage.getKey()).append("\n");
             }
-        }
+        });
 
         if (!validationMessages.isEmpty()) {
             return cutOffLastLineBreak(message.toString());

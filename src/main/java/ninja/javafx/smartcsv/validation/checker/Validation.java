@@ -23,30 +23,17 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import static org.apache.commons.validator.GenericValidator.matchRegexp;
+import ninja.javafx.smartcsv.validation.ValidationError;
 
 /**
- * Checks the value against the given reg exp
+ * Interface for all validations
  */
-public class RegExpValidation extends EmptyValueIsValid {
+public interface Validation {
 
-    private String regexp;
-
-    public RegExpValidation(String regexp) {
-        this.regexp = regexp;
-    }
-
-    @Override
-    public void check(int row, String value, ValidationError error) {
-        if (!matchRegexp(value, regexp)) {
-            error.add("validation.message.regexp", regexp);
-        }
-    }
-
-    @Override
-    public Type getType() {
-        return Type.REGEXP;
-    }
+    enum Type { NOT_EMPTY, UNIQUE, DOUBLE, INTEGER, MIN_LENGTH, MAX_LENGTH, DATE, REGEXP, VALUE_OF, GROOVY }
+    void check(int row, String value, ValidationError error);
+    Type getType();
+    boolean canBeChecked(String value);
 }

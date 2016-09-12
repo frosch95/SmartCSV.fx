@@ -23,15 +23,26 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
+
+import ninja.javafx.smartcsv.validation.ValidationError;
+
+import static org.apache.commons.validator.GenericValidator.isInt;
 
 /**
- * Interface for all validations
+ * Checks if the value is an integer
  */
-public interface Validation {
+public class IntegerValidation extends EmptyValueIsValid {
 
-    enum Type { NOT_EMPTY, UNIQUE, DOUBLE, INTEGER, MIN_LENGTH, MAX_LENGTH, DATE, REGEXP, VALUE_OF, GROOVY }
-    void check(int row, String value, ValidationError error);
-    Type getType();
-    boolean canBeChecked(String value);
+    @Override
+    public void check(int row, String value, ValidationError error) {
+        if (!isInt(value)) {
+            error.add("validation.message.integer");
+        }
+    }
+
+    @Override
+    public Type getType() {
+        return Type.INTEGER;
+    }
 }

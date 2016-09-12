@@ -23,31 +23,32 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import static org.apache.commons.validator.GenericValidator.isDate;
+import ninja.javafx.smartcsv.validation.ValidationError;
+
+import static org.apache.commons.validator.GenericValidator.minLength;
 
 /**
- * Checks if the date has the right format
+ * Checks if the value is at minimum long as the given min length
  */
-public class DateValidation extends EmptyValueIsValid {
+public class MinLengthValidation extends EmptyValueIsValid {
 
-    private String dateformat;
+    private int minLength;
 
-    public DateValidation(String dateformat) {
-        assert dateformat != null && !dateformat.trim().isEmpty() : "empty date format for date validation";
-        this.dateformat = dateformat;
+    public MinLengthValidation(int minLength) {
+        this.minLength = minLength;
     }
 
     @Override
     public void check(int row, String value, ValidationError error) {
-        if (!isDate(value, dateformat, true)) {
-            error.add("validation.message.date.format", dateformat);
+        if (!minLength(value, minLength)) {
+            error.add("validation.message.min.length", Integer.toString(minLength));
         }
     }
 
     @Override
     public Type getType() {
-        return Type.DATE;
+        return Type.MIN_LENGTH;
     }
 }

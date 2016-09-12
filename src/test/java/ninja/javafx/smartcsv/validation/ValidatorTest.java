@@ -2,6 +2,7 @@ package ninja.javafx.smartcsv.validation;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
