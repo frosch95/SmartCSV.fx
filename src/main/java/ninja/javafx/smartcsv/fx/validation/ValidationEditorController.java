@@ -289,15 +289,13 @@ public class ValidationEditorController extends FXMLController {
             case STRING:
                 updateFormatComboBox(getStringFormats());
                 break;
-            case NUMBER:
-                updateFormatComboBox(getNumberFormats());
-                  break;
             case DATE:
             case DATETIME:
             case TIME:
                 updateFormatComboBox(getDateFormats());
                 break;
             case INTEGER:
+            case NUMBER:
             default:
                 // format: no options
                 formatComboBox.setDisable(true);

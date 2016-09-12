@@ -28,6 +28,7 @@ package ninja.javafx.smartcsv.validation;
 
 import com.google.gson.GsonBuilder;
 import ninja.javafx.smartcsv.FileReader;
+import ninja.javafx.smartcsv.validation.configuration.FieldConfiguration;
 import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 
 import java.io.File;
@@ -43,6 +44,30 @@ public class ValidationFileReader implements FileReader<ValidationConfiguration>
     @Override
     public void read(File file) throws IOException {
         config = new GsonBuilder().create().fromJson(new java.io.FileReader(file), ValidationConfiguration.class);
+        setDefaults();
+    }
+
+    private void setDefaults() {
+        for (FieldConfiguration fieldConfiguration: config.getFieldConfigurations()) {
+            if (fieldConfiguration.getType() == null) {
+                fieldConfiguration.setType(FieldConfiguration.Type.STRING);
+            }
+            if (fieldConfiguration.getType() == FieldConfiguration.Type.DATE) {
+                if (fieldConfiguration.getFormat() == null) {
+                    fieldConfiguration.setFormat("yyyy-MM-dd");
+                }
+            }
+            if (fieldConfiguration.getType() == FieldConfiguration.Type.DATETIME) {
+                if (fieldConfiguration.getFormat() == null) {
+                    fieldConfiguration.setFormat("yyyy-MM-ddThh:mm:ssZ");
+                }
+            }
+            if (fieldConfiguration.getType() == FieldConfiguration.Type.TIME) {
+                if (fieldConfiguration.getFormat() == null) {
+                    fieldConfiguration.setFormat("hh:mm:ss");
+                }
+            }
+        }
     }
 
     public ValidationConfiguration getContent() {

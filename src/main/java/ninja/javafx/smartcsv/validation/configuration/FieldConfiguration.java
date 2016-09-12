@@ -40,19 +40,6 @@ public class FieldConfiguration {
                 .collect(Collectors.toList());
     }
 
-    public enum NumberFormat {
-        @SerializedName("decimalChar") DECIMAL_CHAR,
-        @SerializedName("groupChar") GROUP_CHAR,
-        @SerializedName("currency") CURRENCY
-    }
-
-    public static List<String> getNumberFormats() {
-        return Stream.of(NumberFormat.values())
-                .map(NumberFormat::name)
-                .collect(Collectors.toList());
-    }
-
-
     public enum DateFormat {
         @SerializedName("default") DEFAULT,
         @SerializedName("any") ANY,
