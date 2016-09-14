@@ -207,8 +207,10 @@ public class SmartCSVController extends FXMLController {
     private TableView<CSVRow> tableView;
     private ErrorSideBar errorSideBar;
     private ResourceBundle resourceBundle;
+    private CSVFileReader csvFileReader = new CSVFileReader();
+    private CSVFileWriter csvFileWriter = new CSVFileWriter();
 
-    private FileStorage<CSVModel> currentCsvFile = new FileStorage<>(new CSVFileReader(), new CSVFileWriter());
+    private FileStorage<CSVModel> currentCsvFile = new FileStorage<>(csvFileReader, csvFileWriter);
     private FileStorage<ValidationConfiguration> currentConfigFile = new FileStorage<>(new ValidationFileReader(), new ValidationFileWriter());
     private FileStorage<CsvPreference> csvPreferenceFile = new FileStorage<>(new PreferencesFileReader(), new PreferencesFileWriter());
 
@@ -520,6 +522,9 @@ public class SmartCSVController extends FXMLController {
 
     private void setCsvPreference(CsvPreference csvPreference) {
         preferencesController.setCsvPreference(csvPreference);
+        csvFileReader.setCsvPreference(csvPreference);
+        csvFileWriter.setCsvPreference(csvPreference);
+
     }
 
     private void loadFile(String filterText,
