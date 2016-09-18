@@ -23,7 +23,7 @@ binary distribution of the [latest release (0.7)](https://github.com/frosch95/Sm
 ###The MIT License (MIT)
 
 
-Copyright (c) 2015 Andreas Billmann <andreas.billmann@javafx.ninja>
+Copyright (c) 2015-2016 Andreas Billmann <andreas.billmann@javafx.ninja>
 
 
 
