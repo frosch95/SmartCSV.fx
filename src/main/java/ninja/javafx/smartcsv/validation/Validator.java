@@ -30,7 +30,6 @@ import ninja.javafx.smartcsv.fx.table.model.ColumnValueProvider;
 import ninja.javafx.smartcsv.validation.checker.*;
 import ninja.javafx.smartcsv.validation.configuration.Constraints;
 import ninja.javafx.smartcsv.validation.configuration.Field;
-import ninja.javafx.smartcsv.validation.configuration.StringFormat;
 import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 
 import java.util.HashMap;
@@ -201,6 +200,10 @@ public class Validator {
 
             if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(BINARY.getExternalValue())) {
                 add(column.getName(), new BinaryValidation());
+            }
+
+            if (column.getType() == STRING && column.getFormat() == null) {
+                columnValidationMap.get(column).remove(Validation.Type.STRING);
             }
         }
 

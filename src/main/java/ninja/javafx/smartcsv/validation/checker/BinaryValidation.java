@@ -28,7 +28,6 @@ package ninja.javafx.smartcsv.validation.checker;
 import ninja.javafx.smartcsv.validation.ValidationError;
 
 import java.util.Base64;
-import java.util.UUID;
 
 /**
  * checks if the value is a base64 encoded string representing binary data
@@ -46,6 +45,6 @@ public class BinaryValidation extends EmptyValueIsValid {
 
     @Override
     public Type getType() {
-        return Type.BINARY;
+        return Type.STRING;
     }
 }

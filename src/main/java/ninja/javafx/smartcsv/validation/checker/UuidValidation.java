@@ -27,8 +27,6 @@ package ninja.javafx.smartcsv.validation.checker;
 
 import ninja.javafx.smartcsv.validation.ValidationError;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.UUID;
 
 /**
@@ -47,6 +45,6 @@ public class UuidValidation extends EmptyValueIsValid {
 
     @Override
     public Type getType() {
-        return Type.UUID;
+        return Type.STRING;
     }
 }

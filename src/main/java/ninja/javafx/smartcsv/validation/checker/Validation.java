@@ -32,7 +32,7 @@ import ninja.javafx.smartcsv.validation.ValidationError;
  */
 public interface Validation {
 
-    enum Type { NOT_EMPTY, UNIQUE, DOUBLE, INTEGER, MIN_LENGTH, MAX_LENGTH, DATE, REGEXP, VALUE_OF, EMAIL, UUID, URI, BINARY, GROOVY }
+    enum Type { NOT_EMPTY, UNIQUE, DOUBLE, INTEGER, MIN_LENGTH, MAX_LENGTH, DATE, REGEXP, VALUE_OF, STRING, GROOVY }
     void check(int row, String value, ValidationError error);
     Type getType();
     boolean canBeChecked(String value);

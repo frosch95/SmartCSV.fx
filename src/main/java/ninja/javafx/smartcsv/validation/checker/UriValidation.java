@@ -46,6 +46,6 @@ public class UriValidation extends EmptyValueIsValid {
 
     @Override
     public Type getType() {
-        return Type.URI;
+        return Type.STRING;
     }
 }

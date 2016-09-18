@@ -42,6 +42,6 @@ public class EmailValidation extends EmptyValueIsValid {
 
     @Override
     public Type getType() {
-        return Type.EMAIL;
+        return Type.STRING;
     }
 }
