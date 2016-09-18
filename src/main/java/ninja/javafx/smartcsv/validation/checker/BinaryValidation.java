@@ -27,13 +27,25 @@ package ninja.javafx.smartcsv.validation.checker;
 
 import ninja.javafx.smartcsv.validation.ValidationError;
 
-/**
- * Interface for all validations
- */
-public interface Validation {
+import java.util.Base64;
+import java.util.UUID;
 
-    enum Type { NOT_EMPTY, UNIQUE, DOUBLE, INTEGER, MIN_LENGTH, MAX_LENGTH, DATE, REGEXP, VALUE_OF, EMAIL, UUID, URI, BINARY, GROOVY }
-    void check(int row, String value, ValidationError error);
-    Type getType();
-    boolean canBeChecked(String value);
+/**
+ * checks if the value is a base64 encoded string representing binary data
+ */
+public class BinaryValidation extends EmptyValueIsValid {
+
+    @Override
+    public void check(int row, String value, ValidationError error) {
+        try {
+            Base64.getDecoder().decode(value);
+        } catch (IllegalArgumentException e) {
+            error.add("validation.message.binary");
+        }
+    }
+
+    @Override
+    public Type getType() {
+        return Type.BINARY;
+    }
 }

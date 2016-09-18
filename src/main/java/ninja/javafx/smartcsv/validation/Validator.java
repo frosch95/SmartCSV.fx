@@ -30,6 +30,7 @@ import ninja.javafx.smartcsv.fx.table.model.ColumnValueProvider;
 import ninja.javafx.smartcsv.validation.checker.*;
 import ninja.javafx.smartcsv.validation.configuration.Constraints;
 import ninja.javafx.smartcsv.validation.configuration.Field;
+import ninja.javafx.smartcsv.validation.configuration.StringFormat;
 import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ninja.javafx.smartcsv.validation.ValidationFormatHelper.dateFormat;
+import static ninja.javafx.smartcsv.validation.configuration.StringFormat.*;
 import static ninja.javafx.smartcsv.validation.configuration.Type.*;
 
 /**
@@ -183,6 +185,22 @@ public class Validator {
             if (column.getType() == TIME) {
                 String format = dateFormat(column.getFormat(), "hh:mm:ss");
                 add(column.getName(), new DateValidation(format));
+            }
+
+            if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(EMAIL.getExternalValue())) {
+                add(column.getName(), new EmailValidation());
+            }
+
+            if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(URI.getExternalValue())) {
+                add(column.getName(), new UriValidation());
+            }
+
+            if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(UUID.getExternalValue())) {
+                add(column.getName(), new UuidValidation());
+            }
+
+            if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(BINARY.getExternalValue())) {
+                add(column.getName(), new BinaryValidation());
             }
         }
 

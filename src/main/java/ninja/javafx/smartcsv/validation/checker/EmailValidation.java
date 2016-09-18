@@ -26,14 +26,22 @@
 package ninja.javafx.smartcsv.validation.checker;
 
 import ninja.javafx.smartcsv.validation.ValidationError;
+import org.apache.commons.validator.routines.EmailValidator;
 
 /**
- * Interface for all validations
+ * checks if the value is a valid email address
  */
-public interface Validation {
+public class EmailValidation extends EmptyValueIsValid {
 
-    enum Type { NOT_EMPTY, UNIQUE, DOUBLE, INTEGER, MIN_LENGTH, MAX_LENGTH, DATE, REGEXP, VALUE_OF, EMAIL, UUID, URI, BINARY, GROOVY }
-    void check(int row, String value, ValidationError error);
-    Type getType();
-    boolean canBeChecked(String value);
+    @Override
+    public void check(int row, String value, ValidationError error) {
+        if (!EmailValidator.getInstance().isValid(value)) {
+            error.add("validation.message.email");
+        }
+    }
+
+    @Override
+    public Type getType() {
+        return Type.EMAIL;
+    }
 }
