@@ -48,9 +48,11 @@ public enum StringFormat {
     }
 
     public static StringFormat fromExternalValue(String externalValue) {
-        for (StringFormat value: StringFormat.values()) {
-            if (value.name().equals(externalValue)) {
-                return value;
+        if (externalValue != null) {
+            for (StringFormat value : StringFormat.values()) {
+                if (externalValue.equals(value.getExternalValue())) {
+                    return value;
+                }
             }
         }
         return DEFAULT;
