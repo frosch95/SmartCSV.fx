@@ -32,9 +32,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import ninja.javafx.smartcsv.fx.FXMLController;
-import ninja.javafx.smartcsv.validation.configuration.ConstraintsConfiguration;
-import ninja.javafx.smartcsv.validation.configuration.FieldConfiguration;
-import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
+import ninja.javafx.smartcsv.validation.configuration.*;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleSpans;
@@ -54,8 +52,7 @@ import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static javafx.beans.binding.Bindings.when;
-import static javafx.collections.FXCollections.observableList;
-import static ninja.javafx.smartcsv.validation.configuration.FieldConfiguration.*;
+import static ninja.javafx.smartcsv.validation.configuration.Type.STRING;
 
 /**
  * controller for editing column validations
@@ -103,10 +100,10 @@ public class ValidationEditorController extends FXMLController {
     );
 
     @FXML
-    private ComboBox<FieldConfiguration.Type> typeComboBox;
+    private ComboBox<Type> typeComboBox;
 
     @FXML
-    private ComboBox<String> formatComboBox;
+    private ComboBox<StringFormat> formatComboBox;
 
     @FXML
     private TextField formatTextField;
@@ -156,7 +153,7 @@ public class ValidationEditorController extends FXMLController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        initTypeAndFormatInput();
+        initTypeAndFormatInput(resources);
         initMinMaxSpinner();
         initSpinner(minLengthSpinner, enableMinLengthRule);
         initSpinner(maxLengthSpinner, enableMaxLengthRule);
@@ -181,86 +178,49 @@ public class ValidationEditorController extends FXMLController {
         this.validationConfiguration = validationConfiguration;
     }
 
-    private void initTypeAndFormatInput() {
-        typeComboBox.getItems().addAll(Type.STRING,
+    private void initTypeAndFormatInput(ResourceBundle resources) {
+        typeComboBox.getItems().addAll(STRING,
                 Type.INTEGER,
                 Type.NUMBER,
                 Type.DATE,
                 Type.DATETIME,
                 Type.TIME);
-        formatComboBox.setDisable(true);
-        formatTextField.setDisable(true);
-        typeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> clearFormatComboBox());
-        formatComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> clearFormatTextField());
+        formatComboBox.setCellFactory(new StringFormatEditorCellFactory(resources));
+        formatComboBox.setConverter(new StringFormatStringConverter(resources));
+        formatComboBox.getItems().addAll(
+                StringFormat.DEFAULT,
+                StringFormat.EMAIL,
+                StringFormat.URI,
+                StringFormat.BINARY,
+                StringFormat.UUID
+        );
+        typeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> changeFormat());
     }
 
     private void updateFormatTextField() {
-        FieldConfiguration config = getCurrentFieldConfig();
-        switch (config.getType()) {
+        switch (typeComboBox.getValue()) {
             case DATE:
             case DATETIME:
             case TIME:
-                if (config.getFormat().startsWith("fmt:")) {
-                    formatTextField.setText(config.getFormat().substring(4));
-                } else {
-                    formatTextField.setText(config.getFormat());
-                }
+                    formatTextField.setVisible(true);
+                    formatTextField.setText(getCurrentFieldConfig().getFormat());
                 break;
             default:
+                formatTextField.setVisible(false);
                 formatTextField.setText(null);
                 break;
         }
     }
 
-    private void clearFormatTextField() {
-        FieldConfiguration config = getCurrentFieldConfig();
-        formatTextField.setText(null);
-        switch (config.getType()) {
-            case DATE:
-            case DATETIME:
-            case TIME:
-                formatTextField.setDisable(false);
+    private void updateFormatComboBox() {
+        switch (typeComboBox.getValue()) {
+            case STRING:
+                formatComboBox.setVisible(true);
+                formatComboBox.getSelectionModel().select(StringFormat.fromExternalValue(getCurrentFieldConfig().getFormat()));
                 break;
             default:
-                formatTextField.setDisable(true);
+                formatComboBox.setVisible(false);
                 break;
-        }
-    }
-
-    private void clearFormatComboBox() {
-        formatTextField.setText(null);
-        formatTextField.setDisable(true);
-        changeFormat();
-
-        if (!formatComboBox.isDisable()) {
-            formatComboBox.getSelectionModel().selectFirst();
-        } else {
-            formatComboBox.getSelectionModel().clearSelection();
-        }
-    }
-
-    private void updateFormInput() {
-        FieldConfiguration config = getCurrentFieldConfig();
-        if (!formatComboBox.isDisable()) {
-            if (config.getFormat() == null) {
-                formatComboBox.getSelectionModel().selectFirst();
-            } else {
-                switch (config.getType()) {
-                    case STRING:
-                    case NUMBER:
-                        formatComboBox.getSelectionModel().select(config.getFormat());
-                        break;
-                    case DATE:
-                    case DATETIME:
-                    case TIME:
-                        if (config.getFormat().startsWith("fmt:")) {
-                            formatComboBox.getSelectionModel().select(DateFormat.FMT_PATTERN.toString());
-                        } else {
-                            formatComboBox.getSelectionModel().select(DateFormat.ANY.toString());
-                        }
-                        break;
-                }
-            }
         }
     }
 
@@ -283,42 +243,51 @@ public class ValidationEditorController extends FXMLController {
 
 
     private void changeFormat() {
-        formatComboBox.getItems().clear();
-        formatComboBox.getSelectionModel().clearSelection();
         switch (typeComboBox.getValue()) {
             case STRING:
-                updateFormatComboBox(getStringFormats());
+                updateFormatComboBox();
                 break;
             case DATE:
             case DATETIME:
             case TIME:
-                updateFormatComboBox(getDateFormats());
+                updateFormatTextField();
                 break;
             case INTEGER:
             case NUMBER:
             default:
                 // format: no options
-                formatComboBox.setDisable(true);
-                formatTextField.setDisable(true);
-                formatTextField.setText(null);
+                formatComboBox.setVisible(false);
+                formatTextField.setVisible(false);
                 break;
         }
-        updateFormInput();
     }
-
-    private void updateFormatComboBox(List<String> values) {
-        formatComboBox.getItems().setAll(observableList(values));
-        formatComboBox.setEditable(false);
-        formatComboBox.setDisable(false);
-        formatTextField.setDisable(true);
-        formatTextField.setText(null);
-    }
-
 
     public void updateConfiguration() {
 
-        FieldConfiguration config = getCurrentFieldConfig();
+        Field config = getCurrentFieldConfig();
         config.setType(typeComboBox.getValue());
+
+        switch (typeComboBox.getValue()) {
+            case STRING:
+                config.setFormat(formatComboBox.getValue().getExternalValue());
+                break;
+            case DATE:
+            case DATETIME:
+            case TIME:
+                if (formatTextField.getText().trim().isEmpty()) {
+                    config.setFormat(null);
+                } else {
+                    // TODO: validate input
+                    config.setFormat(formatTextField.getText());
+                }
+                break;
+            case INTEGER:
+            case NUMBER:
+            default:
+                // format: no options
+                config.setFormat(null);
+                break;
+        }
 
         if (enableGroovyRule.isSelected()) {
             config.setGroovy(groovyRuleTextArea.getText());
@@ -326,9 +295,9 @@ public class ValidationEditorController extends FXMLController {
             config.setGroovy(null);
         }
 
-        ConstraintsConfiguration constraints = config.getConstraints();
+        Constraints constraints = config.getConstraints();
         if (constraints == null) {
-            constraints = new ConstraintsConfiguration();
+            constraints = new Constraints();
         }
 
         if (enableNotEmptyRule.isSelected()) {
@@ -369,7 +338,7 @@ public class ValidationEditorController extends FXMLController {
 
     }
 
-    private FieldConfiguration getCurrentFieldConfig() {
+    private Field getCurrentFieldConfig() {
         return validationConfiguration.getFieldConfiguration(getSelectedColumn());
     }
 
@@ -385,15 +354,15 @@ public class ValidationEditorController extends FXMLController {
 
     public void updateForm() {
 
-        FieldConfiguration config = getCurrentFieldConfig();
+        Field config = getCurrentFieldConfig();
 
         if (config.getType() != null) {
             typeComboBox.setValue(config.getType());
         } else {
-            typeComboBox.setValue(FieldConfiguration.Type.STRING);
+            typeComboBox.setValue(STRING);
         }
 
-        updateFormInput();
+        updateFormatComboBox();
         updateFormatTextField();
 
         updateCodeAreaControl(
@@ -402,7 +371,7 @@ public class ValidationEditorController extends FXMLController {
                 enableGroovyRule
         );
 
-        ConstraintsConfiguration constraints = config.getConstraints();
+        Constraints constraints = config.getConstraints();
         updateCheckBox(constraints != null ? constraints.getRequired() : FALSE, enableNotEmptyRule);
         updateCheckBox(constraints != null ? constraints.getUnique() : FALSE, enableUniqueRule);
 

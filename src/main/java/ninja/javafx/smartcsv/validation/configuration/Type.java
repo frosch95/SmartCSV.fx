@@ -2,8 +2,8 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>                                              
-                                                                                                                    
+   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,61 +21,28 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-  
+
 */
 
 package ninja.javafx.smartcsv.validation.configuration;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Configuration based on JSON Table Schema
+ * Types of JSON Table Schema
  * @see <a href="http://specs.frictionlessdata.io/json-table-schema/">JSON Table Schema</a>
  */
-public class ValidationConfiguration {
-
-    @SerializedName("fields")
-    private Field[] fields;
-
-    public Field[] getFields() {
-        return fields;
-    }
-
-    public void setFields(Field[] fields) {
-        this.fields = fields;
-    }
-
-    public Field getFieldConfiguration(String column) {
-        for (Field field : fields) {
-            if (field.getName().equals(column)) {
-                return field;
-            }
-        }
-        return null;
-    }
-
-    public String[] headerNames() {
-        if (fields != null) {
-            List<String> headerNames = new ArrayList<>();
-            for (Field field : fields) {
-                headerNames.add(field.getName());
-            }
-            return headerNames.toArray(new String[headerNames.size()]);
-        }
-
-        return null;
-    }
-
-    public void setHeaderNames(String[] header) {
-        fields = new Field[header.length];
-        int i = 0;
-        for (String headerName: header) {
-            fields[i] = new Field();
-            fields[i].setName(headerName);
-            i++;
-        }
-    }
+public enum Type {
+    @SerializedName("string")STRING,
+    @SerializedName("integer")INTEGER,
+    @SerializedName("number")NUMBER,
+    @SerializedName("date")DATE,
+    @SerializedName("datetime")DATETIME,
+    @SerializedName("time")TIME
+// TODO: currently not supported
+//        @SerializedName("object") OBJECT,
+//        @SerializedName("array") ARRAY,
+//        @SerializedName("duration") DURATION,
+//        @SerializedName("geopoint") GEOPOINT,
+//        @SerializedName("geojson") GEOJSON
 }

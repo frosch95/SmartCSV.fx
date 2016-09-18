@@ -35,8 +35,8 @@
         <Label text="%validation.rule.type" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" />
         <Label text="%validation.rule.format" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
         <ComboBox fx:id="typeComboBox" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" />
-        <ComboBox fx:id="formatComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-        <TextField fx:id="formatTextField" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+        <ComboBox fx:id="formatComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" visible="false" />
+        <TextField fx:id="formatTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" visible="false" />
         <CheckBox fx:id="enableNotEmptyRule" mnemonicParsing="false" text="%validation.rule.label.not_empty" GridPane.rowIndex="3" />
         <CheckBox fx:id="enableUniqueRule" mnemonicParsing="false" text="%validation.rule.label.unique" GridPane.columnIndex="2" GridPane.rowIndex="3" />
         <CheckBox fx:id="enableMinLengthRule" mnemonicParsing="false" text="%validation.rule.label.minlength" GridPane.rowIndex="4" />

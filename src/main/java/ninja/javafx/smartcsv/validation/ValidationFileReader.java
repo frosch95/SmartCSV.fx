@@ -28,11 +28,13 @@ package ninja.javafx.smartcsv.validation;
 
 import com.google.gson.GsonBuilder;
 import ninja.javafx.smartcsv.FileReader;
-import ninja.javafx.smartcsv.validation.configuration.FieldConfiguration;
+import ninja.javafx.smartcsv.validation.configuration.Field;
 import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+
+import static ninja.javafx.smartcsv.validation.configuration.Type.*;
 
 /**
  * This class loads the constraints as json config
@@ -48,23 +50,23 @@ public class ValidationFileReader implements FileReader<ValidationConfiguration>
     }
 
     private void setDefaults() {
-        for (FieldConfiguration fieldConfiguration: config.getFieldConfigurations()) {
-            if (fieldConfiguration.getType() == null) {
-                fieldConfiguration.setType(FieldConfiguration.Type.STRING);
+        for (Field field : config.getFields()) {
+            if (field.getType() == null) {
+                field.setType(STRING);
             }
-            if (fieldConfiguration.getType() == FieldConfiguration.Type.DATE) {
-                if (fieldConfiguration.getFormat() == null) {
-                    fieldConfiguration.setFormat("yyyy-MM-dd");
+            if (field.getType() == DATE) {
+                if (field.getFormat() == null) {
+                    field.setFormat("yyyy-MM-dd");
                 }
             }
-            if (fieldConfiguration.getType() == FieldConfiguration.Type.DATETIME) {
-                if (fieldConfiguration.getFormat() == null) {
-                    fieldConfiguration.setFormat("yyyy-MM-ddThh:mm:ssZ");
+            if (field.getType() == DATETIME) {
+                if (field.getFormat() == null) {
+                    field.setFormat("yyyy-MM-ddThh:mm:ssZ");
                 }
             }
-            if (fieldConfiguration.getType() == FieldConfiguration.Type.TIME) {
-                if (fieldConfiguration.getFormat() == null) {
-                    fieldConfiguration.setFormat("hh:mm:ss");
+            if (field.getType() == TIME) {
+                if (field.getFormat() == null) {
+                    field.setFormat("hh:mm:ss");
                 }
             }
         }

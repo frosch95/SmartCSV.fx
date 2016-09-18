@@ -2,8 +2,8 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>                                              
-                                                                                                                    
+   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,61 +21,76 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-  
+
 */
 
 package ninja.javafx.smartcsv.validation.configuration;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Configuration based on JSON Table Schema
+ * contraints defined in JSON Table Schema
  * @see <a href="http://specs.frictionlessdata.io/json-table-schema/">JSON Table Schema</a>
  */
-public class ValidationConfiguration {
+public class Constraints {
+    private Boolean required;
+    private Boolean unique;
+    private Integer minLength;
+    private Integer maxLength;
 
-    @SerializedName("fields")
-    private Field[] fields;
+    private String pattern;
 
-    public Field[] getFields() {
-        return fields;
+    @SerializedName("enum")
+    private List<String> enumeration;
+
+    public Boolean getRequired() {
+        return required;
     }
 
-    public void setFields(Field[] fields) {
-        this.fields = fields;
+    public void setRequired(Boolean required) {
+        this.required = required;
     }
 
-    public Field getFieldConfiguration(String column) {
-        for (Field field : fields) {
-            if (field.getName().equals(column)) {
-                return field;
-            }
-        }
-        return null;
+    public Boolean getUnique() {
+        return unique;
     }
 
-    public String[] headerNames() {
-        if (fields != null) {
-            List<String> headerNames = new ArrayList<>();
-            for (Field field : fields) {
-                headerNames.add(field.getName());
-            }
-            return headerNames.toArray(new String[headerNames.size()]);
-        }
-
-        return null;
+    public void setUnique(Boolean unique) {
+        this.unique = unique;
     }
 
-    public void setHeaderNames(String[] header) {
-        fields = new Field[header.length];
-        int i = 0;
-        for (String headerName: header) {
-            fields[i] = new Field();
-            fields[i].setName(headerName);
-            i++;
-        }
+    public Integer getMinLength() {
+        return minLength;
     }
+
+    public void setMinLength(Integer minLength) {
+        this.minLength = minLength;
+    }
+
+    public Integer getMaxLength() {
+        return maxLength;
+    }
+
+    public void setMaxLength(Integer maxLength) {
+        this.maxLength = maxLength;
+    }
+
+    public String getPattern() {
+        return pattern;
+    }
+
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+
+    public List<String> getEnumeration() {
+        return enumeration;
+    }
+
+    public void setEnumeration(List<String> enumeration) {
+        this.enumeration = enumeration;
+    }
+
 }

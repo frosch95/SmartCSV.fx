@@ -28,8 +28,8 @@ package ninja.javafx.smartcsv.validation;
 
 import ninja.javafx.smartcsv.fx.table.model.ColumnValueProvider;
 import ninja.javafx.smartcsv.validation.checker.*;
-import ninja.javafx.smartcsv.validation.configuration.ConstraintsConfiguration;
-import ninja.javafx.smartcsv.validation.configuration.FieldConfiguration;
+import ninja.javafx.smartcsv.validation.configuration.Constraints;
+import ninja.javafx.smartcsv.validation.configuration.Field;
 import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 
 import java.util.HashMap;
@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ninja.javafx.smartcsv.validation.ValidationFormatHelper.dateFormat;
+import static ninja.javafx.smartcsv.validation.configuration.Type.*;
 
 /**
  * This class checks all the validations defined in the
@@ -140,7 +141,7 @@ public class Validator {
 
     private void initColumnValidations() {
         if (hasConfig()) {
-            for (FieldConfiguration column : validationConfig.getFieldConfigurations()) {
+            for (Field column : validationConfig.getFields()) {
                 initializeColumnWithRules(column);
             }
         }
@@ -148,7 +149,7 @@ public class Validator {
 
     private void initializeColumnWithRules(String columnName) {
         if (hasConfig()) {
-            for (FieldConfiguration column : validationConfig.getFieldConfigurations()) {
+            for (Field column : validationConfig.getFields()) {
                 if (column.getName().equals(columnName)) {
                     initializeColumnWithRules(column);
                     break;
@@ -158,28 +159,28 @@ public class Validator {
 
     }
 
-    private void initializeColumnWithRules(FieldConfiguration column) {
+    private void initializeColumnWithRules(Field column) {
 
         if (column.getType() != null) {
-            if (column.getType() == FieldConfiguration.Type.NUMBER) {
+            if (column.getType() == NUMBER) {
                 add(column.getName(), new DoubleValidation());
             }
 
-            if (column.getType() == FieldConfiguration.Type.INTEGER) {
+            if (column.getType() == INTEGER) {
                 add(column.getName(), new IntegerValidation());
             }
 
-            if (column.getType() == FieldConfiguration.Type.DATE) {
+            if (column.getType() == DATE) {
                 String format = dateFormat(column.getFormat(), "YYYY-MM-DD");
                 add(column.getName(), new DateValidation(format));
             }
 
-            if (column.getType() == FieldConfiguration.Type.DATETIME) {
+            if (column.getType() == DATETIME) {
                 String format = dateFormat(column.getFormat(), "YYYY-MM-DDThh:mm:ssZ");
                 add(column.getName(), new DateValidation(format));
             }
 
-            if (column.getType() == FieldConfiguration.Type.TIME) {
+            if (column.getType() == TIME) {
                 String format = dateFormat(column.getFormat(), "hh:mm:ss");
                 add(column.getName(), new DateValidation(format));
             }
@@ -190,7 +191,7 @@ public class Validator {
             add(column.getName(), new GroovyValidation(groovy));
         }
 
-        ConstraintsConfiguration constraints = column.getConstraints();
+        Constraints constraints = column.getConstraints();
         if (constraints != null) {
             Boolean notEmptyRule = constraints.getRequired();
             if (notEmptyRule != null && notEmptyRule) {
