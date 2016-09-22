@@ -133,6 +133,15 @@ public class Validator {
         validationMap.put(validation.getType(), validation);
     }
 
+    private void remove(String column, Validation.Type type) {
+        Map<Validation.Type, Validation> validationMap = columnValidationMap.get(column);
+        if (validationMap == null) {
+            validationMap = new HashMap<>();
+            columnValidationMap.put(column, validationMap);
+        }
+        validationMap.remove(type);
+    }
+
     private void clear(String column) {
         Map<Validation.Type, Validation> validationMap = columnValidationMap.get(column);
         if (validationMap != null) {
@@ -186,24 +195,26 @@ public class Validator {
                 add(column.getName(), new DateValidation(format));
             }
 
-            if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(EMAIL.getExternalValue())) {
-                add(column.getName(), new EmailValidation());
-            }
-
-            if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(URI.getExternalValue())) {
-                add(column.getName(), new UriValidation());
-            }
-
-            if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(UUID.getExternalValue())) {
-                add(column.getName(), new UuidValidation());
-            }
-
-            if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(BINARY.getExternalValue())) {
-                add(column.getName(), new BinaryValidation());
-            }
-
             if (column.getType() == STRING && column.getFormat() == null) {
-                columnValidationMap.get(column).remove(Validation.Type.STRING);
+                remove(column.getName(), Validation.Type.STRING);
+            } else {
+
+                if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(EMAIL.getExternalValue())) {
+                    add(column.getName(), new EmailValidation());
+                }
+
+                if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(URI.getExternalValue())) {
+                    add(column.getName(), new UriValidation());
+                }
+
+                if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(UUID.getExternalValue())) {
+                    add(column.getName(), new UuidValidation());
+                }
+
+                if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(BINARY.getExternalValue())) {
+                    add(column.getName(), new BinaryValidation());
+                }
+
             }
         }
 
