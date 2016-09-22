@@ -1,6 +1,6 @@
 # SmartCSV.fx
 ##Description
-A simple JavaFX application to load, save and edit a CSV file and provide a JSON configuration for columns to check the values in the columns.
+A simple JavaFX application to load, save and edit a CSV file and provide a [JSON Table Schema](http://specs.frictionlessdata.io/json-table-schema/) for columns to check the values in the columns.
 
 ##Motivation
 At work I have the need to fix wrong CSV files from customers. It is hard to find the errors and fix them in a texteditor, 
@@ -14,7 +14,7 @@ even in a "normal" CSV editor. So I decided to write this simple JavaFX applicat
 
 [Wiki & Documentation](https://github.com/frosch95/SmartCSV.fx/wiki)
 
-binary distribution of the [latest release (0.7)](https://github.com/frosch95/SmartCSV.fx/releases/download/0.7/SmartCSV.fx-0.7-SNAPSHOT.zip)
+binary distribution of the [latest release (0.8)](https://github.com/frosch95/SmartCSV.fx/releases/download/0.8/SmartCSV.fx-0.8-SNAPSHOT.zip)
 
 ##Talks
 [Introduction](http://javafx.ninja/talks/introduction/)
