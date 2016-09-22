@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -23,24 +23,17 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import static org.apache.commons.validator.GenericValidator.isInt;
+import ninja.javafx.smartcsv.validation.ValidationError;
 
 /**
- * Checks if the value is an integer
+ * Interface for all validations
  */
-public class IntegerValidation extends EmptyValueIsValid {
+public interface Validation {
 
-    @Override
-    public void check(int row, String value, ValidationError error) {
-        if (!isInt(value)) {
-            error.add("validation.message.integer");
-        }
-    }
-
-    @Override
-    public Type getType() {
-        return Type.INTEGER;
-    }
+    enum Type { NOT_EMPTY, UNIQUE, DOUBLE, INTEGER, MIN_LENGTH, MAX_LENGTH, DATE, REGEXP, VALUE_OF, STRING, GROOVY }
+    void check(int row, String value, ValidationError error);
+    Type getType();
+    boolean canBeChecked(String value);
 }

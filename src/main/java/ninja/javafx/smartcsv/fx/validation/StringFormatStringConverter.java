@@ -24,57 +24,31 @@
 
 */
 
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.fx.validation;
 
-import java.util.ArrayList;
-import java.util.List;
+import javafx.util.StringConverter;
+import ninja.javafx.smartcsv.validation.configuration.StringFormat;
+
+import java.util.ResourceBundle;
 
 /**
- * This class holds all the error messages
- * for a single cell and the information in
- * which row the cell is
+ * converter for string formats
  */
-public class ValidationError {
+public class StringFormatStringConverter extends StringConverter<StringFormat> {
 
-    private List<ValidationMessage> messages = new ArrayList<>();
-    private Integer lineNumber;
-    private String column = "";
+    private ResourceBundle resourceBundle;
 
-    private ValidationError(Integer lineNumber) {
-        this.lineNumber = lineNumber;
+    public StringFormatStringConverter(ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
     }
 
-    public static ValidationError withLineNumber(int lineNumber) {
-        return new ValidationError(lineNumber);
+    @Override
+    public String toString(StringFormat item) {
+        return resourceBundle.getString("format.type."+item);
     }
 
-    public static ValidationError withoutLineNumber() {
-        return new ValidationError(-1);
-    }
-
-    public ValidationError column(String column) {
-        this.column = column;
-        return this;
-    }
-
-    public Integer getLineNumber() {
-        return lineNumber;
-    }
-
-    public String getColumn() {
-        return column;
-    }
-
-    public List<ValidationMessage> getMessages() {
-        return messages;
-    }
-
-    public ValidationError add(String key, String... parameters) {
-        messages.add(new ValidationMessage(key, parameters));
-        return this;
-    }
-
-    public boolean isEmpty() {
-        return messages.isEmpty();
+    @Override
+    public StringFormat fromString(String string) {
+        return StringFormat.fromExternalValue(string);
     }
 }

@@ -24,57 +24,38 @@
 
 */
 
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.fx.validation;
 
-import java.util.ArrayList;
-import java.util.List;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.util.Callback;
+import ninja.javafx.smartcsv.validation.configuration.StringFormat;
+
+import java.util.ResourceBundle;
 
 /**
- * This class holds all the error messages
- * for a single cell and the information in
- * which row the cell is
+ * cell factory for string formats
  */
-public class ValidationError {
+public class StringFormatEditorCellFactory implements Callback<ListView<StringFormat>, ListCell<StringFormat>> {
 
-    private List<ValidationMessage> messages = new ArrayList<>();
-    private Integer lineNumber;
-    private String column = "";
+    private ResourceBundle resourceBundle;
 
-    private ValidationError(Integer lineNumber) {
-        this.lineNumber = lineNumber;
+    public StringFormatEditorCellFactory(ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
     }
 
-    public static ValidationError withLineNumber(int lineNumber) {
-        return new ValidationError(lineNumber);
-    }
-
-    public static ValidationError withoutLineNumber() {
-        return new ValidationError(-1);
-    }
-
-    public ValidationError column(String column) {
-        this.column = column;
-        return this;
-    }
-
-    public Integer getLineNumber() {
-        return lineNumber;
-    }
-
-    public String getColumn() {
-        return column;
-    }
-
-    public List<ValidationMessage> getMessages() {
-        return messages;
-    }
-
-    public ValidationError add(String key, String... parameters) {
-        messages.add(new ValidationMessage(key, parameters));
-        return this;
-    }
-
-    public boolean isEmpty() {
-        return messages.isEmpty();
+    @Override
+    public ListCell<StringFormat> call(ListView<StringFormat> param) {
+        return new ListCell<StringFormat>(){
+            @Override
+            protected void updateItem(StringFormat item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null || empty) {
+                    setGraphic(null);
+                } else {
+                    setText(resourceBundle.getString("format.type."+item));
+                }
+            }
+        } ;
     }
 }

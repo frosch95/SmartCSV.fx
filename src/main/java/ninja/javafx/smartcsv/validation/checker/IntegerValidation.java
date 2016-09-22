@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -23,30 +23,26 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import static org.apache.commons.validator.GenericValidator.matchRegexp;
+import ninja.javafx.smartcsv.validation.ValidationError;
+
+import static org.apache.commons.validator.GenericValidator.isInt;
 
 /**
- * Checks the value against the given reg exp
+ * Checks if the value is an integer
  */
-public class RegExpValidation extends EmptyValueIsValid {
-
-    private String regexp;
-
-    public RegExpValidation(String regexp) {
-        this.regexp = regexp;
-    }
+public class IntegerValidation extends EmptyValueIsValid {
 
     @Override
     public void check(int row, String value, ValidationError error) {
-        if (!matchRegexp(value, regexp)) {
-            error.add("validation.message.regexp", regexp);
+        if (!isInt(value)) {
+            error.add("validation.message.integer");
         }
     }
 
     @Override
     public Type getType() {
-        return Type.REGEXP;
+        return Type.INTEGER;
     }
 }

@@ -2,8 +2,8 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>                                              
-                                                                                                                    
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
+
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,26 +21,40 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-  
+
 */
 
-package ninja.javafx.smartcsv.validation;
-
-import com.google.gson.annotations.SerializedName;
+package ninja.javafx.smartcsv.validation.configuration;
 
 /**
- * header configuration for the validation
+ * Enumeration for format values for type string in JSON Table Schema
+ * @see <a href="http://specs.frictionlessdata.io/json-table-schema/">JSON Table Schema</a>
  */
-public class HeaderConfiguration {
+public enum StringFormat {
+    DEFAULT(null),
+    EMAIL("email"),
+    URI("uri"),
+    BINARY("binary"),
+    UUID("uuid");
 
-    @SerializedName("list")
-    private String[] names ;
+    private String externalValue;
 
-    public String[] getNames() {
-        return names;
+    StringFormat(String externalValue) {
+        this.externalValue = externalValue;
     }
 
-    public void setNames(String[] names) {
-        this.names = names;
+    public String getExternalValue() {
+        return externalValue;
+    }
+
+    public static StringFormat fromExternalValue(String externalValue) {
+        if (externalValue != null) {
+            for (StringFormat value : StringFormat.values()) {
+                if (externalValue.equals(value.getExternalValue())) {
+                    return value;
+                }
+            }
+        }
+        return DEFAULT;
     }
 }

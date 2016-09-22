@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -23,25 +23,35 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import static org.apache.commons.validator.GenericValidator.matchRegexp;
+import ninja.javafx.smartcsv.validation.ValidationError;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.joining;
 
 /**
- * Checks if the value is alpha numeric
+ * Checks if the value is part of a list of values
  */
-public class AlphaNumericValidation extends EmptyValueIsValid {
+public class ValueOfValidation extends EmptyValueIsValid {
+
+    private List<String> values;
+
+    public ValueOfValidation(List<String> values) {
+        this.values = values;
+    }
+
     @Override
     public void check(int row, String value, ValidationError error) {
-        if (!matchRegexp(value, "[0-9a-zA-Z]*")) {
-            error.add("validation.message.alphanumeric");
+        if (!values.contains(value)) {
+            String commaSeparated = values.stream().collect(joining(", "));
+            error.add("validation.message.value.of", value, commaSeparated);
         }
     }
 
     @Override
     public Type getType() {
-        return Type.ALPHANUMERIC;
+        return Type.VALUE_OF;
     }
-
-
 }

@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>                                              
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
                                                                                                                     
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -26,16 +26,13 @@
 
 package ninja.javafx.smartcsv.fx.validation;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import ninja.javafx.smartcsv.fx.FXMLController;
-import ninja.javafx.smartcsv.validation.ValidationConfiguration;
+import ninja.javafx.smartcsv.validation.configuration.*;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleSpans;
@@ -51,9 +48,11 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static javafx.beans.binding.Bindings.when;
+import static ninja.javafx.smartcsv.validation.configuration.Type.STRING;
 
 /**
  * controller for editing column validations
@@ -80,7 +79,7 @@ public class ValidationEditorController extends FXMLController {
             "transient", "true", "try", "void", "volatile", "while"
     };
 
-    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
+    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", (CharSequence[]) KEYWORDS) + ")\\b";
     private static final String PAREN_PATTERN = "\\(|\\)";
     private static final String BRACE_PATTERN = "\\{|\\}";
     private static final String BRACKET_PATTERN = "\\[|\\]";
@@ -100,29 +99,20 @@ public class ValidationEditorController extends FXMLController {
                     + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
     );
 
-//    @FXML
-//    private CheckBox notEmptyRuleCheckBox;
-//
-//    @FXML
-//    private CheckBox integerRuleCheckBox;
-//
-//    @FXML
-//    private CheckBox doublerRuleCheckBox;
-//
-//    @FXML
-//    private CheckBox alphanumericRuleCheckBox;
-//
-//    @FXML
-//    private CheckBox uniqueRuleCheckBox;
+    @FXML
+    private ComboBox<Type> typeComboBox;
+
+    @FXML
+    private ComboBox<StringFormat> formatComboBox;
+
+    @FXML
+    private TextField formatTextField;
 
     @FXML
     private Spinner<Integer> minLengthSpinner;
 
     @FXML
     private Spinner<Integer>  maxLengthSpinner;
-
-    @FXML
-    private TextField dateformatRuleTextField;
 
     @FXML
     private TextField regexpRuleTextField;
@@ -137,22 +127,10 @@ public class ValidationEditorController extends FXMLController {
     private CheckBox enableNotEmptyRule;
 
     @FXML
-    private CheckBox enableIntegerRule;
-
-    @FXML
-    private CheckBox enableDoubleRule;
-
-    @FXML
-    private CheckBox enableAlphanumericRule;
-
-    @FXML
     private CheckBox enableMinLengthRule;
 
     @FXML
     private CheckBox enableMaxLengthRule;
-
-    @FXML
-    private CheckBox enableDateRule;
 
     @FXML
     private CheckBox enableRegexpRule;
@@ -175,21 +153,75 @@ public class ValidationEditorController extends FXMLController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        initTypeAndFormatInput(resources);
         initMinMaxSpinner();
-
         initSpinner(minLengthSpinner, enableMinLengthRule);
         initSpinner(maxLengthSpinner, enableMaxLengthRule);
-        initTextInputControl(dateformatRuleTextField, enableDateRule);
         initTextInputControl(regexpRuleTextField, enableRegexpRule);
         initTextInputControl(valueOfRuleTextField, enableValueOfRule);
         initCodeAreaControl(groovyRuleTextArea, enableGroovyRule);
+    }
 
-        listenToExcludingRuleCombinations();
+    public String getSelectedColumn() {
+        return selectedColumn.get();
+    }
 
-        selectedColumn.addListener(observable -> {
-            updateForm();
-        });
+    public StringProperty selectedColumnProperty() {
+        return selectedColumn;
+    }
+
+    public void setSelectedColumn(String selectedColumn) {
+        this.selectedColumn.set(selectedColumn);
+    }
+
+    public void setValidationConfiguration(ValidationConfiguration validationConfiguration) {
+        this.validationConfiguration = validationConfiguration;
+    }
+
+    private void initTypeAndFormatInput(ResourceBundle resources) {
+        typeComboBox.getItems().addAll(STRING,
+                Type.INTEGER,
+                Type.NUMBER,
+                Type.DATE,
+                Type.DATETIME,
+                Type.TIME);
+        formatComboBox.setCellFactory(new StringFormatEditorCellFactory(resources));
+        formatComboBox.setConverter(new StringFormatStringConverter(resources));
+        formatComboBox.getItems().addAll(
+                StringFormat.DEFAULT,
+                StringFormat.EMAIL,
+                StringFormat.URI,
+                StringFormat.BINARY,
+                StringFormat.UUID
+        );
+        typeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> changeFormat());
+    }
+
+    private void updateFormatTextField() {
+        switch (typeComboBox.getValue()) {
+            case DATE:
+            case DATETIME:
+            case TIME:
+                    formatTextField.setVisible(true);
+                    formatTextField.setText(getCurrentFieldConfig().getFormat());
+                break;
+            default:
+                formatTextField.setVisible(false);
+                formatTextField.setText(null);
+                break;
+        }
+    }
+
+    private void updateFormatComboBox() {
+        switch (typeComboBox.getValue()) {
+            case STRING:
+                formatComboBox.setVisible(true);
+                formatComboBox.getSelectionModel().select(StringFormat.fromExternalValue(getCurrentFieldConfig().getFormat()));
+                break;
+            default:
+                formatComboBox.setVisible(false);
+                break;
+        }
     }
 
     private void initMinMaxSpinner() {
@@ -210,97 +242,104 @@ public class ValidationEditorController extends FXMLController {
     }
 
 
-    public String getSelectedColumn() {
-        return selectedColumn.get();
-    }
-
-    public StringProperty selectedColumnProperty() {
-        return selectedColumn;
-    }
-
-    public void setSelectedColumn(String selectedColumn) {
-        this.selectedColumn.set(selectedColumn);
-    }
-
-    public void setValidationConfiguration(ValidationConfiguration validationConfiguration) {
-        this.validationConfiguration = validationConfiguration;
+    private void changeFormat() {
+        switch (typeComboBox.getValue()) {
+            case STRING:
+                updateFormatComboBox();
+                break;
+            case DATE:
+            case DATETIME:
+            case TIME:
+                updateFormatTextField();
+                break;
+            case INTEGER:
+            case NUMBER:
+            default:
+                // format: no options
+                formatComboBox.setVisible(false);
+                formatTextField.setVisible(false);
+                break;
+        }
     }
 
     public void updateConfiguration() {
 
-        if (enableIntegerRule.isSelected()) {
-            validationConfiguration.setIntegerRuleFor(selectedColumn.getValue(), enableIntegerRule.isSelected());
-        } else {
-            validationConfiguration.setIntegerRuleFor(selectedColumn.getValue(), null);
-        }
+        Field config = getCurrentFieldConfig();
+        config.setType(typeComboBox.getValue());
 
-        if (enableNotEmptyRule.isSelected()) {
-            validationConfiguration.setNotEmptyRuleFor(selectedColumn.getValue(), enableNotEmptyRule.isSelected());
-        } else {
-            validationConfiguration.setNotEmptyRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableUniqueRule.isSelected()) {
-            validationConfiguration.setUniqueRuleFor(selectedColumn.getValue(), enableUniqueRule.isSelected());
-        } else {
-            validationConfiguration.setUniqueRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableDoubleRule.isSelected()) {
-            validationConfiguration.setDoubleRuleFor(selectedColumn.getValue(), enableDoubleRule.isSelected());
-        } else {
-            validationConfiguration.setDoubleRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableAlphanumericRule.isSelected()) {
-            validationConfiguration.setAlphanumericRuleFor(selectedColumn.getValue(), enableAlphanumericRule.isSelected());
-        } else {
-            validationConfiguration.setAlphanumericRuleFor(selectedColumn.getValue(), null);
-        }
-
-        if (enableDateRule.isSelected()) {
-            validationConfiguration.setDateRuleFor(selectedColumn.getValue(), dateformatRuleTextField.getText());
-        } else {
-            validationConfiguration.setDateRuleFor(selectedColumn.getValue(), null);
+        switch (typeComboBox.getValue()) {
+            case STRING:
+                config.setFormat(formatComboBox.getValue().getExternalValue());
+                break;
+            case DATE:
+            case DATETIME:
+            case TIME:
+                if (formatTextField.getText().trim().isEmpty()) {
+                    config.setFormat(null);
+                } else {
+                    // TODO: validate input
+                    config.setFormat(formatTextField.getText());
+                }
+                break;
+            case INTEGER:
+            case NUMBER:
+            default:
+                // format: no options
+                config.setFormat(null);
+                break;
         }
 
         if (enableGroovyRule.isSelected()) {
-            validationConfiguration.setGroovyRuleFor(selectedColumn.getValue(), groovyRuleTextArea.getText());
+            config.setGroovy(groovyRuleTextArea.getText());
         } else {
-            validationConfiguration.setGroovyRuleFor(selectedColumn.getValue(), null);
+            config.setGroovy(null);
+        }
+
+        Constraints constraints = config.getConstraints();
+        if (constraints == null) {
+            constraints = new Constraints();
+        }
+
+        if (enableNotEmptyRule.isSelected()) {
+            constraints.setRequired(enableNotEmptyRule.isSelected());
+        } else {
+            constraints.setRequired(null);
+        }
+
+        if (enableUniqueRule.isSelected()) {
+            constraints.setUnique(enableUniqueRule.isSelected());
+        } else {
+            constraints.setUnique(null);
         }
 
         if (enableMinLengthRule.isSelected()) {
-            validationConfiguration.setMinLengthRuleFor(selectedColumn.getValue(), minLengthSpinner.getValue());
+            constraints.setMinLength(minLengthSpinner.getValue());
         } else {
-            validationConfiguration.setMinLengthRuleFor(selectedColumn.getValue(), null);
+            constraints.setMinLength(null);
         }
 
         if (enableMaxLengthRule.isSelected()) {
-            validationConfiguration.setMaxLengthRuleFor(selectedColumn.getValue(), maxLengthSpinner.getValue());
+            constraints.setMaxLength(maxLengthSpinner.getValue());
         } else {
-            validationConfiguration.setMaxLengthRuleFor(selectedColumn.getValue(), null);
+            constraints.setMaxLength(null);
         }
 
         if (enableRegexpRule.isSelected()) {
-            validationConfiguration.setRegexpRuleFor(selectedColumn.getValue(), regexpRuleTextField.getText());
+            constraints.setPattern(regexpRuleTextField.getText());
         } else {
-            validationConfiguration.setRegexpRuleFor(selectedColumn.getValue(), null);
+            constraints.setPattern(null);
         }
 
         if (enableValueOfRule.isSelected()) {
-            validationConfiguration.setValueOfRuleFor(selectedColumn.getValue(), asList(valueOfRuleTextField.getText().split(", ")));
+            constraints.setEnumeration(asList(valueOfRuleTextField.getText().split(", ")));
         } else {
-            validationConfiguration.setValueOfRuleFor(selectedColumn.getValue(), null);
+            constraints.setEnumeration(null);
         }
 
     }
 
-    private void listenToExcludingRuleCombinations() {
-        addDependencyListener(enableIntegerRule, enableDoubleRule, enableAlphanumericRule, enableDateRule);
-        addDependencyListener(enableDoubleRule, enableIntegerRule, enableAlphanumericRule, enableDateRule);
-        addDependencyListener(enableAlphanumericRule, enableIntegerRule, enableDoubleRule, enableDateRule);
-        addDependencyListener(enableDateRule, enableIntegerRule, enableDoubleRule, enableAlphanumericRule);
+    private Field getCurrentFieldConfig() {
+        return validationConfiguration.getFieldConfiguration(getSelectedColumn());
     }
 
     private void addDependencyListener(CheckBox rule, CheckBox... dependentRules) {
@@ -313,68 +352,54 @@ public class ValidationEditorController extends FXMLController {
         });
     }
 
-    private void updateForm() {
+    public void updateForm() {
 
-        updateCheckBox(
-                validationConfiguration.getNotEmptyRuleFor(getSelectedColumn()),
-                enableNotEmptyRule
+        Field config = getCurrentFieldConfig();
+
+        if (config.getType() != null) {
+            typeComboBox.setValue(config.getType());
+        } else {
+            typeComboBox.setValue(STRING);
+        }
+
+        updateFormatComboBox();
+        updateFormatTextField();
+
+        updateCodeAreaControl(
+                groovyRuleTextArea,
+                config.getGroovy(),
+                enableGroovyRule
         );
 
-        updateCheckBox(
-                validationConfiguration.getIntegerRuleFor(getSelectedColumn()),
-                enableIntegerRule
-        );
-
-        updateCheckBox(
-                validationConfiguration.getDoubleRuleFor(getSelectedColumn()),
-                enableDoubleRule
-        );
-
-        updateCheckBox(
-                validationConfiguration.getAlphanumericRuleFor(getSelectedColumn()),
-                enableAlphanumericRule
-        );
-
-        updateCheckBox(
-                validationConfiguration.getUniqueRuleFor(getSelectedColumn()),
-                enableUniqueRule
-        );
+        Constraints constraints = config.getConstraints();
+        updateCheckBox(constraints != null ? constraints.getRequired() : FALSE, enableNotEmptyRule);
+        updateCheckBox(constraints != null ? constraints.getUnique() : FALSE, enableUniqueRule);
 
         updateSpinner(
                 minLengthSpinner,
-                validationConfiguration.getMinLengthRuleFor(getSelectedColumn()),
+                constraints != null ? constraints.getMinLength() : null,
                 enableMinLengthRule
         );
 
         updateSpinner(
                 maxLengthSpinner,
-                validationConfiguration.getMaxLengthRuleFor(getSelectedColumn()),
+                constraints != null ? constraints.getMaxLength() : null,
                 enableMaxLengthRule
         );
 
         updateTextInputControl(
-                dateformatRuleTextField,
-                validationConfiguration.getDateRuleFor(getSelectedColumn()),
-                enableDateRule
-        );
-
-        updateTextInputControl(
                 regexpRuleTextField,
-                validationConfiguration.getRegexpRuleFor(getSelectedColumn()),
+                constraints != null ? constraints.getPattern() : null,
                 enableRegexpRule
         );
 
         updateTextInputControl(
                 valueOfRuleTextField,
-                validationConfiguration.getValueOfRuleFor(getSelectedColumn()),
+                constraints != null ? constraints.getEnumeration() : null,
                 enableValueOfRule
         );
 
-        updateCodeAreaControl(
-                groovyRuleTextArea,
-                validationConfiguration.getGroovyRuleFor(getSelectedColumn()),
-                enableGroovyRule
-        );
+
     }
 
     private void updateCheckBox(Boolean value, CheckBox ruleEnabled) {

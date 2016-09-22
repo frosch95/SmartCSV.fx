@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -23,24 +23,32 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import static org.apache.commons.validator.GenericValidator.isDouble;
+import ninja.javafx.smartcsv.validation.ValidationError;
+
+import static org.apache.commons.validator.GenericValidator.maxLength;
 
 /**
- * Checks if the value is a double
+ * Checks if the value is shorter or exactly as long as the given max length
  */
-public class DoubleValidation extends EmptyValueIsValid {
+public class MaxLengthValidation extends EmptyValueIsValid {
+
+    private int maxLength;
+
+    public MaxLengthValidation(int maxLength) {
+        this.maxLength = maxLength;
+    }
 
     @Override
     public void check(int row, String value, ValidationError error) {
-        if (!isDouble(value)) {
-            error.add("validation.message.double");
+        if (!maxLength(value, maxLength)) {
+            error.add("validation.message.max.length", Integer.toString(maxLength));
         }
     }
 
     @Override
     public Type getType() {
-        return Type.DOUBLE;
+        return Type.MAX_LENGTH;
     }
 }

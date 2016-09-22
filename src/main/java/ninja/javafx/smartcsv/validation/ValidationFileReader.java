@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -28,9 +28,13 @@ package ninja.javafx.smartcsv.validation;
 
 import com.google.gson.GsonBuilder;
 import ninja.javafx.smartcsv.FileReader;
+import ninja.javafx.smartcsv.validation.configuration.Field;
+import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+
+import static ninja.javafx.smartcsv.validation.configuration.Type.*;
 
 /**
  * This class loads the constraints as json config
@@ -42,6 +46,30 @@ public class ValidationFileReader implements FileReader<ValidationConfiguration>
     @Override
     public void read(File file) throws IOException {
         config = new GsonBuilder().create().fromJson(new java.io.FileReader(file), ValidationConfiguration.class);
+        setDefaults();
+    }
+
+    private void setDefaults() {
+        for (Field field : config.getFields()) {
+            if (field.getType() == null) {
+                field.setType(STRING);
+            }
+            if (field.getType() == DATE) {
+                if (field.getFormat() == null) {
+                    field.setFormat("yyyy-MM-dd");
+                }
+            }
+            if (field.getType() == DATETIME) {
+                if (field.getFormat() == null) {
+                    field.setFormat("yyyy-MM-ddThh:mm:ssZ");
+                }
+            }
+            if (field.getType() == TIME) {
+                if (field.getFormat() == null) {
+                    field.setFormat("hh:mm:ss");
+                }
+            }
+        }
     }
 
     public ValidationConfiguration getContent() {

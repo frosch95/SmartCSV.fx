@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -23,30 +23,28 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import static org.apache.commons.validator.GenericValidator.minLength;
+import ninja.javafx.smartcsv.validation.ValidationError;
+
+import java.util.UUID;
 
 /**
- * Checks if the value is at minimum long as the given min length
+ * checks if the value is a valid uuid
  */
-public class MinLengthValidation extends EmptyValueIsValid {
-
-    private int minLength;
-
-    public MinLengthValidation(int minLength) {
-        this.minLength = minLength;
-    }
+public class UuidValidation extends EmptyValueIsValid {
 
     @Override
     public void check(int row, String value, ValidationError error) {
-        if (!minLength(value, minLength)) {
-            error.add("validation.message.min.length", Integer.toString(minLength));
+        try {
+            UUID.fromString(value);
+        } catch (IllegalArgumentException e) {
+            error.add("validation.message.uuid");
         }
     }
 
     @Override
     public Type getType() {
-        return Type.MIN_LENGTH;
+        return Type.STRING;
     }
 }

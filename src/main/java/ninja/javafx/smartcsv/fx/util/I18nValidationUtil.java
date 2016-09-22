@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>                                              
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
                                                                                                                     
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -43,9 +43,8 @@ public class I18nValidationUtil {
     public static String getI18nValidatioMessage(ResourceBundle resourceBundle, List<ValidationError> errors) {
 
         StringWriter message = new StringWriter();
-        for (ValidationError validationError: errors) {
-            message.append(getI18nValidatioMessage(resourceBundle, validationError)).append("\n");
-        }
+        errors.forEach(error -> message.append(getI18nValidatioMessage(resourceBundle, error)).append("\n"));
+
 
         if (message.toString().length() != 0) {
             return cutOffLastLineBreak(message.toString());
@@ -66,7 +65,7 @@ public class I18nValidationUtil {
 
         List<ValidationMessage> validationMessages = error.getMessages();
         StringWriter message = new StringWriter();
-        for (ValidationMessage validationMessage: validationMessages) {
+        validationMessages.forEach(validationMessage -> {
             message.append(prefix);
             if (resourceBundle.containsKey(validationMessage.getKey())) {
                 String resourceText = resourceBundle.getString(validationMessage.getKey());
@@ -78,7 +77,7 @@ public class I18nValidationUtil {
             } else {
                 message.append(validationMessage.getKey()).append("\n");
             }
-        }
+        });
 
         if (!validationMessages.isEmpty()) {
             return cutOffLastLineBreak(message.toString());

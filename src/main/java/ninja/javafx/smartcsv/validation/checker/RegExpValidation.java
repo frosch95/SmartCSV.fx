@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -23,33 +23,32 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import java.util.List;
+import ninja.javafx.smartcsv.validation.ValidationError;
 
-import static java.util.stream.Collectors.joining;
+import static org.apache.commons.validator.GenericValidator.matchRegexp;
 
 /**
- * Checks if the value is part of a list of values
+ * Checks the value against the given reg exp
  */
-public class ValueOfValidation extends EmptyValueIsValid {
+public class RegExpValidation extends EmptyValueIsValid {
 
-    private List<String> values;
+    private String regexp;
 
-    public ValueOfValidation(List<String> values) {
-        this.values = values;
+    public RegExpValidation(String regexp) {
+        this.regexp = regexp;
     }
 
     @Override
     public void check(int row, String value, ValidationError error) {
-        if (!values.contains(value)) {
-            String commaSeparated = values.stream().collect(joining(", "));
-            error.add("validation.message.value.of", value, commaSeparated);
+        if (!matchRegexp(value, regexp)) {
+            error.add("validation.message.regexp", regexp);
         }
     }
 
     @Override
     public Type getType() {
-        return Type.VALUE_OF;
+        return Type.REGEXP;
     }
 }

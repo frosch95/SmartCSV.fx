@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -27,10 +27,18 @@
 package ninja.javafx.smartcsv.validation;
 
 import ninja.javafx.smartcsv.fx.table.model.ColumnValueProvider;
+import ninja.javafx.smartcsv.validation.checker.*;
+import ninja.javafx.smartcsv.validation.configuration.Constraints;
+import ninja.javafx.smartcsv.validation.configuration.Field;
+import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static ninja.javafx.smartcsv.validation.ValidationFormatHelper.dateFormat;
+import static ninja.javafx.smartcsv.validation.configuration.StringFormat.*;
+import static ninja.javafx.smartcsv.validation.configuration.Type.*;
 
 /**
  * This class checks all the validations defined in the
@@ -134,68 +142,113 @@ public class Validator {
 
     private void initColumnValidations() {
         if (hasConfig()) {
-            String[] columns = validationConfig.headerNames();
-            for (String column : columns) {
+            for (Field column : validationConfig.getFields()) {
                 initializeColumnWithRules(column);
             }
         }
     }
 
-    private void initializeColumnWithRules(String column) {
-        Boolean alphaNumeric = validationConfig.getAlphanumericRuleFor(column);
-        if (alphaNumeric != null && alphaNumeric) {
-            add(column, new AlphaNumericValidation());
+    private void initializeColumnWithRules(String columnName) {
+        if (hasConfig()) {
+            for (Field column : validationConfig.getFields()) {
+                if (column.getName().equals(columnName)) {
+                    initializeColumnWithRules(column);
+                    break;
+                }
+            }
         }
 
-        Boolean doubleRule = validationConfig.getDoubleRuleFor(column);
-        if (doubleRule != null && doubleRule) {
-            add(column, new DoubleValidation());
+    }
+
+    private void initializeColumnWithRules(Field column) {
+
+        if (column.getType() != null) {
+            if (column.getType() == NUMBER) {
+                add(column.getName(), new DoubleValidation());
+            }
+
+            if (column.getType() == INTEGER) {
+                add(column.getName(), new IntegerValidation());
+            }
+
+            if (column.getType() == DATE) {
+                String format = dateFormat(column.getFormat(), "YYYY-MM-DD");
+                add(column.getName(), new DateValidation(format));
+            }
+
+            if (column.getType() == DATETIME) {
+                String format = dateFormat(column.getFormat(), "YYYY-MM-DDThh:mm:ssZ");
+                add(column.getName(), new DateValidation(format));
+            }
+
+            if (column.getType() == TIME) {
+                String format = dateFormat(column.getFormat(), "hh:mm:ss");
+                add(column.getName(), new DateValidation(format));
+            }
+
+            if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(EMAIL.getExternalValue())) {
+                add(column.getName(), new EmailValidation());
+            }
+
+            if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(URI.getExternalValue())) {
+                add(column.getName(), new UriValidation());
+            }
+
+            if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(UUID.getExternalValue())) {
+                add(column.getName(), new UuidValidation());
+            }
+
+            if (column.getType() == STRING && column.getFormat().equalsIgnoreCase(BINARY.getExternalValue())) {
+                add(column.getName(), new BinaryValidation());
+            }
+
+            if (column.getType() == STRING && column.getFormat() == null) {
+                columnValidationMap.get(column).remove(Validation.Type.STRING);
+            }
         }
 
-        Boolean integerRule = validationConfig.getIntegerRuleFor(column);
-        if (integerRule != null && integerRule) {
-            add(column, new IntegerValidation());
-        }
-
-        Boolean notEmptyRule = validationConfig.getNotEmptyRuleFor(column);
-        if (notEmptyRule != null && notEmptyRule) {
-            add(column, new NotEmptyValidation());
-        }
-
-        Boolean uniqueRule = validationConfig.getUniqueRuleFor(column);
-        if (uniqueRule != null && uniqueRule) {
-            add(column, new UniqueValidation(columnValueProvider, column));
-        }
-
-        String dateRule = validationConfig.getDateRuleFor(column);
-        if (dateRule != null && !dateRule.trim().isEmpty()) {
-            add(column, new DateValidation(dateRule));
-        }
-
-        Integer minLength = validationConfig.getMinLengthRuleFor(column);
-        if (minLength != null) {
-            add(column, new MinLengthValidation(minLength));
-        }
-
-        Integer maxLength = validationConfig.getMaxLengthRuleFor(column);
-        if (maxLength != null) {
-            add(column, new MaxLengthValidation(maxLength));
-        }
-
-        String regexp = validationConfig.getRegexpRuleFor(column);
-        if (regexp != null && !regexp.trim().isEmpty()) {
-            add(column, new RegExpValidation(regexp));
-        }
-
-        String groovy = validationConfig.getGroovyRuleFor(column);
+        String groovy = column.getGroovy();
         if (groovy != null && !groovy.trim().isEmpty()) {
-            add(column, new GroovyValidation(groovy));
+            add(column.getName(), new GroovyValidation(groovy));
         }
-        List<String> valueOfRule = validationConfig.getValueOfRuleFor(column);
-        if (valueOfRule != null && !valueOfRule.isEmpty()) {
-            add(column, new ValueOfValidation(valueOfRule));
+
+        Constraints constraints = column.getConstraints();
+        if (constraints != null) {
+            Boolean notEmptyRule = constraints.getRequired();
+            if (notEmptyRule != null && notEmptyRule) {
+                add(column.getName(), new NotEmptyValidation());
+            }
+
+            Boolean uniqueRule = constraints.getUnique();
+            if (uniqueRule != null && uniqueRule) {
+                add(column.getName(), new UniqueValidation(columnValueProvider, column.getName()));
+            }
+
+            Integer minLength = constraints.getMinLength();
+            if (minLength != null) {
+                add(column.getName(), new MinLengthValidation(minLength));
+            }
+
+            Integer maxLength = constraints.getMaxLength();
+            if (maxLength != null) {
+                add(column.getName(), new MaxLengthValidation(maxLength));
+            }
+
+            String regexp = constraints.getPattern();
+            if (regexp != null && !regexp.trim().isEmpty()) {
+                add(column.getName(), new RegExpValidation(regexp));
+            }
+
+
+
+            List<String> valueOfRule =  constraints.getEnumeration();
+            if (valueOfRule != null && !valueOfRule.isEmpty()) {
+                add(column.getName(), new ValueOfValidation(valueOfRule));
+            }
         }
     }
+
+
 
 
     public ValidationError isHeaderValid(String[] headerNames) {
@@ -227,4 +280,6 @@ public class Validator {
         }
         return result;
     }
+
+
 }

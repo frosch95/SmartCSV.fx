@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -23,30 +23,28 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
-import static org.apache.commons.validator.GenericValidator.maxLength;
+import ninja.javafx.smartcsv.validation.ValidationError;
+
+import java.util.Base64;
 
 /**
- * Checks if the value is shorter or exactly as long as the given max length
+ * checks if the value is a base64 encoded string representing binary data
  */
-public class MaxLengthValidation extends EmptyValueIsValid {
-
-    private int maxLength;
-
-    public MaxLengthValidation(int maxLength) {
-        this.maxLength = maxLength;
-    }
+public class BinaryValidation extends EmptyValueIsValid {
 
     @Override
     public void check(int row, String value, ValidationError error) {
-        if (!maxLength(value, maxLength)) {
-            error.add("validation.message.max.length", Integer.toString(maxLength));
+        try {
+            Base64.getDecoder().decode(value);
+        } catch (IllegalArgumentException e) {
+            error.add("validation.message.binary");
         }
     }
 
     @Override
     public Type getType() {
-        return Type.MAX_LENGTH;
+        return Type.STRING;
     }
 }

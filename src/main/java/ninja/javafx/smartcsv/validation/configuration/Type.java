@@ -24,57 +24,25 @@
 
 */
 
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.configuration;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.annotations.SerializedName;
 
 /**
- * This class holds all the error messages
- * for a single cell and the information in
- * which row the cell is
+ * Types of JSON Table Schema
+ * @see <a href="http://specs.frictionlessdata.io/json-table-schema/">JSON Table Schema</a>
  */
-public class ValidationError {
-
-    private List<ValidationMessage> messages = new ArrayList<>();
-    private Integer lineNumber;
-    private String column = "";
-
-    private ValidationError(Integer lineNumber) {
-        this.lineNumber = lineNumber;
-    }
-
-    public static ValidationError withLineNumber(int lineNumber) {
-        return new ValidationError(lineNumber);
-    }
-
-    public static ValidationError withoutLineNumber() {
-        return new ValidationError(-1);
-    }
-
-    public ValidationError column(String column) {
-        this.column = column;
-        return this;
-    }
-
-    public Integer getLineNumber() {
-        return lineNumber;
-    }
-
-    public String getColumn() {
-        return column;
-    }
-
-    public List<ValidationMessage> getMessages() {
-        return messages;
-    }
-
-    public ValidationError add(String key, String... parameters) {
-        messages.add(new ValidationMessage(key, parameters));
-        return this;
-    }
-
-    public boolean isEmpty() {
-        return messages.isEmpty();
-    }
+public enum Type {
+    @SerializedName("string")STRING,
+    @SerializedName("integer")INTEGER,
+    @SerializedName("number")NUMBER,
+    @SerializedName("date")DATE,
+    @SerializedName("datetime")DATETIME,
+    @SerializedName("time")TIME
+// TODO: currently not supported
+//        @SerializedName("object") OBJECT,
+//        @SerializedName("array") ARRAY,
+//        @SerializedName("duration") DURATION,
+//        @SerializedName("geopoint") GEOPOINT,
+//        @SerializedName("geojson") GEOJSON
 }

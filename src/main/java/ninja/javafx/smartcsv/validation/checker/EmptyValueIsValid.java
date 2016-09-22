@@ -1,4 +1,4 @@
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
 
 /**
  * validations based on this are not validated when the value is null or empty

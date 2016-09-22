@@ -23,58 +23,32 @@
    THE SOFTWARE.
 
 */
+package ninja.javafx.smartcsv.validation.checker;
 
-package ninja.javafx.smartcsv.validation;
+import ninja.javafx.smartcsv.validation.ValidationError;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.apache.commons.validator.GenericValidator.minLength;
 
 /**
- * This class holds all the error messages
- * for a single cell and the information in
- * which row the cell is
+ * Checks if the value is at minimum long as the given min length
  */
-public class ValidationError {
+public class MinLengthValidation extends EmptyValueIsValid {
 
-    private List<ValidationMessage> messages = new ArrayList<>();
-    private Integer lineNumber;
-    private String column = "";
+    private int minLength;
 
-    private ValidationError(Integer lineNumber) {
-        this.lineNumber = lineNumber;
+    public MinLengthValidation(int minLength) {
+        this.minLength = minLength;
     }
 
-    public static ValidationError withLineNumber(int lineNumber) {
-        return new ValidationError(lineNumber);
+    @Override
+    public void check(int row, String value, ValidationError error) {
+        if (!minLength(value, minLength)) {
+            error.add("validation.message.min.length", Integer.toString(minLength));
+        }
     }
 
-    public static ValidationError withoutLineNumber() {
-        return new ValidationError(-1);
-    }
-
-    public ValidationError column(String column) {
-        this.column = column;
-        return this;
-    }
-
-    public Integer getLineNumber() {
-        return lineNumber;
-    }
-
-    public String getColumn() {
-        return column;
-    }
-
-    public List<ValidationMessage> getMessages() {
-        return messages;
-    }
-
-    public ValidationError add(String key, String... parameters) {
-        messages.add(new ValidationMessage(key, parameters));
-        return this;
-    }
-
-    public boolean isEmpty() {
-        return messages.isEmpty();
+    @Override
+    public Type getType() {
+        return Type.MIN_LENGTH;
     }
 }

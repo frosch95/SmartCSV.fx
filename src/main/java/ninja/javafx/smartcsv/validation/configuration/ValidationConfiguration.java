@@ -24,33 +24,58 @@
   
 */
 
-package ninja.javafx.smartcsv.preferences;
+package ninja.javafx.smartcsv.validation.configuration;
 
-import org.supercsv.quote.AlwaysQuoteMode;
-import org.supercsv.quote.ColumnQuoteMode;
-import org.supercsv.quote.NormalQuoteMode;
-import org.supercsv.quote.QuoteMode;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Helper class for mapping quote quoteModeName
+ * Configuration based on JSON Table Schema
+ * @see <a href="http://specs.frictionlessdata.io/json-table-schema/">JSON Table Schema</a>
  */
-public class QuoteModeHelper {
+public class ValidationConfiguration {
 
-    public static QuoteMode getQuoteMode(String quoteModeName) {
-        switch (quoteModeName) {
-            case "always": return new AlwaysQuoteMode();
-            case "column": return new ColumnQuoteMode();
-            default: return new NormalQuoteMode();
-        }
+    @SerializedName("fields")
+    private Field[] fields;
+
+    public Field[] getFields() {
+        return fields;
     }
 
-    public static String getQuoteModeName(QuoteMode quoteMode) {
-        if (quoteMode instanceof AlwaysQuoteMode) {
-            return "always";
-        } else if (quoteMode instanceof ColumnQuoteMode) {
-            return "column";
-        } else {
-            return "normal";
+    public void setFields(Field[] fields) {
+        this.fields = fields;
+    }
+
+    public Field getFieldConfiguration(String column) {
+        for (Field field : fields) {
+            if (field.getName().equals(column)) {
+                return field;
+            }
+        }
+        return null;
+    }
+
+    public String[] headerNames() {
+        if (fields != null) {
+            List<String> headerNames = new ArrayList<>();
+            for (Field field : fields) {
+                headerNames.add(field.getName());
+            }
+            return headerNames.toArray(new String[headerNames.size()]);
+        }
+
+        return null;
+    }
+
+    public void setHeaderNames(String[] header) {
+        fields = new Field[header.length];
+        int i = 0;
+        for (String headerName: header) {
+            fields[i] = new Field();
+            fields[i].setName(headerName);
+            i++;
         }
     }
 }

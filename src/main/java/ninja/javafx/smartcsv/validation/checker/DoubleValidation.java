@@ -23,58 +23,26 @@
    THE SOFTWARE.
 
 */
+package ninja.javafx.smartcsv.validation.checker;
 
-package ninja.javafx.smartcsv.validation;
+import ninja.javafx.smartcsv.validation.ValidationError;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.apache.commons.validator.GenericValidator.isDouble;
 
 /**
- * This class holds all the error messages
- * for a single cell and the information in
- * which row the cell is
+ * Checks if the value is a double
  */
-public class ValidationError {
+public class DoubleValidation extends EmptyValueIsValid {
 
-    private List<ValidationMessage> messages = new ArrayList<>();
-    private Integer lineNumber;
-    private String column = "";
-
-    private ValidationError(Integer lineNumber) {
-        this.lineNumber = lineNumber;
+    @Override
+    public void check(int row, String value, ValidationError error) {
+        if (!isDouble(value)) {
+            error.add("validation.message.double");
+        }
     }
 
-    public static ValidationError withLineNumber(int lineNumber) {
-        return new ValidationError(lineNumber);
-    }
-
-    public static ValidationError withoutLineNumber() {
-        return new ValidationError(-1);
-    }
-
-    public ValidationError column(String column) {
-        this.column = column;
-        return this;
-    }
-
-    public Integer getLineNumber() {
-        return lineNumber;
-    }
-
-    public String getColumn() {
-        return column;
-    }
-
-    public List<ValidationMessage> getMessages() {
-        return messages;
-    }
-
-    public ValidationError add(String key, String... parameters) {
-        messages.add(new ValidationMessage(key, parameters));
-        return this;
-    }
-
-    public boolean isEmpty() {
-        return messages.isEmpty();
+    @Override
+    public Type getType() {
+        return Type.DOUBLE;
     }
 }

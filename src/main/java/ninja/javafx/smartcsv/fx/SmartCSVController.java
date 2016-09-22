@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -56,7 +56,7 @@ import ninja.javafx.smartcsv.fx.util.SaveFileService;
 import ninja.javafx.smartcsv.fx.validation.ValidationEditorController;
 import ninja.javafx.smartcsv.preferences.PreferencesFileReader;
 import ninja.javafx.smartcsv.preferences.PreferencesFileWriter;
-import ninja.javafx.smartcsv.validation.ValidationConfiguration;
+import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.ValidationFileReader;
 import ninja.javafx.smartcsv.validation.ValidationFileWriter;
@@ -425,6 +425,7 @@ public class SmartCSVController extends FXMLController {
 
     public void showValidationEditor(String column) {
         validationEditorController.setSelectedColumn(column);
+        validationEditorController.updateForm();
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setGraphic(null);

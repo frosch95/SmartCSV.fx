@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -23,15 +23,29 @@
    THE SOFTWARE.
 
 */
-package ninja.javafx.smartcsv.validation;
+package ninja.javafx.smartcsv.validation.checker;
+
+import ninja.javafx.smartcsv.validation.ValidationError;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
- * Interface for all validations
+ * checks if the value is a valid uri address
  */
-public interface Validation {
+public class UriValidation extends EmptyValueIsValid {
 
-    enum Type { NOT_EMPTY, UNIQUE, DOUBLE, INTEGER, MIN_LENGTH, MAX_LENGTH, DATE, ALPHANUMERIC, REGEXP, VALUE_OF, GROOVY }
-    void check(int row, String value, ValidationError error);
-    Type getType();
-    boolean canBeChecked(String value);
+    @Override
+    public void check(int row, String value, ValidationError error) {
+        try {
+            new URI(value);
+        } catch (URISyntaxException e) {
+            error.add("validation.message.uri");
+        }
+    }
+
+    @Override
+    public Type getType() {
+        return Type.STRING;
+    }
 }
