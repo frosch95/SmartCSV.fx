@@ -298,6 +298,7 @@ public class ValidationEditorController extends FXMLController {
         Constraints constraints = config.getConstraints();
         if (constraints == null) {
             constraints = new Constraints();
+            config.setConstraints(constraints);
         }
 
         if (enableNotEmptyRule.isSelected()) {
