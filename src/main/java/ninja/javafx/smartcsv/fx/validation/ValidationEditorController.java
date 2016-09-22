@@ -442,7 +442,7 @@ public class ValidationEditorController extends FXMLController {
             ruleEnabled.setSelected(false);
         } else {
             ruleEnabled.setSelected(true);
-            rule.replaceText(0, 0, value);
+            rule.replaceText(0, rule.getLength(), value);
         }
     }
 
