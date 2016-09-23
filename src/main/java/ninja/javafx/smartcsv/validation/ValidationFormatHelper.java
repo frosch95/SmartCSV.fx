@@ -1,5 +1,7 @@
 package ninja.javafx.smartcsv.validation;
 
+import java.text.SimpleDateFormat;
+
 /**
  * @author abi
  */
@@ -31,6 +33,13 @@ public class ValidationFormatHelper {
                 format = format.replace("%j", "DDD");
                 format = format.replace("%U", "ww");
                 return format;
+            } else {
+                try {
+                    new SimpleDateFormat(format);
+                    return format;
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return defaultFormat;

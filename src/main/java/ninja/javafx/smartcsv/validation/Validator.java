@@ -181,12 +181,12 @@ public class Validator {
             }
 
             if (column.getType() == DATE) {
-                String format = dateFormat(column.getFormat(), "YYYY-MM-DD");
+                String format = dateFormat(column.getFormat(), "yyyy-MM-dd");
                 add(column.getName(), new DateValidation(format));
             }
 
             if (column.getType() == DATETIME) {
-                String format = dateFormat(column.getFormat(), "YYYY-MM-DDThh:mm:ssZ");
+                String format = dateFormat(column.getFormat(), "yyyy-MM-ddThh:mm:ssZ");
                 add(column.getName(), new DateValidation(format));
             }
 

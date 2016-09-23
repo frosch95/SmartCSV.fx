@@ -82,7 +82,7 @@ public class HeaderValidationTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Before
     public void initialize() {
-        sut = new Validator(config);
+        sut = new Validator(config, new TestColumnValueProvider());
     }
 
 
@@ -116,7 +116,21 @@ public class HeaderValidationTest {
     }
 
     public static String json(String... headerNames) {
-        return "{\"headers\":{\"list\":[" + asList(headerNames).stream().collect(joining(", ")) + "]}}";
+
+        String json = "{ \"fields\": [";
+
+        for (String headerName: headerNames) {
+            json += "{\"name\" : \""+headerName+"\" },";
+        }
+
+        if (headerNames != null && headerNames.length > 0) {
+            json = json.substring(0, json.length() - 1);
+        }
+
+        json += "]}";
+
+
+        return  json;
     }
 
 }
