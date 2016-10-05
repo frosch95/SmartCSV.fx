@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * This class stores files and there state
+ * This class stores files and their state
  * @author abi
  */
 public class FileStorage<E> {
@@ -26,7 +26,7 @@ public class FileStorage<E> {
 
     private BooleanProperty fileChanged = new SimpleBooleanProperty(true);
     private ObjectProperty<File> file = new SimpleObjectProperty<>();
-    private ObjectProperty<E> content = new SimpleObjectProperty<E>();
+    private ObjectProperty<E> content = new SimpleObjectProperty<>();
 
     public boolean isFileChanged() {
         return fileChanged.get();
