@@ -25,6 +25,7 @@
          </VBox.margin>
       </Label>
       <Label text="AOE Takashi (https://github.com/aoetk)" />
+      <Label text="Hasan Kara (https://github.com/haisi)" />
       <Label text="3rd party software">
          <VBox.margin>
             <Insets top="8.0" />
