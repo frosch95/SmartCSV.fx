@@ -1,13 +1,33 @@
 group 'ninja.javafx'
-version '0.8-SNAPSHOT'
+version '0.9-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'no.tornado:fxlauncher-gradle-plugin:1.0.12'
+    }
+}
 
 apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin:'application'
+apply plugin: 'application'
 apply plugin: 'idea'
+apply plugin: 'no.tornado.fxlauncher'
 
 sourceCompatibility = 1.8
 mainClassName = 'ninja.javafx.smartcsv.fx.SmartCSV'
+
+def fxlauncherPathName = getBuildDir().absolutePath + File.separatorChar + 'fxlauncher' + File.separatorChar
+
+fxlauncher {
+    applicationVendor 'Andreas Billmann (andreas.billmann@javafx.ninja)'
+    applicationUrl 'http://javafx.ninja/SmartCSV.fx/'
+    applicationMainClass mainClassName
+    acceptDowngrade false
+    cacheDir 'USERLIB/SmartCSV.fx'
+}
 
 repositories {
     mavenCentral()
@@ -33,5 +53,21 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.14.1' //version required
+    gradleVersion = '3.1' //version required
 }
+
+task buildSmartCSV(dependsOn: ['clean','embedApplicationManifest']) << {
+    def file = new File(fxlauncherPathName + 'fxlauncher.jar')
+    file.renameTo(fxlauncherPathName + 'SmartCSV.fx.jar')
+}
+
+task modifyAppXML(dependsOn: 'generateApplicationManifest') << {
+    String contents = new File( fxlauncherPathName + 'app.xml' ).getText( 'UTF-8' )
+    contents = contents.replaceAll( 'Updating...', 'Updating SmartCSV.fx ...' )
+    contents = contents.replaceAll( '-fx-spacing: 10; -fx-padding: 25;', '-fx-spacing: 10; -fx-padding: 25;-fx-font-size: 0.9em;' )
+    new File( fxlauncherPathName + 'app.xml' ).write( contents, 'UTF-8' )
+}
+
+embedApplicationManifest.dependsOn modifyAppXML
+
+defaultTasks 'buildSmartCSV'
