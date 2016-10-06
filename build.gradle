@@ -1,5 +1,5 @@
 group 'ninja.javafx'
-version '0.8-SNAPSHOT'
+version '0.9-SNAPSHOT'
 
 buildscript {
     repositories {
@@ -52,6 +52,13 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.14.1' //version required
+    gradleVersion = '3.1' //version required
 }
 
+task buildSmartCSV(dependsOn: 'embedApplicationManifest') {
+    def pathName = getBuildDir().absolutePath + File.separatorChar + 'fxlauncher' + File.separatorChar
+    def file = new File(pathName + 'fxlauncher.jar')
+    file.renameTo(pathName + 'SmartCSV.fx.jar')
+}
+
+defaultTasks 'buildSmartCSV'
