@@ -50,7 +50,6 @@
                   <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Label text="junit" />
@@ -75,8 +74,6 @@
                    <Hyperlink onAction="#openLinkInBrowser" text="http://logging.apache.org/log4j/2.x/" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                    <Label text="RichTextFX" GridPane.rowIndex="10" />
                    <Hyperlink onAction="#openLinkInBrowser" text="https://github.com/TomasMikula/RichTextFX" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                   <Label text="FXLauncher" GridPane.rowIndex="11" />
-                   <Hyperlink onAction="#openLinkInBrowser" text="https://github.com/edvin/fxlauncher" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                </children>
                <padding>
                   <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
@@ -92,7 +89,7 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" text="Copyright (c) 2015-2017 Andreas Billmann &lt;andreas.billmann@javafx.ninja&gt;&#10;&#10;Permission is hereby granted, free of charge, to any person obtaining a copy&#10;of this software and associated documentation files (the &quot;Software&quot;), to deal&#10;in the Software without restriction, including without limitation the rights&#10;to use, copy, modify, merge, publish, distribute, sublicense, and/or sell&#10;copies of the Software, and to permit persons to whom the Software is&#10;furnished to do so, subject to the following conditions:&#10;&#10;The above copyright notice and this permission notice shall be included in&#10;all copies or substantial portions of the Software.&#10;&#10;&#10;&#10;THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&#10;IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&#10;FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE&#10;AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER&#10;LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,&#10;OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN&#10;THE SOFTWARE." wrapText="true" />
+      <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" text="Copyright (c) 2015-2018 Andreas Billmann &lt;andreas.billmann@javafx.ninja&gt;&#10;&#10;Permission is hereby granted, free of charge, to any person obtaining a copy&#10;of this software and associated documentation files (the &quot;Software&quot;), to deal&#10;in the Software without restriction, including without limitation the rights&#10;to use, copy, modify, merge, publish, distribute, sublicense, and/or sell&#10;copies of the Software, and to permit persons to whom the Software is&#10;furnished to do so, subject to the following conditions:&#10;&#10;The above copyright notice and this permission notice shall be included in&#10;all copies or substantial portions of the Software.&#10;&#10;&#10;&#10;THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&#10;IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&#10;FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE&#10;AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER&#10;LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,&#10;OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN&#10;THE SOFTWARE." wrapText="true" />
    </children>
    <opaqueInsets>
       <Insets />
