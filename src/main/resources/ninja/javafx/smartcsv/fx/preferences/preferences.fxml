@@ -14,6 +14,7 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
   </rowConstraints>
    <children>
       <Label text="%preferences.quoteChar" />
@@ -26,6 +27,8 @@
       <CheckBox fx:id="ignoreEmptyLines" mnemonicParsing="false" text="" GridPane.columnIndex="1" GridPane.rowIndex="3" />
       <Label text="%preferences.quoteMode" GridPane.rowIndex="4" />
       <ComboBox fx:id="quoteMode" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <Label text="%preferences.fileEncoding" GridPane.rowIndex="5" />
+      <ComboBox fx:id="fileEncoding" editable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
    </children>
    <padding>
       <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

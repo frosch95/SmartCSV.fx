@@ -54,8 +54,7 @@ import ninja.javafx.smartcsv.fx.table.model.CSVValue;
 import ninja.javafx.smartcsv.fx.util.LoadFileService;
 import ninja.javafx.smartcsv.fx.util.SaveFileService;
 import ninja.javafx.smartcsv.fx.validation.ValidationEditorController;
-import ninja.javafx.smartcsv.preferences.PreferencesFileReader;
-import ninja.javafx.smartcsv.preferences.PreferencesFileWriter;
+import ninja.javafx.smartcsv.preferences.*;
 import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 import ninja.javafx.smartcsv.validation.ValidationError;
 import ninja.javafx.smartcsv.validation.ValidationFileReader;
@@ -68,6 +67,7 @@ import org.supercsv.prefs.CsvPreference;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -93,6 +93,13 @@ public class SmartCSVController extends FXMLController {
             ".SmartCSV.fx" +
             File.separator + "" +
             "preferences.json");
+
+    private static final File ENCODING_FILE = new File(System.getProperty("user.home") +
+            File.separator +
+            ".SmartCSV.fx" +
+            File.separator +
+            "encoding.json");
+
     public static final String CSV_FILTER_TEXT = "CSV files (*.csv)";
     public static final String CSV_FILTER_EXTENSION = "*.csv";
     public static final String JSON_FILTER_TEXT = "JSON files (*.json)";
@@ -213,6 +220,7 @@ public class SmartCSVController extends FXMLController {
     private FileStorage<CSVModel> currentCsvFile = new FileStorage<>(csvFileReader, csvFileWriter);
     private FileStorage<ValidationConfiguration> currentConfigFile = new FileStorage<>(new ValidationFileReader(), new ValidationFileWriter());
     private FileStorage<CsvPreference> csvPreferenceFile = new FileStorage<>(new PreferencesFileReader(), new PreferencesFileWriter());
+    private FileStorage<String> fileEncodingFile = new FileStorage<>(new EncodingFileReader(), new EncodingFileWriter());
 
     private ListChangeListener<ValidationError> errorListListener = c -> tableView.refresh();
     private WeakListChangeListener<ValidationError> weakErrorListListener = new WeakListChangeListener<>(errorListListener);
@@ -238,8 +246,23 @@ public class SmartCSVController extends FXMLController {
         bindConfigFileName();
 
         csvPreferenceFile.setFile(PREFERENCES_FILE);
+        fileEncodingFile.setFile(ENCODING_FILE);
 
         loadCsvPreferencesFromFile();
+    }
+
+    private void loadEncodingFromFile() {
+        if (fileEncodingFile.getFile().exists()) {
+            useLoadFileService(fileEncodingFile, event -> setFileEncoding(fileEncodingFile.getContent()));
+        } else {
+            setFileEncoding(Charset.defaultCharset().name());
+        }
+    }
+
+    private void setFileEncoding(String content) {
+        preferencesController.setFileEncoding(content);
+        csvFileReader.setFileEncoding(content);
+        csvFileWriter.setFileEncoding(content);
     }
 
     private void setupErrorSideBar(ResourceBundle resourceBundle) {
@@ -345,8 +368,29 @@ public class SmartCSVController extends FXMLController {
             CsvPreference csvPreference = preferencesController.getCsvPreference();
             setCsvPreference(csvPreference);
             saveCsvPreferences(csvPreference);
+            String fileEncoding = CharsetHelper.getCharsetName(preferencesController.getFileEncoding());
+            setFileEncoding(fileEncoding);
+            saveFileEncoding(fileEncoding);
         } else {
             preferencesController.setCsvPreference(csvPreferenceFile.getContent());
+            preferencesController.setFileEncoding(fileEncodingFile.getContent());
+        }
+    }
+
+    private void saveFileEncoding(String fileEncoding) {
+        try {
+            createFileEncodingFile();
+            fileEncodingFile.setContent(fileEncoding);
+            useSaveFileService(fileEncodingFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createFileEncodingFile() throws IOException {
+        if (!fileEncodingFile.getFile().exists()) {
+            createPreferencesFileFolder();
+            fileEncodingFile.getFile().createNewFile();
         }
     }
 
@@ -492,9 +536,13 @@ public class SmartCSVController extends FXMLController {
 
     private void loadCsvPreferencesFromFile() {
         if (csvPreferenceFile.getFile().exists()) {
-            useLoadFileService(csvPreferenceFile, event -> setCsvPreference(csvPreferenceFile.getContent()));
+            useLoadFileService(csvPreferenceFile, event -> {
+                setCsvPreference(csvPreferenceFile.getContent());
+                loadEncodingFromFile();
+            });
         } else {
             setCsvPreference(CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
+            loadEncodingFromFile();
         }
     }
 

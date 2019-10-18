@@ -3,7 +3,7 @@
    -----------------------------------------------------------------------------
 
    Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
-                                                                                                                    
+
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,32 +21,24 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-  
+
 */
 
-package ninja.javafx.smartcsv.csv;
+package ninja.javafx.smartcsv.preferences;
 
-import org.supercsv.prefs.CsvPreference;
+import java.nio.charset.Charset;
 
 /**
- *
+ * Helper class for getting charset's name
  */
-public class CSVConfigurable {
+public class CharsetHelper {
 
-    protected CsvPreference csvPreference;
-
-    protected String fileEncoding;
-
-    public CSVConfigurable() {
-        csvPreference = CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE;
-    }
-
-    public void setCsvPreference(CsvPreference csvPreference) {
-        this.csvPreference = csvPreference;
-    }
-
-    public void setFileEncoding(String fileEncoding) {
-        this.fileEncoding = fileEncoding;
+    public static String getCharsetName(String name) {
+        try {
+            return Charset.forName(name).name();
+        } catch (Exception e) {
+            return Charset.defaultCharset().name();
+        }
     }
 
 }

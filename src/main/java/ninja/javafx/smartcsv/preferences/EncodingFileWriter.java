@@ -3,7 +3,7 @@
    -----------------------------------------------------------------------------
 
    Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
-                                                                                                                    
+
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,32 +21,39 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-  
+
 */
 
-package ninja.javafx.smartcsv.csv;
+package ninja.javafx.smartcsv.preferences;
 
-import org.supercsv.prefs.CsvPreference;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import ninja.javafx.smartcsv.FileWriter;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- *
+ * Save the file encoding to configuration file
  */
-public class CSVConfigurable {
+public class EncodingFileWriter implements FileWriter<String> {
 
-    protected CsvPreference csvPreference;
+    private String fileEncoding;
 
-    protected String fileEncoding;
-
-    public CSVConfigurable() {
-        csvPreference = CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE;
-    }
-
-    public void setCsvPreference(CsvPreference csvPreference) {
-        this.csvPreference = csvPreference;
-    }
-
-    public void setFileEncoding(String fileEncoding) {
+    @Override
+    public void setContent(String fileEncoding) {
         this.fileEncoding = fileEncoding;
+    }
+
+    @Override
+    public void write(File filename) throws IOException {
+        Map<String, String> encodings = new HashMap<>();
+        encodings.put("fileEncoding", CharsetHelper.getCharsetName(fileEncoding));
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Files.write(filename.toPath(), gson.toJson(encodings).getBytes());
     }
 
 }
