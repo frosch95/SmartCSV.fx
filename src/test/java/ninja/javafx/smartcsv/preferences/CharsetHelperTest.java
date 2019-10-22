@@ -3,7 +3,7 @@
    -----------------------------------------------------------------------------
 
    Copyright (c) 2015-2016 javafx.ninja <info@javafx.ninja>
-                                                                                                                    
+
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,32 +21,36 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-  
+
 */
 
-package ninja.javafx.smartcsv.csv;
+package ninja.javafx.smartcsv.preferences;
 
-import org.supercsv.prefs.CsvPreference;
+import org.junit.jupiter.api.Test;
 
-/**
- *
- */
-public class CSVConfigurable {
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
-    protected CsvPreference csvPreference;
+import static org.junit.jupiter.api.Assertions.*;
 
-    protected String fileEncoding;
+public class CharsetHelperTest {
 
-    public CSVConfigurable() {
-        csvPreference = CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE;
+    @Test
+    public void getCharsetName_known_charset() {
+        String result = CharsetHelper.getCharsetName("UTF-16");
+        assertEquals(StandardCharsets.UTF_16.name(), result);
     }
 
-    public void setCsvPreference(CsvPreference csvPreference) {
-        this.csvPreference = csvPreference;
+    @Test
+    public void getCharsetName_unknown_charset() {
+        String result = CharsetHelper.getCharsetName("foobar");
+        assertEquals(StandardCharsets.UTF_8.name(), result);
     }
 
-    public void setFileEncoding(String fileEncoding) {
-        this.fileEncoding = fileEncoding;
+    @Test
+    public void getCharsetName_null_charset() {
+        String result = CharsetHelper.getCharsetName(null);
+        assertEquals(StandardCharsets.UTF_8.name(), result);
     }
 
 }

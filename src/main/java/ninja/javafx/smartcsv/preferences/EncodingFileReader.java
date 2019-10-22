@@ -24,56 +24,39 @@
 
 */
 
-package ninja.javafx.smartcsv.csv;
+package ninja.javafx.smartcsv.preferences;
 
+import com.google.gson.GsonBuilder;
 import ninja.javafx.smartcsv.FileReader;
-import ninja.javafx.smartcsv.fx.table.model.CSVModel;
-import ninja.javafx.smartcsv.fx.table.model.CSVRow;
-import org.supercsv.io.CsvMapReader;
-import org.supercsv.io.ICsvMapReader;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * reads the csv file and stores the values in csv model
+ * file reader for the file encoding
  */
-public class CSVFileReader extends CSVConfigurable implements FileReader<CSVModel> {
+public class EncodingFileReader implements FileReader<String> {
 
-    private CSVModel model;
+    private String fileEncoding;
 
-    @Override
-    public void read(File file) throws IOException {
-
-        ICsvMapReader mapReader = null;
-        try {
-            mapReader = new CsvMapReader(new java.io.FileReader(file.getAbsoluteFile(), Charset.forName(fileEncoding)),
-                    csvPreference);
-            model = new CSVModel();
-
-            // the header columns are used as the keys to the Map
-            String[] header = mapReader.getHeader(true);
-            model.setHeader(header);
-
-            Map<String, String> customerMap;
-            while ((customerMap = mapReader.read(header)) != null) {
-                CSVRow row = model.addRow();
-                for (String column : header) {
-                    model.addValue(row, column, customerMap.get(column));
-                }
-            }
-
-        } finally {
-            if (mapReader != null) {
-                mapReader.close();
-            }
-        }
+    public EncodingFileReader() {
+        fileEncoding = Charset.defaultCharset().name();
     }
 
-    public CSVModel getContent() {
-        return model;
+    @Override
+    public String getContent() {
+        return fileEncoding;
+    }
+
+    @Override
+    public void read(File filename) throws IOException {
+        Map settings = new GsonBuilder().create().fromJson(new java.io.FileReader(filename), HashMap.class);
+        if (settings != null) {
+            fileEncoding = CharsetHelper.getCharsetName(settings.get("fileEncoding").toString());
+        }
     }
 
 }

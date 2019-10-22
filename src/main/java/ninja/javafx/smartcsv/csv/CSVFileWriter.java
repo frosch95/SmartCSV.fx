@@ -34,6 +34,7 @@ import org.supercsv.io.ICsvMapWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
@@ -53,7 +54,8 @@ public class CSVFileWriter extends CSVConfigurable implements ninja.javafx.smart
     public void write(File filename) throws IOException {
         ICsvMapWriter mapWriter = null;
         try {
-            mapWriter = new CsvMapWriter(new FileWriter(filename.getAbsolutePath()), csvPreference);
+            mapWriter = new CsvMapWriter(new FileWriter(filename.getAbsolutePath(), Charset.forName(fileEncoding)),
+                    csvPreference);
             mapWriter.writeHeader(model.getHeader());
 
             for(CSVRow row: model.getRows()) {

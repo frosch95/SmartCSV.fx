@@ -39,6 +39,7 @@ import org.springframework.stereotype.Component;
 import org.supercsv.prefs.CsvPreference;
 
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
 
@@ -66,6 +67,9 @@ public class PreferencesController extends FXMLController {
     @FXML
     private ComboBox<String> quoteMode;
 
+    @FXML
+    private ComboBox<String> fileEncoding;
+
     private String endOfLineSymbols;
 
     private BooleanProperty valid = new SimpleBooleanProperty(true);
@@ -80,6 +84,7 @@ public class PreferencesController extends FXMLController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         quoteMode.getItems().addAll("normal", "always", "column");
+        fileEncoding.getItems().addAll(Charset.availableCharsets().keySet());
 
         UnaryOperator<TextFormatter.Change> allowOnlyOneCharacter = change -> {
             if (change.isContentChange()) {
@@ -115,6 +120,14 @@ public class PreferencesController extends FXMLController {
                 .surroundingSpacesNeedQuotes(surroundingSpacesNeedQuotes.isSelected())
                 .ignoreEmptyLines(ignoreEmptyLines.isSelected())
                 .build();
+    }
+
+    public void setFileEncoding(String fileEncoding) {
+        this.fileEncoding.setValue(fileEncoding);
+    }
+
+    public String getFileEncoding() {
+        return fileEncoding.getValue();
     }
 
     public boolean getValid() {
