@@ -18,6 +18,7 @@ javafx {
 dependencies {
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.5.2'
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.5.2'
     testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '2.2'
     testCompile group: 'org.mockito', name: 'mockito-core', version:'3.1.0'
     compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.0-beta-3'
@@ -33,6 +34,10 @@ dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
     compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.2'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 group 'ninja.javafx'

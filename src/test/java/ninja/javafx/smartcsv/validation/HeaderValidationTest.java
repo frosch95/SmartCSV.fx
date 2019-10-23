@@ -29,13 +29,12 @@ package ninja.javafx.smartcsv.validation;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -46,50 +45,22 @@ import static org.junit.Assert.assertTrue;
 /**
  * unit test for header validator
  */
-@RunWith(Parameterized.class)
 public class HeaderValidationTest {
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // parameters
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private ValidationConfiguration config;
-    private Boolean expectedResult;
-    private List<ValidationMessage> expectedErrors;
-    private String[] headerNames;
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // subject under test
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private Validator sut;
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // parameterized constructor
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public HeaderValidationTest(String configHeaderNames,
-                                String[] headerNames,
-                                Boolean expectedResult,
-                                List<ValidationMessage> expectedErrors) {
-        Gson gson = new GsonBuilder().create();
-        this.config = gson.fromJson(configHeaderNames, ValidationConfiguration.class);
-        this.headerNames = headerNames;
-        this.expectedResult = expectedResult;
-        this.expectedErrors = expectedErrors;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // init
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    @Before
-    public void initialize() {
-        sut = new Validator(config, new TestColumnValueProvider());
-    }
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // tests
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    @Test
-    public void validation() {
+    @ParameterizedTest
+    @MethodSource("validationConfigurations")
+    public void validation(String configHeaderNames,
+                           String[] headerNames,
+                           Boolean expectedResult,
+                           List<ValidationMessage> expectedErrors) {
+        // setup
+        Gson gson = new GsonBuilder().create();
+        ValidationConfiguration config = gson.fromJson(configHeaderNames, ValidationConfiguration.class);
+        Validator sut = new Validator(config, new TestColumnValueProvider());
+
         // execution
         ValidationError result = sut.isHeaderValid(headerNames);
 
@@ -103,15 +74,14 @@ public class HeaderValidationTest {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // parameters for tests
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    @Parameterized.Parameters
-    public static Collection validationConfigurations() {
-        return asList(new Object[][] {
-                { json(), new String[] {}, true, null },
-                { json("a"), new String[] {"a"}, true, null },
-                { json("a"), new String[] {"b"}, false, singletonList(new ValidationMessage("validation.message.header.match", "0", "a", "b"))},
-                { json("a"), new String[] {"a","b"}, false, singletonList(new ValidationMessage("validation.message.header.length", "2", "1"))},
-                { json("a", "b"), new String[] {"b", "a"}, false, asList(new ValidationMessage("validation.message.header.match", "0", "a", "b"), new ValidationMessage("validation.message.header.match", "1", "b", "a")) }
-        });
+    public static Stream<Arguments> validationConfigurations() {
+        return Stream.of(
+                Arguments.of( json(), new String[] {}, true, null ),
+                Arguments.of( json("a"), new String[] {"a"}, true, null ),
+                Arguments.of( json("a"), new String[] {"b"}, false, singletonList(new ValidationMessage("validation.message.header.match", "0", "a", "b"))),
+                Arguments.of( json("a"), new String[] {"a","b"}, false, singletonList(new ValidationMessage("validation.message.header.length", "2", "1"))),
+                Arguments.of( json("a", "b"), new String[] {"b", "a"}, false, asList(new ValidationMessage("validation.message.header.match", "0", "a", "b"), new ValidationMessage("validation.message.header.match", "1", "b", "a")) )
+        );
     }
 
     @SuppressWarnings("StringConcatenationInLoop")

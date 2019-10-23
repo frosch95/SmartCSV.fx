@@ -2,11 +2,8 @@ package ninja.javafx.smartcsv.files;
 
 import ninja.javafx.smartcsv.FileReader;
 import ninja.javafx.smartcsv.FileWriter;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 
 import java.io.File;
 
