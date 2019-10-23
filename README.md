@@ -1,4 +1,5 @@
 # SmartCSV.fx
+[![Build Status](https://travis-ci.org/frosch95/SmartCSV.fx.svg?branch=master)](https://travis-ci.org/frosch95/SmartCSV.fx) ![GitHub All Releases](https://img.shields.io/github/downloads/frosch95/SmartCSV.fx/total) ![GitHub](https://img.shields.io/github/license/frosch95/SmartCSV.fx) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/frosch95/SmartCSV.fx?label=version) ![GitHub Release Date](https://img.shields.io/github/release-date/frosch95/SmartCSV.fx)
 ## Description
 A simple JavaFX application to load, save and edit a CSV file and provide a [JSON Table Schema](http://specs.frictionlessdata.io/json-table-schema/) for columns to check the values in the columns.
 
