@@ -125,7 +125,7 @@ public class EditableValidationCell extends TableCell<CSVRow, CSVValue> {
         });
     }
 
-    private class ValueTextField extends TextField {
+    private static class ValueTextField extends TextField {
         private CSVValue value;
 
         public ValueTextField(CSVValue value) {

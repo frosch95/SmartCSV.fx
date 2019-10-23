@@ -43,7 +43,6 @@ import static ninja.javafx.smartcsv.preferences.QuoteModeHelper.getQuoteMode;
  */
 public class PreferencesFileReader implements FileReader<CsvPreference> {
 
-    private Map config;
     private CsvPreference csvPreference;
 
     public PreferencesFileReader() {
@@ -54,14 +53,14 @@ public class PreferencesFileReader implements FileReader<CsvPreference> {
 
     @Override
     public void read(File filename) throws IOException {
-        config = new GsonBuilder().create().fromJson(new java.io.FileReader(filename), HashMap.class);
+        Map config = new GsonBuilder().create().fromJson(new java.io.FileReader(filename), HashMap.class);
 
         if (config != null) {
             char quoteChar = config.get("quoteChar").toString().charAt(0);
             char delimiterChar = config.get("delimiterChar").toString().charAt(0);
             String endOfLineSymbols = config.get("endOfLineSymbols").toString();
-            boolean surroundingSpacesNeedQuotes = (Boolean)config.get("surroundingSpacesNeedQuotes");
-            boolean ignoreEmptyLines = (Boolean)config.get("ignoreEmptyLines");
+            boolean surroundingSpacesNeedQuotes = (Boolean) config.get("surroundingSpacesNeedQuotes");
+            boolean ignoreEmptyLines = (Boolean) config.get("ignoreEmptyLines");
             String quoteMode = config.get("quoteMode").toString();
 
             csvPreference = new CsvPreference.Builder(quoteChar, delimiterChar, endOfLineSymbols)

@@ -47,7 +47,6 @@ public class ObservableMapValueFactory implements
     @Override
     public ObjectProperty<CSVValue> call(TableColumn.CellDataFeatures<CSVRow, CSVValue> features) {
         CSVRow row = features.getValue();
-        ObjectProperty<CSVValue> value = row.getColumns().get(key);
-        return value;
+        return row.getColumns().get(key);
     }
 }

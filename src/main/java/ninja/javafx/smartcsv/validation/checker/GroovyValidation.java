@@ -37,11 +37,11 @@ import org.codehaus.groovy.control.CompilationFailedException;
 public class GroovyValidation extends EmptyValueIsValid {
 
     private String groovyScript;
-    private GroovyShell shell = new GroovyShell();
     private Script script;
 
     public GroovyValidation(String groovyScript) {
         this.groovyScript = groovyScript;
+        GroovyShell shell = new GroovyShell();
         script = shell.parse(groovyScript);
     }
 

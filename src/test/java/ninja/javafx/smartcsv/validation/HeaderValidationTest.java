@@ -39,7 +39,6 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.joining;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -115,6 +114,7 @@ public class HeaderValidationTest {
         });
     }
 
+    @SuppressWarnings("StringConcatenationInLoop")
     public static String json(String... headerNames) {
 
         String json = "{ \"fields\": [";

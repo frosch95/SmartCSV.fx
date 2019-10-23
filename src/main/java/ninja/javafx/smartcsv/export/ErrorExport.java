@@ -29,7 +29,6 @@ package ninja.javafx.smartcsv.export;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
-import ninja.javafx.smartcsv.validation.ValidationError;
 
 import java.io.File;
 import java.io.StringWriter;

@@ -34,6 +34,7 @@ import java.util.UUID;
  */
 public class UuidValidation extends EmptyValueIsValid {
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void check(int row, String value, ValidationError error) {
         try {
