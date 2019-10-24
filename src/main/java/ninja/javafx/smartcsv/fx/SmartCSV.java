@@ -30,6 +30,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import ninja.javafx.smartcsv.fx.about.AboutController;
 import org.springframework.context.annotation.*;
@@ -87,6 +88,7 @@ public class SmartCSV extends Application {
 
         primaryStage.setScene(scene);
         primaryStage.setTitle(String.format("%s %s", name, version));
+        primaryStage.getIcons().add(new Image(SmartCSV.class.getResourceAsStream("/ninja/javafx/smartcsv/icon/logo.png")));
         primaryStage.show();
         primaryStage.setMaximized(true);
 
