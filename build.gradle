@@ -41,5 +41,5 @@ test {
 }
 
 group 'ninja.javafx'
-version '0.9.3-SNAPSHOT'
+version '1.0.0'
 mainClassName = 'ninja.javafx.smartcsv.Main'
