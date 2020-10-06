@@ -24,7 +24,7 @@ binary distribution of the [latest release (1.0.0)](https://github.com/frosch95/
 ### The MIT License (MIT)
 
 
-Copyright (c) 2015-2019 Andreas Billmann <andreas.billmann@javafx.ninja>
+Copyright (c) 2015-2020 Andreas Billmann <andreas.billmann@javafx.ninja>
 
 
 
