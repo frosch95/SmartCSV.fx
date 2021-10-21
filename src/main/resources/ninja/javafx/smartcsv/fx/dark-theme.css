@@ -1,0 +1,34 @@
+.root {
+    -fx-base: rgb(39, 40, 40);
+    -fx-accent: rgb(80, 80, 80);
+    -fx-default-button: rgb(39, 40, 40);
+    -fx-focus-color: rgb(80, 80, 80);
+    -fx-faint-focus-color: #efefef22;
+    -fx-focused-text-base-color : ladder(
+            -fx-selection-bar,
+            -fx-light-text-color 45%,
+            -fx-dark-text-color 46%,
+            -fx-dark-text-color 59%,
+            -fx-mid-text-color 60%
+    );
+    -fx-focused-mark-color : -fx-focused-text-base-color ;
+    -fx-control-inner-background: rgb(39, 40, 40);
+    -fx-control-inner-background-alt: rgb(20, 20, 20);
+}
+
+
+.table-row-cell:selected {
+    -fx-background-color: rgb(80, 80, 80);
+}
+.table-row-cell {
+    -fx-background-color: #81c483;
+}
+.text-input:focused {
+    -fx-highlight-text-fill: ladder(
+            -fx-highlight-fill,
+            -fx-light-text-color 45%,
+            -fx-dark-text-color  46%,
+            -fx-dark-text-color  59%,
+            -fx-mid-text-color   60%
+    );
+}

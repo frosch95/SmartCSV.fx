@@ -266,6 +266,7 @@
     <left>
     </left>
     <stylesheets>
+        <URL value="@/ninja/javafx/smartcsv/fx/dark-theme.css" />
         <URL value="@/ninja/javafx/smartcsv/fx/smartcsv.css" />
     </stylesheets>
     <bottom>

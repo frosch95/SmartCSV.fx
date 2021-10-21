@@ -85,6 +85,9 @@ public class SmartCSV extends Application {
     private void showUI(Stage primaryStage, String name, String version) {
         SmartCSVController smartCVSController = appContext.getBean(SmartCSVController.class);
         Scene scene = new Scene((Parent) smartCVSController.getView());
+        var darkThemeCss = scene.getRoot().getStylesheets().get(0);
+        scene.getRoot().getStylesheets().remove(darkThemeCss);
+        scene.getRoot().getStylesheets().add(darkThemeCss);
 
         primaryStage.setScene(scene);
         primaryStage.setTitle(String.format("%s %s", name, version));
