@@ -31,22 +31,22 @@ import javafx.concurrent.Task;
 import ninja.javafx.smartcsv.files.FileStorage;
 
 /**
- * Service class for async load of a csv file
+ * Service class for async save of a csv file
  */
 @org.springframework.stereotype.Service
-public class SaveFileService extends Service {
+public class SaveFileService extends Service<Void> {
 
-    private FileStorage file;
+    private FileStorage<?> file;
 
-    public void setFileStorage(FileStorage value) {
+    public void setFileStorage(FileStorage<?> value) {
         file = value;
     }
 
     @Override
-    protected Task createTask() {
-        return new Task() {
+    protected Task<Void> createTask() {
+        return new Task<>() {
             @Override
-            protected Void call() throws Exception {
+            protected Void call() {
                 try {
                     file.save();
                 } catch (Throwable ex) {

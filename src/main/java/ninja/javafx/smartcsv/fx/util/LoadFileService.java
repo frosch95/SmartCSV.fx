@@ -34,17 +34,17 @@ import ninja.javafx.smartcsv.files.FileStorage;
  * Service class for async load of a csv file
  */
 @org.springframework.stereotype.Service
-public class LoadFileService extends Service {
+public class LoadFileService extends Service<Void> {
 
-    private FileStorage file;
+    private FileStorage<?> file;
 
-    public void setFileStorage(FileStorage file) {
+    public void setFileStorage(FileStorage<?> file) {
         this.file = file;
     }
 
     @Override
-    protected Task createTask() {
-        return new Task() {
+    protected Task<Void> createTask() {
+        return new Task<>() {
             @Override
             protected Void call() throws Exception {
                 if (file != null) {
