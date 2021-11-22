@@ -52,6 +52,7 @@ import ninja.javafx.smartcsv.fx.table.ValidationCellFactory;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
 import ninja.javafx.smartcsv.fx.table.model.CSVRow;
 import ninja.javafx.smartcsv.fx.table.model.CSVValue;
+import ninja.javafx.smartcsv.fx.util.JavaFxUtils;
 import ninja.javafx.smartcsv.fx.util.LoadFileService;
 import ninja.javafx.smartcsv.fx.util.SaveFileService;
 import ninja.javafx.smartcsv.fx.validation.ValidationEditorController;
@@ -84,6 +85,7 @@ import static javafx.scene.layout.AnchorPane.*;
  */
 @Component
 public class SmartCSVController extends FXMLController {
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // constants
@@ -595,8 +597,9 @@ public class SmartCSVController extends FXMLController {
         //Show open file dialog
         File file = fileChooser.showOpenDialog(applicationPane.getScene().getWindow());
         if (file != null) {
+            File previousFile = storageFile.getFile();
             storageFile.setFile(file);
-            useLoadFileService(storageFile, t -> resetContent());
+            useLoadFileService(storageFile, t -> resetContent(), () -> storageFile.setFile(previousFile));
         }
     }
 
@@ -625,13 +628,20 @@ public class SmartCSVController extends FXMLController {
         return file;
     }
 
-    private void useLoadFileService(FileStorage fileStorage, EventHandler<WorkerStateEvent> onSucceededHandler) {
+    private void useLoadFileService(FileStorage<?> fileStorage, EventHandler<WorkerStateEvent> onSucceededHandler) {
+        useLoadFileService(fileStorage, onSucceededHandler, () -> {
+            // nothing to rollback
+        });
+    }
+
+    private void useLoadFileService(FileStorage<?> fileStorage, EventHandler<WorkerStateEvent> onSucceededHandler, Runnable rollbackAction) {
         loadFileService.setFileStorage(fileStorage);
         loadFileService.restart();
         loadFileService.setOnSucceeded(onSucceededHandler);
+        loadFileService.setOnFailed(event -> JavaFxUtils.onServiceError(event, "LoadFileService Error", "Failed to load the file.", rollbackAction));
     }
 
-    private void useSaveFileService(FileStorage fileStorage) {
+    private void useSaveFileService(FileStorage<?> fileStorage) {
         saveFileService.setFileStorage(fileStorage);
         saveFileService.restart();
         saveFileService.setOnSucceeded(t -> resetContent());

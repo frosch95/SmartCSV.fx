@@ -29,6 +29,7 @@ package ninja.javafx.smartcsv.csv;
 import ninja.javafx.smartcsv.FileReader;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
 import ninja.javafx.smartcsv.fx.table.model.CSVRow;
+import org.supercsv.exception.SuperCsvException;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.ICsvMapReader;
 
@@ -47,10 +48,8 @@ public class CSVFileReader extends CSVConfigurable implements FileReader<CSVMode
     @Override
     public void read(File file) throws IOException {
 
-        ICsvMapReader mapReader = null;
-        try {
-            mapReader = new CsvMapReader(new java.io.FileReader(file.getAbsoluteFile(), Charset.forName(fileEncoding)),
-                    csvPreference);
+        try (ICsvMapReader mapReader = new CsvMapReader(new java.io.FileReader(file.getAbsoluteFile(), Charset.forName(fileEncoding)),
+                csvPreference)) {
             model = new CSVModel();
 
             // the header columns are used as the keys to the Map
@@ -64,11 +63,10 @@ public class CSVFileReader extends CSVConfigurable implements FileReader<CSVMode
                     model.addValue(row, column, customerMap.get(column));
                 }
             }
-
-        } finally {
-            if (mapReader != null) {
-                mapReader.close();
-            }
+        } catch (IOException | SuperCsvException ex) {
+            // TODO perhaps a custom NinjaException that can properly identify and localize the exception message
+            // is this a file not found? is this a corrupt csv? etc
+            throw new IOException("Failed to read " + file + ": " + ex.getMessage(), ex);
         }
     }
 
