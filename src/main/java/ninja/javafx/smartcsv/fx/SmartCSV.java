@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015-2019 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2021 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -85,6 +85,8 @@ public class SmartCSV extends Application {
     private void showUI(Stage primaryStage, String name, String version) {
         SmartCSVController smartCVSController = appContext.getBean(SmartCSVController.class);
         Scene scene = new Scene((Parent) smartCVSController.getView());
+        var defaultThemeCss = getClass().getResource("/ninja/javafx/smartcsv/fx/smartcsv.css").toExternalForm();
+        scene.getRoot().getStylesheets().add(defaultThemeCss);
 
         primaryStage.setScene(scene);
         primaryStage.setTitle(String.format("%s %s", name, version));

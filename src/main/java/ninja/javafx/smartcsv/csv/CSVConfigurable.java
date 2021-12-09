@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015-2019 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2021 javafx.ninja <info@javafx.ninja>
                                                                                                                     
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -26,22 +26,24 @@
 
 package ninja.javafx.smartcsv.csv;
 
-import org.supercsv.prefs.CsvPreference;
+import ninja.javafx.smartcsv.preferences.Preferences;
+
+import static ninja.javafx.smartcsv.preferences.Preferences.defaultPreferences;
 
 /**
  *
  */
 public class CSVConfigurable {
 
-    protected CsvPreference csvPreference;
+    protected Preferences csvPreference;
 
     protected String fileEncoding;
 
     public CSVConfigurable() {
-        csvPreference = CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE;
+        csvPreference = defaultPreferences();
     }
 
-    public void setCsvPreference(CsvPreference csvPreference) {
+    public void setCsvPreference(Preferences csvPreference) {
         this.csvPreference = csvPreference;
     }
 

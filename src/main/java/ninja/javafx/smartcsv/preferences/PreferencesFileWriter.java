@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015-2019 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2021 javafx.ninja <info@javafx.ninja>
                                                                                                                     
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,6 @@ package ninja.javafx.smartcsv.preferences;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ninja.javafx.smartcsv.FileWriter;
-import org.supercsv.prefs.CsvPreference;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,22 +39,20 @@ import java.util.Map;
 /**
  * Save preferences to configuration file
  */
-public class PreferencesFileWriter implements FileWriter<CsvPreference> {
+public class PreferencesFileWriter implements FileWriter<Preferences> {
 
-    private CsvPreference csvPreference;
+    private Preferences csvPreference;
 
-    public void setContent(CsvPreference csvPreference) {
+    public void setContent(Preferences csvPreference) {
         this.csvPreference = csvPreference;
     }
 
     public void write(File file) throws IOException {
         Map<String, Object> preferences = new HashMap<>();
-        preferences.put("quoteChar", Character.toString(csvPreference.getQuoteChar()));
-        preferences.put("delimiterChar", Character.toString((char)csvPreference.getDelimiterChar()));
-        preferences.put("endOfLineSymbols", csvPreference.getEndOfLineSymbols());
-        preferences.put("surroundingSpacesNeedQuotes", csvPreference.isSurroundingSpacesNeedQuotes());
-        preferences.put("ignoreEmptyLines", csvPreference.isIgnoreEmptyLines());
-        preferences.put("quoteMode", QuoteModeHelper.getQuoteModeName(csvPreference.getQuoteMode()));
+        preferences.put("quoteChar", csvPreference.quoteChar() == null ? null: csvPreference.quoteChar().toString());
+        preferences.put("delimiterChar", Character.toString((char)csvPreference.delimiterChar()));
+        preferences.put("endOfLineSymbols", csvPreference.endOfLineSymbols());
+        preferences.put("ignoreEmptyLines", csvPreference.ignoreEmptyLines());
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         Files.write(file.toPath(), gson.toJson(preferences).getBytes());

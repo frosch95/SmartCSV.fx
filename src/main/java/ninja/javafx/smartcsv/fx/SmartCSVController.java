@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015-2019 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2021 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +64,6 @@ import ninja.javafx.smartcsv.validation.configuration.ValidationConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.supercsv.prefs.CsvPreference;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,6 +78,7 @@ import static javafx.application.Platform.exit;
 import static javafx.application.Platform.runLater;
 import static javafx.beans.binding.Bindings.*;
 import static javafx.scene.layout.AnchorPane.*;
+import static ninja.javafx.smartcsv.preferences.Preferences.defaultPreferences;
 
 /**
  * main controller of the application
@@ -222,7 +222,7 @@ public class SmartCSVController extends FXMLController {
 
     private FileStorage<CSVModel> currentCsvFile = new FileStorage<>(csvFileReader, csvFileWriter);
     private FileStorage<ValidationConfiguration> currentConfigFile = new FileStorage<>(new ValidationFileReader(), new ValidationFileWriter());
-    private FileStorage<CsvPreference> csvPreferenceFile = new FileStorage<>(new PreferencesFileReader(), new PreferencesFileWriter());
+    private FileStorage<Preferences> csvPreferenceFile = new FileStorage<>(new PreferencesFileReader(), new PreferencesFileWriter());
     private FileStorage<String> fileEncodingFile = new FileStorage<>(new EncodingFileReader(), new EncodingFileWriter());
 
     private ListChangeListener<ValidationError> errorListListener = c -> tableView.refresh();
@@ -368,7 +368,7 @@ public class SmartCSVController extends FXMLController {
         Optional<ButtonType> result = alert.showAndWait();
 
         if (result.get() == ButtonType.OK){
-            CsvPreference csvPreference = preferencesController.getCsvPreference();
+            Preferences csvPreference = preferencesController.getCsvPreference();
             setCsvPreference(csvPreference);
             saveCsvPreferences(csvPreference);
             String fileEncoding = CharsetHelper.getCharsetName(preferencesController.getFileEncoding());
@@ -544,12 +544,12 @@ public class SmartCSVController extends FXMLController {
                 loadEncodingFromFile();
             });
         } else {
-            setCsvPreference(CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
+            setCsvPreference(defaultPreferences());
             loadEncodingFromFile();
         }
     }
 
-    private void saveCsvPreferences(CsvPreference csvPreference) {
+    private void saveCsvPreferences(Preferences csvPreference) {
         try {
             createPreferenceFile();
             csvPreferenceFile.setContent(csvPreference);
@@ -572,7 +572,7 @@ public class SmartCSVController extends FXMLController {
         }
     }
 
-    private void setCsvPreference(CsvPreference csvPreference) {
+    private void setCsvPreference(Preferences csvPreference) {
         preferencesController.setCsvPreference(csvPreference);
         csvFileReader.setCsvPreference(csvPreference);
         csvFileWriter.setCsvPreference(csvPreference);

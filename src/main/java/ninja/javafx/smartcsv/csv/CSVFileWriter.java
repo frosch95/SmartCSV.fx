@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015-2019 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2021 javafx.ninja <info@javafx.ninja>
                                                                                                                     
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -26,18 +26,17 @@
 
 package ninja.javafx.smartcsv.csv;
 
+import de.siegmar.fastcsv.writer.CsvWriter;
+import de.siegmar.fastcsv.writer.QuoteStrategy;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
 import ninja.javafx.smartcsv.fx.table.model.CSVRow;
-import org.supercsv.io.CsvMapWriter;
-import org.supercsv.io.ICsvMapWriter;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Map;
+import java.util.List;
 
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toList;
 
 /**
  * filewriter for the csv
@@ -52,22 +51,22 @@ public class CSVFileWriter extends CSVConfigurable implements ninja.javafx.smart
 
     @Override
     public void write(File filename) throws IOException {
-        ICsvMapWriter mapWriter = null;
-        try {
-            mapWriter = new CsvMapWriter(new FileWriter(filename.getAbsolutePath(), Charset.forName(fileEncoding)),
-                    csvPreference);
-            mapWriter.writeHeader(model.getHeader());
-
+        try (var writer = getCsvWriter(filename)){
+            writer.writeRow(model.getHeader());
             for(CSVRow row: model.getRows()) {
-                Map<String, String> columns = convertMapFromModel(row);
-                mapWriter.write(columns, model.getHeader());
+                writer.writeRow(convertMapFromModel(row));
             }
         }
-        finally {
-            if( mapWriter != null ) {
-                mapWriter.close();
-            }
+    }
+
+    private CsvWriter getCsvWriter(File filename) throws IOException {
+        var writer = CsvWriter.builder().fieldSeparator(csvPreference.delimiterChar());
+        if (csvPreference.quoteChar() != null) {
+            writer.quoteCharacter(csvPreference.quoteChar());
+            writer.quoteStrategy(QuoteStrategy.ALWAYS);
         }
+
+        return writer.build(filename.toPath(), Charset.forName(fileEncoding));
     }
 
     /**
@@ -75,13 +74,8 @@ public class CSVFileWriter extends CSVConfigurable implements ninja.javafx.smart
      * @param row the row to convert
      * @return a simple map for the supercvs writer
      */
-    private Map<String, String> convertMapFromModel(CSVRow row) {
-        return row.getColumns().entrySet().stream()
-                .collect(
-                        toMap(
-                            Map.Entry::getKey,
-                            e -> e.getValue().getValue().getValue() != null ? e.getValue().getValue().getValue() : ""
-                        )
-                );
+    private List<String> convertMapFromModel(CSVRow row) {
+        return row.getColumns().values().stream().map(v -> v.get().getValue())
+                .collect(toList());
     }
 }

@@ -2,8 +2,8 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015-2019 javafx.ninja <info@javafx.ninja>
-                                                                                                                    
+   Copyright (c) 2015-2021 javafx.ninja <info@javafx.ninja>
+
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -21,36 +21,18 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
-  
+
 */
 
 package ninja.javafx.smartcsv.preferences;
 
-import org.supercsv.quote.AlwaysQuoteMode;
-import org.supercsv.quote.ColumnQuoteMode;
-import org.supercsv.quote.NormalQuoteMode;
-import org.supercsv.quote.QuoteMode;
+public record Preferences(
+        Character quoteChar,
+        char delimiterChar,
+        String endOfLineSymbols,
+        boolean ignoreEmptyLines) {
 
-/**
- * Helper class for mapping quote quoteModeName
- */
-public class QuoteModeHelper {
-
-    public static QuoteMode getQuoteMode(String quoteModeName) {
-        switch (quoteModeName) {
-            case "always": return new AlwaysQuoteMode();
-            case "column": return new ColumnQuoteMode();
-            default: return new NormalQuoteMode();
-        }
-    }
-
-    public static String getQuoteModeName(QuoteMode quoteMode) {
-        if (quoteMode instanceof AlwaysQuoteMode) {
-            return "always";
-        } else if (quoteMode instanceof ColumnQuoteMode) {
-            return "column";
-        } else {
-            return "normal";
-        }
+    public static Preferences defaultPreferences() {
+        return new Preferences('\"',',', "\n", true);
     }
 }
