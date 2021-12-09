@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015-2019 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2021 javafx.ninja <info@javafx.ninja>
                                                                                                                     
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -34,17 +34,14 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import ninja.javafx.smartcsv.fx.FXMLController;
+import ninja.javafx.smartcsv.preferences.Preferences;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.supercsv.prefs.CsvPreference;
 
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
-
-import static ninja.javafx.smartcsv.preferences.QuoteModeHelper.getQuoteMode;
-import static ninja.javafx.smartcsv.preferences.QuoteModeHelper.getQuoteModeName;
 
 /**
  * controller for preferences
@@ -59,13 +56,7 @@ public class PreferencesController extends FXMLController {
     private TextField delimiterChar;
 
     @FXML
-    private CheckBox surroundingSpacesNeedQuotes;
-
-    @FXML
     private CheckBox ignoreEmptyLines;
-
-    @FXML
-    private ComboBox<String> quoteMode;
 
     @FXML
     private ComboBox<String> fileEncoding;
@@ -83,7 +74,6 @@ public class PreferencesController extends FXMLController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        quoteMode.getItems().addAll("normal", "always", "column");
         fileEncoding.getItems().addAll(Charset.availableCharsets().keySet());
 
         UnaryOperator<TextFormatter.Change> allowOnlyOneCharacter = change -> {
@@ -102,24 +92,23 @@ public class PreferencesController extends FXMLController {
     }
 
     private void revalidate() {
-        valid.setValue(quoteChar.getText().length() == 1 && delimiterChar.getText().length() == 1);
+        valid.setValue(quoteChar.getText().length() <= 1 && delimiterChar.getText().length() == 1);
     }
 
-    public void setCsvPreference(CsvPreference csvPreference) {
-        quoteChar.setText(Character.toString(csvPreference.getQuoteChar()));
-        delimiterChar.setText(Character.toString((char)csvPreference.getDelimiterChar()));
-        surroundingSpacesNeedQuotes.setSelected(csvPreference.isSurroundingSpacesNeedQuotes());
-        ignoreEmptyLines.setSelected(csvPreference.isIgnoreEmptyLines());
-        quoteMode.getSelectionModel().select(getQuoteModeName(csvPreference.getQuoteMode()));
-        endOfLineSymbols = csvPreference.getEndOfLineSymbols();
+    public void setCsvPreference(Preferences csvPreference) {
+        if (csvPreference.quoteChar() != null) {
+            quoteChar.setText(csvPreference.quoteChar().toString());
+        } else {
+            quoteChar.setText("");
+        }
+        delimiterChar.setText(Character.toString(csvPreference.delimiterChar()));
+        ignoreEmptyLines.setSelected(csvPreference.ignoreEmptyLines());
+        endOfLineSymbols = csvPreference.endOfLineSymbols();
     }
 
-    public CsvPreference getCsvPreference() {
-        return new CsvPreference.Builder(quoteChar.getText().charAt(0), delimiterChar.getText().charAt(0), endOfLineSymbols)
-                .useQuoteMode(getQuoteMode(quoteMode.getSelectionModel().getSelectedItem()))
-                .surroundingSpacesNeedQuotes(surroundingSpacesNeedQuotes.isSelected())
-                .ignoreEmptyLines(ignoreEmptyLines.isSelected())
-                .build();
+    public Preferences getCsvPreference() {
+        var quote = quoteChar.getText().length() == 0 ? null : quoteChar.getText().charAt(0);
+        return new Preferences(quote, delimiterChar.getText().charAt(0), endOfLineSymbols, ignoreEmptyLines.isSelected());
     }
 
     public void setFileEncoding(String fileEncoding) {

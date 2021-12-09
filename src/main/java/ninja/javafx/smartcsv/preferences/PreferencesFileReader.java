@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015-2019 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2021 javafx.ninja <info@javafx.ninja>
                                                                                                                     
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -28,27 +28,23 @@ package ninja.javafx.smartcsv.preferences;
 
 import com.google.gson.GsonBuilder;
 import ninja.javafx.smartcsv.FileReader;
-import org.supercsv.prefs.CsvPreference;
-import org.supercsv.quote.AlwaysQuoteMode;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ninja.javafx.smartcsv.preferences.QuoteModeHelper.getQuoteMode;
+import static ninja.javafx.smartcsv.preferences.Preferences.defaultPreferences;
 
 /**
  * file reader for the preferences
  */
-public class PreferencesFileReader implements FileReader<CsvPreference> {
+public class PreferencesFileReader implements FileReader<Preferences> {
 
-    private CsvPreference csvPreference;
+    private Preferences csvPreference;
 
     public PreferencesFileReader() {
-        csvPreference = new CsvPreference.
-                Builder(CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE).
-                useQuoteMode(new AlwaysQuoteMode()).build();
+        csvPreference = defaultPreferences();
     }
 
     @Override
@@ -56,22 +52,15 @@ public class PreferencesFileReader implements FileReader<CsvPreference> {
         Map config = new GsonBuilder().create().fromJson(new java.io.FileReader(filename), HashMap.class);
 
         if (config != null) {
-            char quoteChar = config.get("quoteChar").toString().charAt(0);
+            Character quoteChar = config.get("quoteChar") == null ? null : config.get("quoteChar").toString().charAt(0);
             char delimiterChar = config.get("delimiterChar").toString().charAt(0);
             String endOfLineSymbols = config.get("endOfLineSymbols").toString();
-            boolean surroundingSpacesNeedQuotes = (Boolean) config.get("surroundingSpacesNeedQuotes");
             boolean ignoreEmptyLines = (Boolean) config.get("ignoreEmptyLines");
-            String quoteMode = config.get("quoteMode").toString();
-
-            csvPreference = new CsvPreference.Builder(quoteChar, delimiterChar, endOfLineSymbols)
-                    .useQuoteMode(getQuoteMode(quoteMode))
-                    .surroundingSpacesNeedQuotes(surroundingSpacesNeedQuotes)
-                    .ignoreEmptyLines(ignoreEmptyLines)
-                    .build();
+            csvPreference = new Preferences(quoteChar, delimiterChar, endOfLineSymbols, ignoreEmptyLines);
         }
     }
 
-    public CsvPreference getContent() {
+    public Preferences getContent() {
         return csvPreference;
     }
 

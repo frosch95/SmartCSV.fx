@@ -2,7 +2,7 @@
    The MIT License (MIT)
    -----------------------------------------------------------------------------
 
-   Copyright (c) 2015-2019 javafx.ninja <info@javafx.ninja>
+   Copyright (c) 2015-2021 javafx.ninja <info@javafx.ninja>
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -26,17 +26,13 @@
 
 package ninja.javafx.smartcsv.csv;
 
+import de.siegmar.fastcsv.reader.NamedCsvReader;
 import ninja.javafx.smartcsv.FileReader;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
-import ninja.javafx.smartcsv.fx.table.model.CSVRow;
-import org.supercsv.exception.SuperCsvException;
-import org.supercsv.io.CsvMapReader;
-import org.supercsv.io.ICsvMapReader;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Map;
 
 /**
  * reads the csv file and stores the values in csv model
@@ -48,26 +44,36 @@ public class CSVFileReader extends CSVConfigurable implements FileReader<CSVMode
     @Override
     public void read(File file) throws IOException {
 
-        try (ICsvMapReader mapReader = new CsvMapReader(new java.io.FileReader(file.getAbsoluteFile(), Charset.forName(fileEncoding)),
-                csvPreference)) {
+        System.out.println(csvPreference);
+        try (var csv = getNamedCsvReader(file)) {
             model = new CSVModel();
 
             // the header columns are used as the keys to the Map
-            String[] header = mapReader.getHeader(true);
+            var header = csv.getHeader().toArray(new String[csv.getHeader().size()]);
             model.setHeader(header);
 
-            Map<String, String> customerMap;
-            while ((customerMap = mapReader.read(header)) != null) {
-                CSVRow row = model.addRow();
+            csv.forEach(csvRow -> {
+                var row = model.addRow();
                 for (String column : header) {
-                    model.addValue(row, column, customerMap.get(column));
+                    model.addValue(row, column, csvRow.getField(column));
                 }
-            }
-        } catch (IOException | SuperCsvException ex) {
+            });
+
+        } catch (IOException ex) {
             // TODO perhaps a custom NinjaException that can properly identify and localize the exception message
             // is this a file not found? is this a corrupt csv? etc
             throw new IOException("Failed to read " + file + ": " + ex.getMessage(), ex);
         }
+    }
+
+    private NamedCsvReader getNamedCsvReader(File file) throws IOException {
+        var builder = NamedCsvReader.builder()
+                .fieldSeparator(csvPreference.delimiterChar());
+        if (csvPreference.quoteChar() != null) {
+            builder.quoteCharacter(csvPreference.quoteChar());
+        }
+
+        return builder.build(file.toPath(), Charset.forName(fileEncoding));
     }
 
     public CSVModel getContent() {

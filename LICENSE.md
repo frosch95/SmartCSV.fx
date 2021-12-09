@@ -1,7 +1,7 @@
 The MIT License (MIT)
 ------------------------------------------------------------------------------------------------------------------------
 
-Copyright (c) 2015-2019 Andreas Billmann <andreas.billmann@javafx.ninja>
+Copyright (c) 2015-2021 Andreas Billmann <andreas.billmann@javafx.ninja>
 
 
 
