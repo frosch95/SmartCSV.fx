@@ -28,8 +28,9 @@ package ninja.javafx.smartcsv.fx.table.model;
 
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+
 
 /**
  * unit test for the csv model

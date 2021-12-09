@@ -22,12 +22,13 @@ javafx {
 
 dependencies {
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
-    testImplementation  group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.5.2'
-    testImplementation  group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.5.2'
+    testImplementation  group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
+    testRuntimeOnly  group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
+    testImplementation  group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.8.2'
     testImplementation  group: 'org.hamcrest', name: 'hamcrest-library', version: '2.2'
     testImplementation  group: 'org.mockito', name: 'mockito-core', version:'3.1.0'
     implementation  group: 'org.apache.groovy', name: 'groovy', version: '4.0.0-rc-1'
-    implementation  (group: 'org.springframework', name:'spring-context', version: '5.3.13')
+    implementation  group: 'org.springframework', name:'spring-context', version: '5.3.13'
     implementation  group: 'de.siegmar', name: 'fastcsv', version: '2.1.0'
     implementation  group: 'commons-validator', name: 'commons-validator', version: '1.7'
     implementation  group: 'de.jensd', name: 'fontawesomefx-commons', version: '11.0'
