@@ -275,7 +275,9 @@
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                 <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
                 <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="NEVER" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="NEVER" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -289,6 +291,8 @@
                 <Label fx:id="configurationName" GridPane.columnIndex="5" GridPane.hgrow="ALWAYS" />
                 <Label text="%lineNumber" GridPane.columnIndex="7" />
                 <Label fx:id="currentLineNumber" text="" GridPane.columnIndex="8" />
+                <Label text="%totalNumberOfLines" GridPane.columnIndex="9" />
+                <Label fx:id="totalNumberOfLines" text="0" GridPane.columnIndex="10" />
             </children>
             <BorderPane.margin>
                 <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
