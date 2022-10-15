@@ -208,6 +208,9 @@ public class SmartCSVController extends FXMLController {
     @FXML
     private Label currentLineNumber;
 
+    @FXML
+    private Label totalNumberOfLines;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // members
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -673,6 +676,8 @@ public class SmartCSVController extends FXMLController {
 
             tableView.getItems().setAll(currentCsvFile.getContent().getRows());
             tableView.setEditable(true);
+
+            totalNumberOfLines.textProperty().setValue("" + currentCsvFile.getContent().getRows().size());
 
             setBottomAnchor(tableView, 0.0);
             setTopAnchor(tableView, 0.0);
