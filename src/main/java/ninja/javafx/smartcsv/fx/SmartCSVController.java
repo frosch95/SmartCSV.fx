@@ -276,7 +276,7 @@ public class SmartCSVController extends FXMLController {
         tableWrapper.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
-            if (db.hasFiles() && db.getFiles().size() == 1) {
+            if (db.hasFiles() && db.getFiles().size() == 1 && canOpen()) {
                 File file = db.getFiles().get(0);
                 openFile(currentCsvFile, file);
                 success = true;
@@ -501,6 +501,22 @@ public class SmartCSVController extends FXMLController {
         }
 
         return canExit;
+    }
+
+    private boolean canOpen() {
+        boolean canOpen = true;
+        if (currentCsvFile.getContent() != null && currentCsvFile.isFileChanged()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(resourceBundle.getString("dialog.changes.title"));
+            alert.setHeaderText(resourceBundle.getString("dialog.changes.header.text"));
+            alert.setContentText(resourceBundle.getString("dialog.changes.text"));
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() != ButtonType.OK){
+                canOpen = false;
+            }
+        }
+        return canOpen;
     }
 
     public void showValidationEditor(String column) {
