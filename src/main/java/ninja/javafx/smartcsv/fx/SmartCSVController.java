@@ -36,6 +36,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
@@ -255,6 +257,34 @@ public class SmartCSVController extends FXMLController {
         fileEncodingFile.setFile(ENCODING_FILE);
 
         loadCsvPreferencesFromFile();
+
+        initDragAndDrop();
+    }
+
+    private void initDragAndDrop() {
+        tableWrapper.setOnDragOver(event -> {
+            Dragboard db = event.getDragboard();
+            if (event.getGestureSource() != tableWrapper
+                    && db.hasFiles()
+                    && db.getFiles().size() == 1
+                    && db.getFiles().get(0).getName().endsWith(".csv")) {
+                event.acceptTransferModes(TransferMode.COPY);
+            }
+            event.consume();
+        });
+
+        tableWrapper.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasFiles() && db.getFiles().size() == 1) {
+                File file = db.getFiles().get(0);
+                openFile(currentCsvFile, file);
+                success = true;
+            }
+            /* let the source know whether the string was successfully
+             * transferred and used */
+            event.setDropCompleted(success);
+        });
     }
 
     private void loadEncodingFromFile() {
@@ -599,6 +629,10 @@ public class SmartCSVController extends FXMLController {
 
         //Show open file dialog
         File file = fileChooser.showOpenDialog(applicationPane.getScene().getWindow());
+        openFile(storageFile, file);
+    }
+
+    private void openFile(FileStorage storageFile, File file) {
         if (file != null) {
             File previousFile = storageFile.getFile();
             storageFile.setFile(file);
