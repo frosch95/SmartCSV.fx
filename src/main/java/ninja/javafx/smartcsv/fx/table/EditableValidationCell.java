@@ -65,8 +65,8 @@ public class EditableValidationCell extends TableCell<CSVRow, CSVValue> {
 
     @Override
     public void cancelEdit() {
-        super.cancelEdit();
         setText(getItem().getValue());
+        super.cancelEdit();
         setContentDisplay(ContentDisplay.TEXT_ONLY);
     }
 
@@ -113,14 +113,9 @@ public class EditableValidationCell extends TableCell<CSVRow, CSVValue> {
         textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         textField.setOnKeyPressed(t -> {
             if (t.getCode() == KeyCode.ENTER) {
-                commitEdit(textField.getValue());
+                runLater(() -> commitEdit(textField.getValue()));
             } else if (t.getCode() == KeyCode.ESCAPE) {
                 cancelEdit();
-            }
-        });
-        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue && textField != null) {
-                commitEdit(textField.getValue());
             }
         });
     }
