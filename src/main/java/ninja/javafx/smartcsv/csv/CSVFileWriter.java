@@ -27,7 +27,7 @@
 package ninja.javafx.smartcsv.csv;
 
 import de.siegmar.fastcsv.writer.CsvWriter;
-import de.siegmar.fastcsv.writer.QuoteStrategy;
+import de.siegmar.fastcsv.writer.QuoteStrategies;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
 import ninja.javafx.smartcsv.fx.table.model.CSVRow;
 
@@ -52,9 +52,9 @@ public class CSVFileWriter extends CSVConfigurable implements ninja.javafx.smart
     @Override
     public void write(File filename) throws IOException {
         try (var writer = getCsvWriter(filename)){
-            writer.writeRow(model.getHeader());
+            writer.writeRecord(model.getHeader());
             for(CSVRow row: model.getRows()) {
-                writer.writeRow(convertMapFromModel(row));
+                writer.writeRecord(convertMapFromModel(row));
             }
         }
     }
@@ -63,7 +63,7 @@ public class CSVFileWriter extends CSVConfigurable implements ninja.javafx.smart
         var writer = CsvWriter.builder().fieldSeparator(csvPreference.delimiterChar());
         if (csvPreference.quoteChar() != null) {
             writer.quoteCharacter(csvPreference.quoteChar());
-            writer.quoteStrategy(QuoteStrategy.ALWAYS);
+            writer.quoteStrategy(QuoteStrategies.ALWAYS);
         }
 
         return writer.build(filename.toPath(), Charset.forName(fileEncoding));

@@ -26,7 +26,8 @@
 
 package ninja.javafx.smartcsv.csv;
 
-import de.siegmar.fastcsv.reader.NamedCsvReader;
+import de.siegmar.fastcsv.reader.CsvReader;
+import de.siegmar.fastcsv.reader.NamedCsvRecord;
 import ninja.javafx.smartcsv.FileReader;
 import ninja.javafx.smartcsv.fx.table.model.CSVModel;
 
@@ -49,7 +50,13 @@ public class CSVFileReader extends CSVConfigurable implements FileReader<CSVMode
             model = new CSVModel();
 
             // the header columns are used as the keys to the Map
-            var header = csv.getHeader().toArray(new String[csv.getHeader().size()]);
+            var firstRow = csv.stream().findFirst();
+
+            if (firstRow.isEmpty()) {
+                return;
+            }
+
+            var header = firstRow.get().getHeader().toArray(String[]::new);
             model.setHeader(header);
 
             csv.forEach(csvRow -> {
@@ -66,14 +73,14 @@ public class CSVFileReader extends CSVConfigurable implements FileReader<CSVMode
         }
     }
 
-    private NamedCsvReader getNamedCsvReader(File file) throws IOException {
-        var builder = NamedCsvReader.builder()
+    private CsvReader<NamedCsvRecord> getNamedCsvReader(File file) throws IOException {
+        var builder = CsvReader.builder()
                 .fieldSeparator(csvPreference.delimiterChar());
         if (csvPreference.quoteChar() != null) {
             builder.quoteCharacter(csvPreference.quoteChar());
         }
 
-        return builder.build(file.toPath(), Charset.forName(fileEncoding));
+        return builder.ofNamedCsvRecord(file.toPath(), Charset.forName(fileEncoding));
     }
 
     public CSVModel getContent() {
