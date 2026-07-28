@@ -3,8 +3,8 @@ plugins {
     id 'java'
     id 'groovy'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.14'
-    id 'com.github.ben-manes.versions' version '0.48.0'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'com.github.ben-manes.versions' version '0.54.0'
 }
 
 repositories {
@@ -26,28 +26,27 @@ javafx {
 
 dependencies {
     // updated testing libraries
-    testImplementation group: 'org.junit.platform', name: 'junit-platform-launcher', version: '6.0.0'
-    testImplementation  group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '6.0.0'
-    testRuntimeOnly  group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '6.0.0'
-    testImplementation  group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '6.0.0'
-    testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '3.0'
-    testImplementation  group: 'org.mockito', name: 'mockito-core', version:'5.20.0'
+    testImplementation "org.junit.platform:junit-platform-launcher:6.1.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:6.1.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:6.1.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:6.1.2"
+    testImplementation "org.hamcrest:hamcrest:3.0"
+    testImplementation "org.mockito:mockito-core:5.20.0"
 
     // runtime libraries - bumped to recent stable versions where compatible
-    implementation group: 'org.apache.groovy', name: 'groovy', version: '5.0.2'
-    implementation group: 'org.springframework', name: 'spring-context', version: '6.2.12'
-    implementation group: 'de.siegmar', name: 'fastcsv', version: '4.1.0'
-    implementation group: 'commons-validator', name: 'commons-validator', version: '1.10.0'
-    implementation group: 'de.jensd', name: 'fontawesomefx-commons', version: '9.1.2'
-    implementation group: 'de.jensd', name: 'fontawesomefx-fontawesome', version: '4.7.0-9.1.2'
-    implementation group: 'de.jensd', name: 'fontawesomefx-materialdesignfont', version: '2.0.26-9.1.2'
-    implementation group: 'de.jensd', name: 'fontawesomefx-materialicons', version: '2.2.0-9.1.2'
-    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.2.2'
-    implementation group: 'com.google.code.gson', name: 'gson', version: '2.13.2'
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.25.2'
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.25.2'
-    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.11.6'
-
+    implementation "org.apache.groovy:groovy:5.0.6"
+    implementation "org.springframework:spring-context:7.0.8"
+    implementation "de.siegmar:fastcsv:4.3.1"
+    implementation "commons-validator:commons-validator:1.10.1"
+    implementation "de.jensd:fontawesomefx-commons:9.1.2"
+    implementation "de.jensd:fontawesomefx-fontawesome:4.7.0-9.1.2"
+    implementation "de.jensd:fontawesomefx-materialdesignfont:2.0.26-9.1.2"
+    implementation "de.jensd:fontawesomefx-materialicons:2.2.0-9.1.2"
+    implementation "org.controlsfx:controlsfx:11.2.3"
+    implementation "com.google.code.gson:gson:2.14.0"
+    implementation "org.apache.logging.log4j:log4j-api:2.26.1"
+    implementation 'org.apache.logging.log4j:log4j-core:2.26.1'
+    implementation "org.fxmisc.richtext:richtextfx:0.11.7"
 }
 
 test {
@@ -55,7 +54,7 @@ test {
 }
 
 group 'ninja.javafx'
-version '1.5.0'
+version '1.6.0'
 
 application {
     mainClass = 'ninja.javafx.smartcsv.Main'
