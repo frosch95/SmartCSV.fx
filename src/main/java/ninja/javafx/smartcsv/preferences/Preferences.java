@@ -30,9 +30,10 @@ public record Preferences(
         Character quoteChar,
         char delimiterChar,
         String endOfLineSymbols,
-        boolean ignoreEmptyLines) {
+        boolean ignoreEmptyLines,
+        double fontSize) {
 
     public static Preferences defaultPreferences() {
-        return new Preferences('\"',',', "\n", true);
+        return new Preferences('\"',',', "\n", true, 12.0);
     }
 }

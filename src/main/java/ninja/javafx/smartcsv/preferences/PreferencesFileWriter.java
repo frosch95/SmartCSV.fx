@@ -50,9 +50,10 @@ public class PreferencesFileWriter implements FileWriter<Preferences> {
     public void write(File file) throws IOException {
         Map<String, Object> preferences = new HashMap<>();
         preferences.put("quoteChar", csvPreference.quoteChar() == null ? null: csvPreference.quoteChar().toString());
-        preferences.put("delimiterChar", Character.toString((char)csvPreference.delimiterChar()));
+        preferences.put("delimiterChar", Character.toString(csvPreference.delimiterChar()));
         preferences.put("endOfLineSymbols", csvPreference.endOfLineSymbols());
         preferences.put("ignoreEmptyLines", csvPreference.ignoreEmptyLines());
+        preferences.put("fontSize", csvPreference.fontSize());
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         Files.write(file.toPath(), gson.toJson(preferences).getBytes());

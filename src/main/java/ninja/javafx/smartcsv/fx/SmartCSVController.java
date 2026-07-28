@@ -35,6 +35,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -96,7 +97,7 @@ public class SmartCSVController extends FXMLController {
     private static final File PREFERENCES_FILE =  new File(System.getProperty("user.home") +
             File.separator +
             ".SmartCSV.fx" +
-            File.separator + "" +
+            File.separator +
             "preferences.json");
 
     private static final File ENCODING_FILE = new File(System.getProperty("user.home") +
@@ -384,6 +385,10 @@ public class SmartCSVController extends FXMLController {
         alert.setTitle("About");
         alert.setHeaderText("SmartCSV.fx");
         alert.getDialogPane().setContent(aboutController.getView());
+        // Schriftgröße auf den Dialog anwenden
+        double fontSize = csvPreferenceFile.getContent().fontSize();
+        String fontSizeStyle = ".root { -fx-font-size: " + fontSize + "px; }";
+        alert.getDialogPane().setStyle(fontSizeStyle);
         alert.showAndWait();
     }
 
@@ -394,6 +399,13 @@ public class SmartCSVController extends FXMLController {
         alert.setTitle(resourceBundle.getString("dialog.preferences.title"));
         alert.setHeaderText(resourceBundle.getString("dialog.preferences.header.text"));
         alert.getDialogPane().setContent(preferencesController.getView());
+
+        // Schriftgröße auf den Dialog anwenden
+        double fontSize = csvPreferenceFile.getContent().fontSize();
+        String fontSizeStyle = ".root { -fx-font-size: " + fontSize + "px; }";
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/ninja/javafx/smartcsv/fx/smartcsv.css").toExternalForm());
+        // Benutzerdefinierte Schriftgröße als inline-Stil hinzufügen
+        alert.getDialogPane().setStyle(fontSizeStyle);
 
         Node okButton = alert.getDialogPane().lookupButton(ButtonType.OK);
         okButton.disableProperty().bind(preferencesController.validProperty().not());
@@ -456,6 +468,10 @@ public class SmartCSVController extends FXMLController {
         dialog.setTitle(resourceBundle.getString("dialog.goto.line.title"));
         dialog.setHeaderText(format(resourceBundle.getString("dialog.goto.line.header.text"), maxLineNumber));
         dialog.setContentText(resourceBundle.getString("dialog.goto.line.label"));
+        // Schriftgröße auf den Dialog anwenden
+        double fontSize = csvPreferenceFile.getContent().fontSize();
+        String fontSizeStyle = ".root { -fx-font-size: " + fontSize + "px; }";
+        dialog.getDialogPane().setStyle(fontSizeStyle);
         Optional<Integer> result = dialog.showAndWait();
         if (result.isPresent()){
             Integer lineNumber = result.get();
@@ -493,6 +509,10 @@ public class SmartCSVController extends FXMLController {
             alert.setTitle(resourceBundle.getString("dialog.exit.title"));
             alert.setHeaderText(resourceBundle.getString("dialog.exit.header.text"));
             alert.setContentText(resourceBundle.getString("dialog.exit.text"));
+            // Schriftgröße auf den Dialog anwenden
+            double fontSize = csvPreferenceFile.getContent().fontSize();
+            String fontSizeStyle = ".root { -fx-font-size: " + fontSize + "px; }";
+            alert.getDialogPane().setStyle(fontSizeStyle);
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() != ButtonType.OK){
@@ -510,6 +530,10 @@ public class SmartCSVController extends FXMLController {
             alert.setTitle(resourceBundle.getString("dialog.changes.title"));
             alert.setHeaderText(resourceBundle.getString("dialog.changes.header.text"));
             alert.setContentText(resourceBundle.getString("dialog.changes.text"));
+            // Schriftgröße auf den Dialog anwenden
+            double fontSize = csvPreferenceFile.getContent().fontSize();
+            String fontSizeStyle = ".root { -fx-font-size: " + fontSize + "px; }";
+            alert.getDialogPane().setStyle(fontSizeStyle);
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() != ButtonType.OK){
@@ -528,6 +552,10 @@ public class SmartCSVController extends FXMLController {
         alert.setTitle(resourceBundle.getString("dialog.validation.rules.title"));
         alert.setHeaderText(format(resourceBundle.getString("dialog.validation.rules.header"), column));
         alert.getDialogPane().setContent(validationEditorController.getView());
+        // Schriftgröße auf den Dialog anwenden
+        double fontSize = csvPreferenceFile.getContent().fontSize();
+        String fontSizeStyle = ".root { -fx-font-size: " + fontSize + "px; }";
+        alert.getDialogPane().setStyle(fontSizeStyle);
         Optional<ButtonType> result = alert.showAndWait();
 
         if (result.get() == ButtonType.OK){
@@ -621,11 +649,70 @@ public class SmartCSVController extends FXMLController {
         }
     }
 
+    private void applyFontSize(double fontSize) {
+        Preferences currentPrefs = csvPreferenceFile.getContent();
+        String fontSizeStyle = "-fx-font-size: " + fontSize + "px;";
+        Scene scene = applicationPane.getScene();
+        if (scene != null) {
+            scene.getRoot().setStyle(fontSizeStyle);
+            applyFontSizeToTable(currentPrefs.fontSize());
+            // Schriftgröße auch auf Toolbar-Buttons und Menü anwenden
+            applyFontSizeToToolbarButtons(fontSizeStyle);
+            applyFontSizeToMenu(fontSizeStyle);
+        }
+    }
+
+    private void applyFontSizeToToolbarButtons(String fontSizeStyle) {
+        // Schriftgröße auf alle bekannten Toolbar-Buttons anwenden
+        if (saveButton != null) saveButton.setStyle(fontSizeStyle);
+        if (saveAsButton != null) saveAsButton.setStyle(fontSizeStyle);
+        if (createConfigButton != null) createConfigButton.setStyle(fontSizeStyle);
+        if (loadConfigButton != null) loadConfigButton.setStyle(fontSizeStyle);
+        if (saveConfigButton != null) saveConfigButton.setStyle(fontSizeStyle);
+        if (deleteRowButton != null) deleteRowButton.setStyle(fontSizeStyle);
+        if (addRowButton != null) addRowButton.setStyle(fontSizeStyle);
+        if (exportButton != null) exportButton.setStyle(fontSizeStyle);
+        
+        // Schriftgröße auf alle Buttons in der Toolbar anwenden (inkl. first/last Buttons)
+        if (applicationPane != null) {
+            applicationPane.lookupAll(".button").forEach(node -> {
+                if (node instanceof Button) {
+                    node.setStyle(fontSizeStyle);
+                }
+            });
+        }
+    }
+
+    private void applyFontSizeToMenu(String fontSizeStyle) {
+        // Schriftgröße auf alle Menü-Elemente anwenden
+        if (saveMenuItem != null) saveMenuItem.setStyle(fontSizeStyle);
+        if (saveAsMenuItem != null) saveAsMenuItem.setStyle(fontSizeStyle);
+        if (createConfigMenuItem != null) createConfigMenuItem.setStyle(fontSizeStyle);
+        if (loadConfigMenuItem != null) loadConfigMenuItem.setStyle(fontSizeStyle);
+        if (saveConfigMenuItem != null) saveConfigMenuItem.setStyle(fontSizeStyle);
+        if (saveAsConfigMenuItem != null) saveAsConfigMenuItem.setStyle(fontSizeStyle);
+        if (deleteRowMenuItem != null) deleteRowMenuItem.setStyle(fontSizeStyle);
+        if (addRowMenuItem != null) addRowMenuItem.setStyle(fontSizeStyle);
+        if (gotoLineMenuItem != null) gotoLineMenuItem.setStyle(fontSizeStyle);
+        if (exportMenuItem != null) exportMenuItem.setStyle(fontSizeStyle);
+    }
+
+    private void applyFontSizeToTable(double fontSize) {
+        if (tableView != null) {
+            String fontSizeStyle = "-fx-font-size: " + fontSize + "px;";
+            tableView.setStyle(fontSizeStyle);
+            // Schriftgröße auch auf alle Tabellenspalten anwenden
+            for (TableColumn<?, ?> column : tableView.getColumns()) {
+                column.setStyle(fontSizeStyle);
+            }
+        }
+    }
+
     private void setCsvPreference(Preferences csvPreference) {
         preferencesController.setCsvPreference(csvPreference);
         csvFileReader.setCsvPreference(csvPreference);
         csvFileWriter.setCsvPreference(csvPreference);
-
+        applyFontSize(csvPreference.fontSize());
     }
 
     private void loadFile(String filterText,
@@ -735,6 +822,17 @@ public class SmartCSVController extends FXMLController {
             setRightAnchor(tableView, 0.0);
             tableWrapper.getChildren().setAll(tableView);
             errorSideBar.setModel(currentCsvFile.getContent());
+            // Schriftgröße auf die Tabelle anwenden
+            double fontSize = csvPreferenceFile.getContent().fontSize();
+            applyFontSizeToTable(fontSize);
+            // Schriftgröße auf Labels und Toolbar-Buttons anwenden
+            String fontSizeStyle = "-fx-font-size: " + fontSize + "px;";
+            currentLineNumber.setStyle(fontSizeStyle);
+            totalNumberOfLines.setStyle(fontSizeStyle);
+            csvName.setStyle(fontSizeStyle);
+            configurationName.setStyle(fontSizeStyle);
+            stateName.setStyle(fontSizeStyle);
+            applyFontSizeToToolbarButtons(fontSizeStyle);
             binExportButtons();
         }
     }

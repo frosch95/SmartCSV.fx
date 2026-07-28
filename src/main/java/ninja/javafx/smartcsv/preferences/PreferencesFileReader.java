@@ -56,7 +56,8 @@ public class PreferencesFileReader implements FileReader<Preferences> {
             char delimiterChar = config.get("delimiterChar").toString().charAt(0);
             String endOfLineSymbols = config.get("endOfLineSymbols").toString();
             boolean ignoreEmptyLines = (Boolean) config.get("ignoreEmptyLines");
-            csvPreference = new Preferences(quoteChar, delimiterChar, endOfLineSymbols, ignoreEmptyLines);
+            double fontSize = config.containsKey("fontSize") ? ((Number) config.get("fontSize")).doubleValue() : 12.0;
+            csvPreference = new Preferences(quoteChar, delimiterChar, endOfLineSymbols, ignoreEmptyLines, fontSize);
         }
     }
 

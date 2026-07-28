@@ -61,6 +61,9 @@ public class PreferencesController extends FXMLController {
     @FXML
     private ComboBox<String> fileEncoding;
 
+    @FXML
+    private ComboBox<Double> fontSize;
+
     private String endOfLineSymbols;
 
     private BooleanProperty valid = new SimpleBooleanProperty(true);
@@ -75,6 +78,10 @@ public class PreferencesController extends FXMLController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         fileEncoding.getItems().addAll(Charset.availableCharsets().keySet());
+
+        // Initialize font size combo box with common font sizes
+        fontSize.getItems().addAll(8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0);
+        fontSize.setEditable(true);
 
         UnaryOperator<TextFormatter.Change> allowOnlyOneCharacter = change -> {
             if (change.isContentChange()) {
@@ -104,11 +111,25 @@ public class PreferencesController extends FXMLController {
         delimiterChar.setText(Character.toString(csvPreference.delimiterChar()));
         ignoreEmptyLines.setSelected(csvPreference.ignoreEmptyLines());
         endOfLineSymbols = csvPreference.endOfLineSymbols();
+        fontSize.setValue(csvPreference.fontSize());
     }
 
     public Preferences getCsvPreference() {
         var quote = quoteChar.getText().length() == 0 ? null : quoteChar.getText().charAt(0);
-        return new Preferences(quote, delimiterChar.getText().charAt(0), endOfLineSymbols, ignoreEmptyLines.isSelected());
+        double fontSizeValue = 12.0;
+        if (fontSize.getValue() != null) {
+            Object value = fontSize.getValue();
+            if (value instanceof Double) {
+                fontSizeValue = (Double) value;
+            } else if (value instanceof String) {
+                try {
+                    fontSizeValue = Double.parseDouble((String) value);
+                } catch (NumberFormatException e) {
+                    fontSizeValue = 12.0;
+                }
+            }
+        }
+        return new Preferences(quote, delimiterChar.getText().charAt(0), endOfLineSymbols, ignoreEmptyLines.isSelected(), fontSizeValue);
     }
 
     public void setFileEncoding(String fileEncoding) {
